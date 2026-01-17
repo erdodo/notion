@@ -6,9 +6,11 @@ import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-re
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useUser } from "@clerk/nextjs"
-import { getSidebarDocuments, createDocument } from "../_actions/documents"
+import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { DocumentList } from "./document-list"
 import { ItemSkeleton } from "./item-skeleton"
+import { TrashBox } from "@/components/trash-box"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
 export const Navigation = () => {
@@ -25,6 +27,7 @@ export const Navigation = () => {
   const [documents, setDocuments] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
+  const [archivedDocuments, setArchivedDocuments] = useState<any[]>([])
 
   useEffect(() => {
     if (isMobile) {
@@ -42,6 +45,7 @@ export const Navigation = () => {
 
   useEffect(() => {
     loadDocuments()
+    loadArchivedDocuments()
   }, [])
 
   const loadDocuments = async () => {
@@ -53,6 +57,15 @@ export const Navigation = () => {
       console.error("Error loading documents:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadArchivedDocuments = async () => {
+    try {
+      const docs = await getArchivedDocuments()
+      setArchivedDocuments(docs)
+    } catch (error) {
+      console.error("Error loading archived documents:", error)
     }
   }
 
@@ -177,12 +190,22 @@ export const Navigation = () => {
               <span>New Page</span>
             </button>
 
-            <button 
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-            >
-              <Trash className="h-4 w-4" />
-              <span>Trash</span>
-            </button>
+            <Popover>
+              <PopoverTrigger className="w-full">
+                <button 
+                  className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+                >
+                  <Trash className="h-4 w-4" />
+                  <span>Trash</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent 
+                className="p-0 w-72"
+                side={isMobile ? "bottom" : "right"}
+              >
+                <TrashBox documents={archivedDocuments} />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="mt-4">

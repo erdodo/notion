@@ -1,7 +1,15 @@
 "use client"
 
-import { ChevronDown, ChevronRight, Plus, FileText } from "lucide-react"
+import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { archiveDocument } from "../_actions/documents"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 interface ItemProps {
@@ -53,6 +61,12 @@ export const Item = ({
     }
   }
 
+  const handleArchive = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    await archiveDocument(id)
+    router.push("/documents")
+  }
+
   const ChevronIcon = expanded ? ChevronDown : ChevronRight
 
   return (
@@ -97,6 +111,33 @@ export const Item = ({
         >
           <Plus className="h-4 w-4" />
         </button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger 
+            onClick={(e) => e.stopPropagation()}
+            className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-0.5"
+            asChild
+          >
+            <button>
+              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            className="w-60"
+            align="start"
+            side="right"
+            forceMount
+          >
+            <DropdownMenuItem onClick={handleArchive}>
+              <Trash className="h-4 w-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <div className="text-xs text-muted-foreground p-2">
+              Last edited by: User
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )

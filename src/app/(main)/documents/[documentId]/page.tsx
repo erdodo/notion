@@ -1,8 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { getPageById } from "@/actions/page"
+import { getDocument } from "@/app/(main)/_actions/documents"
 import { DocumentHeader } from "@/components/editor/document-header"
 import { DocumentEditor } from "@/components/editor/document-editor"
+import { Banner } from "@/components/banner"
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
     redirect("/")
   }
 
-  const page = await getPageById(params.documentId)
+  const page = await getDocument(params.documentId)
 
   if (!page) {
     redirect("/documents")
@@ -27,6 +28,9 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
 
   return (
     <div className="h-full">
+      {page.isArchived && (
+        <Banner documentId={params.documentId} />
+      )}
       <DocumentHeader page={page} />
       <DocumentEditor page={page} />
     </div>
