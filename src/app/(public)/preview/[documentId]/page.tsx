@@ -11,6 +11,56 @@ interface PreviewPageProps {
   }
 }
 
+// BlockNote block structure
+interface BlockNoteBlock {
+  type?: string
+  content?: Array<{
+    type?: string
+    text?: string
+  }>
+}
+
+// Helper function to extract text from content for description
+function extractDescription(content: string | null): string {
+  if (!content) return "Shared document"
+  
+  const HTML_TAG_REGEX = /<[^>]*>/g
+  const MAX_DESCRIPTION_LENGTH = 155
+  
+  try {
+    // Try to parse as JSON (BlockNote format)
+    const parsed = JSON.parse(content)
+    
+    if (Array.isArray(parsed)) {
+      const blocks = parsed as BlockNoteBlock[]
+      
+      // Extract text from first few blocks
+      const text = blocks
+        .slice(0, 3)
+        .map((block) => {
+          if (block.content && Array.isArray(block.content)) {
+            return block.content
+              .map((item) => item.text || "")
+              .join(" ")
+          }
+          return ""
+        })
+        .filter(Boolean)
+        .join(" ")
+        .trim()
+      
+      // Return first 155 characters for meta description
+      return text.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
+    }
+  } catch (error: unknown) {
+    // If parsing fails, try to extract plain text
+    const plainText = content.replace(HTML_TAG_REGEX, "").trim()
+    return plainText.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
+  }
+  
+  return "Shared document"
+}
+
 export async function generateMetadata({
   params
 }: PreviewPageProps): Promise<Metadata> {
@@ -22,18 +72,22 @@ export async function generateMetadata({
     }
   }
 
+  const description = extractDescription(document.content)
+  const title = document.title || "Untitled"
+
   return {
-    title: document.title || "Untitled",
-    description: "Shared document",
+    title: title,
+    description: description,
     openGraph: {
-      title: document.title || "Untitled",
-      description: "Shared document",
+      title: title,
+      description: description,
       images: document.coverImage ? [document.coverImage] : [],
+      type: "article",
     },
     twitter: {
       card: "summary_large_image",
-      title: document.title || "Untitled",
-      description: "Shared document",
+      title: title,
+      description: description,
       images: document.coverImage ? [document.coverImage] : [],
     },
   }

@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Trash, Undo } from "lucide-react"
+import { Search, Trash, Undo, FileText } from "lucide-react"
+import { toast } from "sonner"
 import { getArchivedDocuments, restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/spinner"
@@ -30,17 +31,32 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
     documentId: string,
   ) => {
     event.stopPropagation()
-    await restoreDocument(documentId)
     
-    // Remove from local state
-    setDocuments(documents.filter(doc => doc.id !== documentId))
+    const promise = restoreDocument(documentId).then(() => {
+      // Remove from local state
+      setDocuments(documents.filter(doc => doc.id !== documentId))
+      router.refresh()
+    })
+
+    toast.promise(promise, {
+      loading: "Restoring page...",
+      success: "Page restored!",
+      error: "Failed to restore page."
+    })
   }
 
   const onRemove = async (documentId: string) => {
-    await removeDocument(documentId)
-    
-    // Remove from local state
-    setDocuments(documents.filter(doc => doc.id !== documentId))
+    const promise = removeDocument(documentId).then(() => {
+      // Remove from local state
+      setDocuments(documents.filter(doc => doc.id !== documentId))
+      router.push("/documents")
+    })
+
+    toast.promise(promise, {
+      loading: "Deleting page...",
+      success: "Page deleted permanently!",
+      error: "Failed to delete page."
+    })
   }
 
   if (documents === undefined) {
@@ -64,7 +80,7 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
       </div>
       <div className="mt-2 px-1 pb-1">
         <p className="hidden last:block text-xs text-center text-muted-foreground pb-2">
-          No documents found.
+          No documents found in Trash.
         </p>
         {filteredDocuments?.map((document) => (
           <div
@@ -73,9 +89,16 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
             onClick={() => onClick(document.id)}
             className="text-sm rounded-sm w-full hover:bg-primary/5 flex items-center text-primary justify-between"
           >
-            <span className="truncate pl-2">
-              {document.title}
-            </span>
+            <div className="flex items-center gap-x-2 pl-2">
+              {document.icon ? (
+                <span className="text-lg">{document.icon}</span>
+              ) : (
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              )}
+              <span className="truncate">
+                {document.title}
+              </span>
+            </div>
             <div className="flex items-center">
               <div
                 onClick={(e) => onRestore(e, document.id)}

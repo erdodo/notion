@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
 import { Button } from "@/components/ui/button"
 import { ConfirmModal } from "@/components/modals/confirm-modal"
@@ -13,12 +14,25 @@ export const Banner = ({ documentId }: BannerProps) => {
   const router = useRouter()
 
   const onRemove = async () => {
-    await removeDocument(documentId)
-    router.push("/documents")
+    const promise = removeDocument(documentId).then(() => {
+      router.push("/documents")
+    })
+
+    toast.promise(promise, {
+      loading: "Deleting page...",
+      success: "Page deleted permanently!",
+      error: "Failed to delete page."
+    })
   }
 
   const onRestore = async () => {
-    await restoreDocument(documentId)
+    const promise = restoreDocument(documentId)
+
+    toast.promise(promise, {
+      loading: "Restoring page...",
+      success: "Page restored!",
+      error: "Failed to restore page."
+    })
   }
 
   return (

@@ -270,3 +270,62 @@ export async function getArchivedPages() {
 
   return pages
 }
+
+export async function searchPages(query: string) {
+  const { userId } = await auth()
+  
+  if (!userId) {
+    return []
+  }
+
+  const user = await db.user.findUnique({
+    where: { clerkId: userId }
+  })
+
+  if (!user) {
+    return []
+  }
+
+  // Return empty array if query is empty
+  if (!query || query.trim().length === 0) {
+    return []
+  }
+
+  const searchQuery = query.trim()
+
+  const pages = await db.page.findMany({
+    where: {
+      userId: user.id,
+      isArchived: false,
+      OR: [
+        {
+          title: {
+            contains: searchQuery,
+            mode: 'insensitive'
+          }
+        },
+        {
+          content: {
+            contains: searchQuery,
+            mode: 'insensitive'
+          }
+        }
+      ]
+    },
+    include: {
+      parent: {
+        select: {
+          id: true,
+          title: true,
+          icon: true
+        }
+      }
+    },
+    orderBy: {
+      updatedAt: 'desc'
+    },
+    take: 50 // Limit results for performance
+  })
+
+  return pages
+}
