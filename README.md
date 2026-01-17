@@ -10,7 +10,7 @@ A full-featured Notion clone built with modern web technologies including Next.j
 - 🎨 **Customization** - Page icons and cover images
 - 🗑️ **Trash/Archive** - Soft delete functionality with restore capability
 - ⭐ **Favorites** - Mark pages as favorites for quick access
-- 🔍 **Search** - Quick search through all pages (Command+K)
+- 🔍 **Search** - Advanced search with Command+K (⌘K) keyboard shortcut, real-time filtering through page titles and content with debouncing
 - 🌓 **Dark Mode** - Full dark mode support
 - 📱 **Responsive** - Mobile-friendly design with collapsible sidebar
 - 📏 **Resizable Sidebar** - Drag to resize sidebar (240px - 480px)
@@ -37,7 +37,7 @@ notion/
 │   └── schema.prisma          # Database schema with User, Page, Favorite models
 ├── src/
 │   ├── actions/
-│   │   └── page.ts            # Server Actions for page CRUD operations
+│   │   └── page.ts            # Server Actions for page CRUD and search operations
 │   ├── app/
 │   │   ├── (auth)/
 │   │   │   ├── sign-in/
@@ -63,7 +63,14 @@ notion/
 │   │   ├── navigation/
 │   │   │   ├── sidebar.tsx         # Main sidebar navigation
 │   │   │   └── page-item.tsx       # Individual page item with expand/collapse
+│   │   ├── providers/
+│   │   │   ├── modal-provider.tsx  # Modal provider (includes SearchCommand)
+│   │   │   ├── theme-provider.tsx  # Dark/light theme provider
+│   │   │   └── edgestore-provider.tsx # File storage provider
+│   │   ├── search-command.tsx      # Command palette (⌘K) search component
 │   │   └── ui/                     # Shadcn UI components
+│   ├── hooks/
+│   │   └── use-search.tsx          # Zustand store for search modal state
 │   ├── lib/
 │   │   ├── db.ts                   # Prisma client instance
 │   │   └── utils.ts                # Utility functions
@@ -150,6 +157,7 @@ All page operations are handled through Server Actions for optimal performance:
 - `restorePage(pageId)` - Restore an archived page
 - `deletePage(pageId)` - Permanently delete a page
 - `getArchivedPages()` - Get all archived pages
+- `searchPages(query)` - Search pages by title and content with security filtering
 
 ### Hierarchical Navigation
 
@@ -169,6 +177,18 @@ Built with Tiptap, supporting:
 - Blockquotes
 - Links
 - And more...
+
+### Command Palette Search (⌘K / Ctrl+K)
+
+Professional Omnibar-style search system:
+- **Keyboard-First**: Global `Cmd+K` (Mac) or `Ctrl+K` (Windows) shortcut
+- **Real-Time Search**: Debounced search (300ms) for optimal performance
+- **Content Search**: Searches both page titles and content using PostgreSQL case-insensitive queries
+- **Visual Hierarchy**: Shows page icons (emoji) and parent page breadcrumbs
+- **Security**: Only searches user's own non-archived pages
+- **Instant Navigation**: Click or press Enter to navigate to selected page
+- **Theme Aware**: Fully integrated with dark/light mode
+- **Loading States**: Visual feedback with spinner during search
 
 ## Development
 
@@ -193,7 +213,8 @@ npm start
 - [ ] Real-time collaboration
 - [ ] Page templates
 - [ ] Export functionality
-- [ ] Advanced search with filters
+- [ ] Full-text search with PostgreSQL tsvector
+- [ ] Advanced search with filters (date, author, tags)
 - [ ] Page permissions and sharing
 - [ ] Comments and discussions
 
