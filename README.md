@@ -6,13 +6,15 @@ A full-featured Notion clone built with modern web technologies including Next.j
 
 - 🔐 **Authentication** - Secure user authentication with Clerk, dedicated sign-in/sign-up pages
 - 📝 **Rich Text Editor** - Notion-style block-based editor with Tiptap
-- 📁 **Hierarchical Pages** - Unlimited nested pages with parent-child relationships
+- 📁 **Hierarchical Pages** - Unlimited nested pages with parent-child relationships and on-demand loading
 - 🎨 **Customization** - Page icons and cover images
 - 🗑️ **Trash/Archive** - Soft delete functionality with restore capability
 - ⭐ **Favorites** - Mark pages as favorites for quick access
 - 🔍 **Search** - Quick search through all pages (Command+K)
 - 🌓 **Dark Mode** - Full dark mode support
-- 📱 **Responsive** - Mobile-friendly design
+- 📱 **Responsive** - Mobile-friendly design with collapsible sidebar
+- 📏 **Resizable Sidebar** - Drag to resize sidebar (240px - 480px)
+- 🔄 **Recursive Loading** - Efficient lazy loading of nested documents
 
 ## Tech Stack
 

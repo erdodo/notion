@@ -20,21 +20,32 @@ npx prisma migrate dev   # Create and apply migration
 
 ```
 notion/
-├── prisma/schema.prisma           # Database schema
+├── prisma/schema.prisma              # Database schema
 ├── src/
-│   ├── actions/page.ts            # Server Actions
-│   ├── app/                       # Next.js routes
-│   │   ├── (main)/documents/      # Protected routes
-│   │   └── page.tsx               # Landing page
+│   ├── actions/page.ts               # Legacy server actions
+│   ├── app/                          # Next.js routes
+│   │   ├── (auth)/                   # Auth route group
+│   │   ├── (main)/                   # Main app route group
+│   │   │   ├── _actions/             # Module-specific actions
+│   │   │   │   └── documents.ts      # Document CRUD operations
+│   │   │   ├── _components/          # Module-specific components
+│   │   │   │   ├── navigation.tsx    # Resizable sidebar
+│   │   │   │   ├── document-list.tsx # Recursive document tree
+│   │   │   │   ├── item.tsx          # Sidebar item
+│   │   │   │   └── item-skeleton.tsx # Loading skeleton
+│   │   │   └── documents/            # Document routes
+│   │   └── page.tsx                  # Landing page
 │   ├── components/
-│   │   ├── editor/                # Editor components
-│   │   └── navigation/            # Sidebar components
+│   │   ├── editor/                   # Editor components
+│   │   └── navigation/               # Legacy navigation
+│   ├── hooks/
+│   │   └── use-media-query.tsx       # Responsive hook
 │   ├── lib/
-│   │   ├── db.ts                  # Prisma client
-│   │   └── utils.ts               # Utilities
-│   └── middleware.ts              # Clerk auth
-├── .env.example                   # Environment template
-└── README.md                      # Main documentation
+│   │   ├── db.ts                     # Prisma client
+│   │   └── utils.ts                  # Utilities
+│   └── middleware.ts                 # Clerk auth
+├── .env.example                      # Environment template
+└── README.md                         # Main documentation
 ```
 
 ## Key Files
@@ -42,11 +53,13 @@ notion/
 | File | Purpose |
 |------|---------|
 | `prisma/schema.prisma` | Database models and relations |
-| `src/actions/page.ts` | Server-side page operations |
+| `src/app/(main)/_actions/documents.ts` | Document server actions |
+| `src/app/(main)/_components/navigation.tsx` | Resizable sidebar |
+| `src/app/(main)/_components/document-list.tsx` | Recursive tree component |
 | `src/lib/db.ts` | Prisma client singleton |
 | `src/middleware.ts` | Authentication middleware |
 | `src/components/editor/editor.tsx` | Tiptap rich text editor |
-| `src/components/navigation/sidebar.tsx` | Main navigation |
+| `src/hooks/use-media-query.tsx` | Responsive media query hook |
 
 ## Server Actions
 
@@ -205,3 +218,53 @@ npx prisma db pull
 - Client Components only when needed
 - Tailwind for styling
 - Descriptive variable names
+
+## Module 3: Sidebar Features
+
+### Resizable Sidebar
+- Drag from right edge to resize (240px - 480px)
+- Auto-collapse on mobile (<768px)
+- Hamburger menu on mobile
+- Smooth transitions
+
+### Recursive Document Loading
+- On-demand children loading (click chevron to expand)
+- Prevents loading all documents at once
+- Skeleton loading states
+- "No pages inside" placeholder
+
+### Level-Based Padding
+Each nested level uses dynamic padding:
+```typescript
+paddingLeft = level * 12px + 12px
+```
+
+### Server Actions (Module 3)
+
+```typescript
+// In app/(main)/_actions/documents.ts
+createDocument(title, parentDocumentId?)  // Create document
+getSidebarDocuments(parentDocumentId?)    // Get children for parent
+```
+
+### Components
+
+**Navigation** - Resizable sidebar
+- `useRef` for resize tracking
+- `useMediaQuery` for mobile detection
+- Mouse events for drag resize
+
+**DocumentList** - Recursive component
+- Lazy loads children on expand
+- Maintains expand/collapse state per document
+- Shows skeleton while loading
+
+**Item** - Individual sidebar item
+- Chevron for expand/collapse
+- Plus button for creating child
+- Dynamic padding based on level
+- Icon or FileText default
+
+**ItemSkeleton** - Loading placeholder
+- Animated pulse effect
+- Respects level padding
