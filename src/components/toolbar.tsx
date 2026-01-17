@@ -36,7 +36,7 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
     try {
       // For now, use a placeholder image URL
       // You can integrate with a file upload service later
-      const placeholderUrl = `https://placehold.co/1200x400/e2e8f0/475569?text=${encodeURIComponent(file.name)}`
+      const placeholderUrl = `https://placehold.co/1200x400/`
       await updateDocument(page.id, { coverImage: placeholderUrl })
     } catch (error) {
       console.error("Error uploading cover:", error)
