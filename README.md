@@ -4,7 +4,7 @@ A full-featured Notion clone built with modern web technologies including Next.j
 
 ## Features
 
-- 🔐 **Authentication** - Secure user authentication with Clerk
+- 🔐 **Authentication** - Secure user authentication with Clerk, dedicated sign-in/sign-up pages
 - 📝 **Rich Text Editor** - Notion-style block-based editor with Tiptap
 - 📁 **Hierarchical Pages** - Unlimited nested pages with parent-child relationships
 - 🎨 **Customization** - Page icons and cover images
@@ -37,6 +37,12 @@ notion/
 │   ├── actions/
 │   │   └── page.ts            # Server Actions for page CRUD operations
 │   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── sign-in/
+│   │   │   │   └── page.tsx       # Sign-in page
+│   │   │   ├── sign-up/
+│   │   │   │   └── page.tsx       # Sign-up page
+│   │   │   └── layout.tsx         # Centered auth layout
 │   │   ├── (main)/
 │   │   │   ├── documents/
 │   │   │   │   ├── [documentId]/
@@ -45,7 +51,7 @@ notion/
 │   │   │   └── layout.tsx          # Main app layout with sidebar
 │   │   ├── api/                    # API routes
 │   │   ├── layout.tsx              # Root layout with Clerk
-│   │   ├── page.tsx                # Landing/sign-in page
+│   │   ├── page.tsx                # Landing page (redirects)
 │   │   └── globals.css             # Global styles
 │   ├── components/
 │   │   ├── editor/

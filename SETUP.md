@@ -122,9 +122,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Step 9: Create Your First User
 
 1. Navigate to [http://localhost:3000](http://localhost:3000)
-2. Click "Sign Up" to create an account with Clerk
-3. After signing up, you'll be redirected to the documents page
-4. Click "New Page" in the sidebar to create your first document
+2. You'll be automatically redirected to `/sign-in`
+3. Click "Sign Up" or navigate to `/sign-up` to create an account with Clerk
+4. After signing up, you'll be redirected to the documents page
+5. Click "New Page" in the sidebar to create your first document
 
 ## Database Management
 
