@@ -59,3 +59,46 @@ export async function getSidebarDocuments(parentDocumentId?: string | null) {
 
   return documents
 }
+
+export async function updateDocument(
+  documentId: string,
+  data: {
+    title?: string
+    content?: string
+    icon?: string
+    coverImage?: string
+  }
+) {
+  const { userId } = await auth()
+  
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  const user = await db.user.findUnique({
+    where: { clerkId: userId }
+  })
+
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  try {
+    const document = await db.page.updateMany({
+      where: {
+        id: documentId,
+        userId: user.id,
+      },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      }
+    })
+
+    revalidatePath(`/documents/${documentId}`)
+    return document
+  } catch (error) {
+    console.error("Error updating document:", error)
+    throw new Error("Failed to update document")
+  }
+}

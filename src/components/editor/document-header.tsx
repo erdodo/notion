@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { updatePage } from "@/actions/page"
+import { updateDocument } from "@/app/(main)/_actions/documents"
 import { Smile, Image as ImageIcon } from "lucide-react"
 
 interface DocumentHeaderProps {
@@ -15,11 +15,11 @@ export const DocumentHeader = ({ page }: DocumentHeaderProps) => {
     const newTitle = e.target.value
     setTitle(newTitle)
     
-    await updatePage(page.id, { title: newTitle })
+    await updateDocument(page.id, { title: newTitle })
   }
 
   const handleIconSelect = async (icon: string) => {
-    await updatePage(page.id, { icon })
+    await updateDocument(page.id, { icon })
   }
 
   return (

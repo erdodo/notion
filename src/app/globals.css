@@ -57,3 +57,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* BlockNote Editor Styles */
+.blocknote-editor {
+  min-height: 500px;
+}
+
+.blocknote-editor .bn-editor {
+  padding: 0;
+}
+
+.blocknote-editor .bn-block-outer {
+  margin: 4px 0;
+}
+
+/* Ensure drag handle and add block button are visible */
+.blocknote-editor .bn-side-menu {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.blocknote-editor .bn-block-outer:hover .bn-side-menu {
+  opacity: 1;
+}
