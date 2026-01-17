@@ -11,6 +11,41 @@ interface PreviewPageProps {
   }
 }
 
+// Helper function to extract text from content for description
+function extractDescription(content: string | null): string {
+  if (!content) return "Shared document"
+  
+  try {
+    // Try to parse as JSON (BlockNote format)
+    const blocks = JSON.parse(content)
+    if (Array.isArray(blocks)) {
+      // Extract text from first few blocks
+      const text = blocks
+        .slice(0, 3)
+        .map((block: any) => {
+          if (block.content && Array.isArray(block.content)) {
+            return block.content
+              .map((item: any) => item.text || "")
+              .join(" ")
+          }
+          return ""
+        })
+        .filter(Boolean)
+        .join(" ")
+        .trim()
+      
+      // Return first 155 characters for meta description
+      return text.substring(0, 155) || "Shared document"
+    }
+  } catch (e) {
+    // If parsing fails, try to extract plain text
+    const plainText = content.replace(/<[^>]*>/g, "").trim()
+    return plainText.substring(0, 155) || "Shared document"
+  }
+  
+  return "Shared document"
+}
+
 export async function generateMetadata({
   params
 }: PreviewPageProps): Promise<Metadata> {
@@ -22,18 +57,22 @@ export async function generateMetadata({
     }
   }
 
+  const description = extractDescription(document.content)
+  const title = document.title || "Untitled"
+
   return {
-    title: document.title || "Untitled",
-    description: "Shared document",
+    title: title,
+    description: description,
     openGraph: {
-      title: document.title || "Untitled",
-      description: "Shared document",
+      title: title,
+      description: description,
       images: document.coverImage ? [document.coverImage] : [],
+      type: "article",
     },
     twitter: {
       card: "summary_large_image",
-      title: document.title || "Untitled",
-      description: "Shared document",
+      title: title,
+      description: description,
       images: document.coverImage ? [document.coverImage] : [],
     },
   }
