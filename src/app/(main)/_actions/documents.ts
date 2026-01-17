@@ -264,3 +264,57 @@ export async function getArchivedDocuments() {
 
   return documents
 }
+
+export async function togglePublish(documentId: string) {
+  const { userId } = await auth()
+  
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  const user = await db.user.findUnique({
+    where: { clerkId: userId }
+  })
+
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  // Get current document
+  const existingDocument = await db.page.findFirst({
+    where: {
+      id: documentId,
+      userId: user.id,
+    }
+  })
+
+  if (!existingDocument) {
+    throw new Error("Document not found")
+  }
+
+  // Toggle the isPublished state
+  const document = await db.page.update({
+    where: { id: documentId },
+    data: {
+      isPublished: !existingDocument.isPublished,
+    }
+  })
+
+  // Revalidate both private and public routes
+  revalidatePath(`/documents/${documentId}`)
+  revalidatePath(`/preview/${documentId}`)
+  
+  return document
+}
+
+// Public function to get published document (no auth required)
+export async function getPublicDocument(documentId: string) {
+  const document = await db.page.findFirst({
+    where: {
+      id: documentId,
+      isPublished: true,
+    }
+  })
+
+  return document
+}

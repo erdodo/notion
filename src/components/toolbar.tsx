@@ -5,6 +5,7 @@ import { ImageIcon, Smile, X } from "lucide-react"
 import { useEdgeStore } from "@/lib/edgestore"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
+import { Publish } from "./publish"
 
 interface ToolbarProps {
   page: any
@@ -95,6 +96,9 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
               className="hidden"
             />
           </>
+        )}
+        {!preview && (
+          <Publish initialData={{ id: page.id, isPublished: page.isPublished }} />
         )}
       </div>
     </div>

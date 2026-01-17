@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { getDocument } from "@/app/(main)/_actions/documents"
 import { DocumentHeader } from "@/components/editor/document-header"
-import { DocumentEditor } from "@/components/editor/document-editor"
+import DocumentEditor from "@/components/editor/document-editor"
 import { Banner } from "@/components/banner"
 
 export const dynamic = 'force-dynamic'
@@ -32,7 +32,11 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
         <Banner documentId={params.documentId} />
       )}
       <DocumentHeader page={page} />
-      <DocumentEditor page={page} />
+      <DocumentEditor 
+        documentId={page.id}
+        initialContent={page.content}
+        editable={true}
+      />
     </div>
   )
 }

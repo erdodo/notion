@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "Notion Clone",
@@ -27,6 +28,7 @@ export default function RootLayout({
               disableTransitionOnChange
               storageKey="notion-theme"
             >
+              <Toaster position="bottom-center" />
               <ModalProvider />
               {children}
             </ThemeProvider>
