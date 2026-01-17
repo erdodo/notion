@@ -4,7 +4,6 @@ import { useState, useRef } from "react"
 import { ImageIcon, Smile, X } from "lucide-react"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
-import { Publish } from "./publish"
 
 interface Page {
   id: string
@@ -53,9 +52,9 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   }
 
   return (
-    <div className="pl-[54px] group relative">
+    <div className="group relative">
       {!!page.icon && !preview && (
-        <div className="flex items-center gap-x-2 group/icon pt-6">
+        <div className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? "absolute -top-[1rem] left-0 z-10" : ""}`}>
           <IconPicker onChange={handleIconSelect}>
             <p className="text-6xl hover:opacity-75 transition">
               {page.icon}
@@ -70,7 +69,7 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
         </div>
       )}
       {!!page.icon && preview && (
-        <p className="text-6xl pt-6">
+        <p className={`text-6xl pt-6 ${page.coverImage ? "absolute -top-[2.5rem] left-0 z-10" : ""}`}>
           {page.icon}
         </p>
       )}
@@ -101,9 +100,6 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
               className="hidden"
             />
           </>
-        )}
-        {!preview && (
-          <Publish initialData={{ id: page.id, isPublished: page.isPublished }} />
         )}
       </div>
     </div>

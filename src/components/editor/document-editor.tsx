@@ -26,7 +26,7 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
   const debouncedSave = useDebouncedCallback(
     async (newContent: string) => {
       if (!editable) return
-      
+
       setIsSaving(true)
       try {
         await updateDocument(documentId, { content: newContent })
@@ -47,7 +47,7 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
   }, [debouncedSave, editable])
 
   return (
-    <div className="px-12 pb-40">
+    <div className="px-12 pb-40 md:max-w-3xl md:mx-auto lg:max-w-4xl">
       <div className="relative">
         {/* Save indicator */}
         {editable && (

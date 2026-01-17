@@ -16,9 +16,15 @@ import {
     AlertCircle
 } from "lucide-react"
 import { useState, useEffect } from "react"
-import { fetchLinkMetadata } from "@/app/(main)/_actions/utils"
+import { ImageBlock } from "./blocks/image-block"
+import { VideoBlock } from "./blocks/video-block"
+import { AudioBlock } from "./blocks/audio-block"
+import { FileBlock } from "./blocks/file-block"
+import { EmbedBlock } from "./blocks/embed-block"
+import { BookmarkBlock } from "./blocks/bookmark-block"
 
 // --- 1. Toggle Block ---
+// (ToggleBlock export remains same)
 export const ToggleBlock = createReactBlockSpec(
     {
         type: "toggle",
@@ -76,6 +82,7 @@ export const ToggleBlock = createReactBlockSpec(
 )
 
 // --- 2. Callout Block ---
+// (CalloutBlock export remains same)
 export const CalloutBlock = createReactBlockSpec(
     {
         type: "callout",
@@ -117,6 +124,7 @@ export const CalloutBlock = createReactBlockSpec(
 )
 
 // --- 3. Quote Block ---
+// (QuoteBlock export remains same)
 export const QuoteBlock = createReactBlockSpec(
     {
         type: "quote",
@@ -133,6 +141,7 @@ export const QuoteBlock = createReactBlockSpec(
 )
 
 // --- 4. Divider Block ---
+// (DividerBlock export remains same)
 export const DividerBlock = createReactBlockSpec(
     {
         type: "divider",
@@ -160,6 +169,7 @@ export const DividerBlock = createReactBlockSpec(
 )
 
 // --- 5. Table of Contents Block ---
+// (TOCBlock export remains same)
 export const TOCBlock = createReactBlockSpec(
     {
         type: "toc",
@@ -248,144 +258,24 @@ export const TOCBlock = createReactBlockSpec(
     }
 )
 
-// --- 6. Bookmark Block ---
-export const BookmarkBlock = createReactBlockSpec(
-    {
-        type: "bookmark",
-        content: "none",
-        propSchema: {
-            url: { default: "" },
-        },
-    },
-    {
-        render: (props) => {
-            const { block, editor } = props
-            const url = block.props.url
-            const [loading, setLoading] = useState(false)
-            const [error, setError] = useState(false)
-            const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string; favicon?: string } | null>(null)
-            const [inputUrl, setInputUrl] = useState("")
-
-            useEffect(() => {
-                if (!url) return
-
-                const fetchData = async () => {
-                    setLoading(true)
-                    setError(false)
-                    try {
-                        // In a real app we would check cache or similar. 
-                        // Here we just call the server action we created.
-                        const data = await fetchLinkMetadata(url)
-                        if (!data) throw new Error("No data")
-                        setMetadata(data)
-                    } catch (e) {
-                        console.error(e)
-                        setError(true)
-                    } finally {
-                        setLoading(false)
-                    }
-                }
-
-                fetchData()
-            }, [url])
-
-            const handleSetUrl = () => {
-                if (!inputUrl) return
-                // Basic validation
-                try {
-                    new URL(inputUrl)
-                    editor.updateBlock(block, { props: { url: inputUrl } })
-                } catch {
-                    alert("Invalid URL")
-                }
-            }
-
-            const clearUrl = () => {
-                editor.updateBlock(block, { props: { url: "" } })
-                setMetadata(null)
-            }
-
-            if (!url) {
-                return (
-                    <div className="p-3 bg-muted/20 border rounded flex gap-2 items-center" contentEditable={false} >
-                        <LinkIcon className="text-muted-foreground h-4 w-4" />
-                        <input
-                            className="bg-transparent border-none outline-none text-sm flex-1 placeholder:text-muted-foreground/50"
-                            placeholder="Paste a URL to create a bookmark..."
-                            value={inputUrl}
-                            onChange={(e) => setInputUrl(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") handleSetUrl()
-                            }}
-                        />
-                        < button
-                            className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded hover:opacity-90 transition-opacity"
-                            onClick={handleSetUrl}
-                        >
-                            Bookmark
-                        </button>
-                    </div>
-                )
-            }
-
-            return (
-                <div className="my-2 group relative" contentEditable={false} >
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10" >
-                        <button onClick={clearUrl} className="bg-background/80 p-1 rounded-full border shadow-sm hover:bg-destructive hover:text-destructive-foreground transition-colors" >
-                            <XCircle size={16} />
-                        </button>
-                    </div>
-
-                    < a href={url} target="_blank" rel="noopener noreferrer" className="block border rounded-lg overflow-hidden hover:bg-muted/30 transition-colors no-underline" >
-                        {
-                            loading ? (
-                                <div className="flex items-center justify-center p-8 text-muted-foreground gap-2" >
-                                    <Loader2 className="animate-spin h-5 w-5" />
-                                    <span className="text-sm" > Loading preview...</span>
-                                </div>
-                            ) : error ? (
-                                <div className="flex items-center p-4 gap-2 text-destructive" >
-                                    <AlertCircle className="h-5 w-5" />
-                                    <span className="text-sm" > Failed to load preview for {url} </span>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col md:flex-row h-full" >
-                                    <div className="flex-1 p-3 overflow-hidden" >
-                                        <div className="text-sm font-semibold truncate mb-1 text-foreground" > {metadata?.title || url}</div>
-                                        < div className="text-xs text-muted-foreground line-clamp-2 h-8 mb-2" >
-                                            {metadata?.description || "No description available"}
-                                        </div>
-                                        < div className="flex items-center gap-2 mt-auto" >
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            {metadata?.favicon && <img src={metadata.favicon} alt="" className="w-4 h-4 object-contain" />}
-                                            <span className="text-xs text-muted-foreground truncate" > {new URL(url).hostname} </span>
-                                        </div>
-                                    </div>
-                                    {
-                                        metadata?.image && (
-                                            <div className="w-full md:w-1/3 h-32 md:h-auto overflow-hidden bg-muted relative" >
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                < img src={metadata.image} alt="Preview" className="w-full h-full object-cover" />
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            )}
-                    </a>
-                </div>
-            )
-        },
-    }
-)
-
 export const schema = BlockNoteSchema.create({
     blockSpecs: {
         ...defaultBlockSpecs,
+        // Custom blocks
         toggle: ToggleBlock(),
         callout: CalloutBlock(),
         quote: QuoteBlock(),
         divider: DividerBlock(),
         toc: TOCBlock(),
+
+        // Media blocks
+        image: ImageBlock(),
+        video: VideoBlock(),
+        audio: AudioBlock(),
+        file: FileBlock(),
+
+        // Embeds
+        embed: EmbedBlock(),
         bookmark: BookmarkBlock(),
     },
 })
