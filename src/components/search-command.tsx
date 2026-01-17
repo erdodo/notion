@@ -46,7 +46,10 @@ export const SearchCommand = () => {
 
   useEffect(() => {
     const performSearch = async () => {
-      if (!user) return
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
       
       if (!debouncedQuery || debouncedQuery.trim().length === 0) {
         setResults([])
