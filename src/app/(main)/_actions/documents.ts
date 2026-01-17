@@ -165,11 +165,8 @@ export async function archiveDocument(documentId: string) {
   await archiveChildrenRecursively(documentId, user.id)
 
   // Then archive the parent
-  const document = await db.page.updateMany({
-    where: {
-      id: documentId,
-      userId: user.id,
-    },
+  await db.page.update({
+    where: { id: documentId },
     data: {
       isArchived: true,
     }
@@ -177,7 +174,9 @@ export async function archiveDocument(documentId: string) {
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
-  return document
+  revalidatePath("/documents/[documentId]", "page")
+  
+  return { success: true }
 }
 
 export async function restoreDocument(documentId: string) {
@@ -195,19 +194,48 @@ export async function restoreDocument(documentId: string) {
     throw new Error("User not found")
   }
 
-  const document = await db.page.updateMany({
+  const document = await db.page.findFirst({
     where: {
       id: documentId,
       userId: user.id,
-    },
+    }
+  })
+
+  if (!document) {
+    throw new Error("Document not found")
+  }
+
+  // Smart restoration logic:
+  // If parent is archived, move to root (parentId: null)
+  // Otherwise keep the hierarchy
+  let parentId = document.parentId
+
+  if (parentId) {
+    const parent = await db.page.findFirst({
+      where: {
+        id: parentId,
+        userId: user.id,
+      }
+    })
+
+    // If parent is archived, move to root
+    if (parent?.isArchived) {
+      parentId = null
+    }
+  }
+
+  await db.page.update({
+    where: { id: documentId },
     data: {
       isArchived: false,
+      parentId: parentId,
     }
   })
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
-  return document
+  
+  return { success: true }
 }
 
 export async function removeDocument(documentId: string) {
@@ -225,16 +253,41 @@ export async function removeDocument(documentId: string) {
     throw new Error("User not found")
   }
 
-  // Delete will cascade to children due to onDelete: Cascade in schema
-  const document = await db.page.deleteMany({
+  // Get the document to check for cover image
+  const document = await db.page.findFirst({
     where: {
       id: documentId,
       userId: user.id,
     }
   })
 
+  if (!document) {
+    throw new Error("Document not found")
+  }
+
+  // Delete the document (will cascade to children due to onDelete: Cascade in schema)
+  await db.page.delete({
+    where: {
+      id: documentId,
+    }
+  })
+
+  // Cleanup cover image from EdgeStore if it exists
+  if (document.coverImage) {
+    try {
+      // EdgeStore cleanup will be handled by the client-side
+      // The URL contains the file info needed for deletion
+      // We'll return the coverImage URL so the client can delete it
+    } catch (error) {
+      console.error("Error deleting cover image:", error)
+      // Don't throw - document is already deleted
+    }
+  }
+
   revalidatePath("/documents")
-  return document
+  revalidatePath("/documents/[documentId]", "page")
+  
+  return { success: true, coverImage: document.coverImage }
 }
 
 export async function getArchivedDocuments() {
