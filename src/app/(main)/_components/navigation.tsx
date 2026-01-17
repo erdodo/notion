@@ -88,6 +88,31 @@ export const Navigation = () => {
   useEffect(() => {
     loadDocuments()
     loadArchivedDocuments()
+
+    const onUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ id: string; title?: string; icon?: string }>
+      const { id, title, icon } = customEvent.detail
+
+      if (id) {
+        setDocuments(prevDocs => prevDocs.map(doc => {
+          if (doc.id === id) {
+            return {
+              ...doc,
+              ...(title !== undefined && { title }),
+              ...(icon !== undefined && { icon })
+            }
+          }
+          return doc
+        }))
+      } else {
+        // Fallback for full reload if no ID (e.g. delete/create)
+        loadDocuments()
+        loadArchivedDocuments()
+      }
+    }
+
+    window.addEventListener("notion-document-update", onUpdate)
+    return () => window.removeEventListener("notion-document-update", onUpdate)
   }, [])
 
   const loadDocuments = async () => {

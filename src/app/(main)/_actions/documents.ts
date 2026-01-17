@@ -105,7 +105,6 @@ export async function updateDocument(
     })
 
     revalidatePath(`/documents/${documentId}`)
-    revalidatePath("/", "layout")
     return document
   } catch (error) {
     console.error("Error updating document:", error)

@@ -20,6 +20,11 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
     const newTitle = e.target.value
     setTitle(newTitle)
 
+    // Optimistic update
+    window.dispatchEvent(new CustomEvent("notion-document-update", {
+      detail: { id: page.id, title: newTitle }
+    }))
+
     await updateDocument(page.id, { title: newTitle })
   }
 

@@ -23,10 +23,17 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   const [isUploading, setIsUploading] = useState(false)
 
   const handleIconSelect = async (icon: string) => {
+    // Optimistic update
+    window.dispatchEvent(new CustomEvent("notion-document-update", {
+      detail: { id: page.id, icon }
+    }))
     await updateDocument(page.id, { icon })
   }
 
   const handleIconRemove = async () => {
+    window.dispatchEvent(new CustomEvent("notion-document-update", {
+      detail: { id: page.id, icon: null }
+    }))
     await updateDocument(page.id, { icon: "" })
   }
 
