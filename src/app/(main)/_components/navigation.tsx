@@ -100,7 +100,7 @@ export const Navigation = () => {
               ...doc,
               ...(title !== undefined && { title }),
               ...(icon !== undefined && { icon })
-            }
+            } as any
           }
           return doc
         }))

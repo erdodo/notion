@@ -131,15 +131,7 @@ a,
   margin: 4px 0;
 }
 
-/* Ensure drag handle and add block button are visible */
-.blocknote-editor .bn-side-menu {
-  opacity: 0;
-  transition: opacity 0.2s;
-}
 
-.blocknote-editor .bn-block-outer:hover .bn-side-menu {
-  opacity: 1;
-}
 
 /* Micro-interactions */
 .hover-lift {
