@@ -11,21 +11,36 @@ interface PreviewPageProps {
   }
 }
 
+// BlockNote block structure
+interface BlockNoteBlock {
+  type?: string
+  content?: Array<{
+    type?: string
+    text?: string
+  }>
+}
+
 // Helper function to extract text from content for description
 function extractDescription(content: string | null): string {
   if (!content) return "Shared document"
   
+  const HTML_TAG_REGEX = /<[^>]*>/g
+  const MAX_DESCRIPTION_LENGTH = 155
+  
   try {
     // Try to parse as JSON (BlockNote format)
-    const blocks = JSON.parse(content)
-    if (Array.isArray(blocks)) {
+    const parsed = JSON.parse(content)
+    
+    if (Array.isArray(parsed)) {
+      const blocks = parsed as BlockNoteBlock[]
+      
       // Extract text from first few blocks
       const text = blocks
         .slice(0, 3)
-        .map((block: any) => {
+        .map((block) => {
           if (block.content && Array.isArray(block.content)) {
             return block.content
-              .map((item: any) => item.text || "")
+              .map((item) => item.text || "")
               .join(" ")
           }
           return ""
@@ -35,12 +50,12 @@ function extractDescription(content: string | null): string {
         .trim()
       
       // Return first 155 characters for meta description
-      return text.substring(0, 155) || "Shared document"
+      return text.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
     }
-  } catch (e) {
+  } catch (error: unknown) {
     // If parsing fails, try to extract plain text
-    const plainText = content.replace(/<[^>]*>/g, "").trim()
-    return plainText.substring(0, 155) || "Shared document"
+    const plainText = content.replace(HTML_TAG_REGEX, "").trim()
+    return plainText.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
   }
   
   return "Shared document"
