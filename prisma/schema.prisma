@@ -88,6 +88,10 @@ model Page {
 
   favorites Favorite[]
 
+  database    Database?
+  databaseRow DatabaseRow? @relation("RowPage")
+  isDatabase  Boolean      @default(false)
+
   @@index([userId])
   @@index([parentId])
   @@index([isArchived])
@@ -107,4 +111,82 @@ model Favorite {
   @@unique([userId, pageId])
   @@index([userId])
   @@index([pageId])
+}
+
+// Database - Page ile 1:1 ilişki (her database bir sayfa)
+model Database {
+  id          String   @id @default(uuid())
+  pageId      String   @unique
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  properties  Property[]
+  rows        DatabaseRow[]
+  defaultView String   @default("table") // table, board, calendar, gallery, list
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([pageId])
+}
+
+// Property (Column) - Sütun tanımları
+model Property {
+  id          String       @id @default(uuid())
+  name        String
+  type        PropertyType
+  databaseId  String
+  database    Database     @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  order       Int          @default(0)
+  width       Int          @default(200)
+  isVisible   Boolean      @default(true)
+  options     Json?        // Select options: [{id, name, color}]
+  cells       Cell[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([databaseId])
+}
+
+// Property Types Enum
+enum PropertyType {
+  TITLE       // Zorunlu - her database'de bir tane
+  TEXT
+  NUMBER
+  SELECT
+  MULTI_SELECT
+  DATE
+  CHECKBOX
+  URL
+  EMAIL
+  PHONE
+  CREATED_TIME
+  UPDATED_TIME
+}
+
+// Database Row - Satırlar (aynı zamanda alt sayfa)
+model DatabaseRow {
+  id          String   @id @default(uuid())
+  databaseId  String
+  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  pageId      String?  @unique // Her satır bir sayfa olabilir (açılabilir)
+  page        Page?    @relation("RowPage", fields: [pageId], references: [id])
+  cells       Cell[]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([databaseId])
+  @@index([order])
+}
+
+// Cell - Hücre değerleri
+model Cell {
+  id         String      @id @default(uuid())
+  propertyId String
+  property   Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  rowId      String
+  row        DatabaseRow @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  value      Json?       // Dinamik değer storage
+  
+  @@unique([propertyId, rowId])
+  @@index([propertyId])
+  @@index([rowId])
 }

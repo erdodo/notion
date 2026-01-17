@@ -152,3 +152,119 @@ a,
 :focus:not(:focus-visible) {
   outline: none;
 }
+
+/* Database Table */
+.database-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.database-table th {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.database-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+
+.database-cell {
+  min-height: 32px;
+  padding: 6px 8px;
+}
+
+/* Property colors (Notion style) */
+.property-color-gray {
+  background: #f1f1f0;
+  color: #787774;
+}
+
+.property-color-brown {
+  background: #f4eeee;
+  color: #976d57;
+}
+
+.property-color-orange {
+  background: #fbecdd;
+  color: #cc772f;
+}
+
+.property-color-yellow {
+  background: #fbf3db;
+  color: #c29243;
+}
+
+.property-color-green {
+  background: #edf3ec;
+  color: #548164;
+}
+
+.property-color-blue {
+  background: #e7f3f8;
+  color: #477da5;
+}
+
+.property-color-purple {
+  background: #f6f3f8;
+  color: #9065b0;
+}
+
+.property-color-pink {
+  background: #faf1f5;
+  color: #b35588;
+}
+
+.property-color-red {
+  background: #fdebec;
+  color: #c4554d;
+}
+
+/* Dark mode variants */
+.dark .property-color-gray {
+  background: #373737;
+  color: #979a9b;
+}
+
+.dark .property-color-brown {
+  background: #443730;
+  color: #c49682;
+}
+
+.dark .property-color-orange {
+  background: #503928;
+  color: #d6985d;
+}
+
+.dark .property-color-yellow {
+  background: #554425;
+  color: #d9b775;
+}
+
+.dark .property-color-green {
+  background: #2f4438;
+  color: #7aa58c;
+}
+
+.dark .property-color-blue {
+  background: #294455;
+  color: #6fa0c9;
+}
+
+.dark .property-color-purple {
+  background: #42324f;
+  color: #b285d1;
+}
+
+.dark .property-color-pink {
+  background: #4f2e43;
+  color: #d072a4;
+}
+
+.dark .property-color-red {
+  background: #4e2e2e;
+  color: #e16b64;
+}

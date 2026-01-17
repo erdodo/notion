@@ -284,6 +284,11 @@ export async function getArchivedDocuments() {
     },
     orderBy: {
       updatedAt: 'desc'
+    },
+    include: {
+      _count: {
+        select: { children: true }
+      }
     }
   })
 

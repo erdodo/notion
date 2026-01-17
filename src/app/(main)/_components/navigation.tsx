@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-react"
+import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Database } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useSettings } from "@/hooks/use-settings"
 import { useSession } from "next-auth/react"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
+import { createDatabase as createDatabaseAction } from "../_actions/database"
 import { DocumentList } from "./document-list"
 import { ItemSkeleton } from "./item-skeleton"
 import { TrashBox } from "@/components/trash-box"
@@ -177,6 +178,19 @@ export const Navigation = () => {
     }
   }
 
+  const handleCreateDatabase = async () => {
+    setIsCreating(true)
+    try {
+      const { page } = await createDatabaseAction()
+      await loadDocuments()
+      router.push(`/documents/${page.id}`)
+    } catch (error) {
+      console.error("Error creating database:", error)
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   return (
     <>
       <aside
@@ -232,6 +246,15 @@ export const Navigation = () => {
             >
               <Plus className="h-4 w-4" />
               <span>New Page</span>
+            </button>
+
+            <button
+              onClick={handleCreateDatabase}
+              disabled={isCreating}
+              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+            >
+              <Database className="h-4 w-4" />
+              <span>New Database</span>
             </button>
 
             <Popover>
