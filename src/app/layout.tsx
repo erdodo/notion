@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "@/components/providers/theme-provider"
-import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
+import { SessionProvider } from "@/components/providers/session-provider"
 import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
@@ -17,24 +16,22 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className="font-sans">
-          <EdgeStoreProviderWrapper>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="notion-theme"
-            >
-              <Toaster position="bottom-center" />
-              <ModalProvider />
-              {children}
-            </ThemeProvider>
-          </EdgeStoreProviderWrapper>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans">
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="notion-theme"
+          >
+            <Toaster position="bottom-center" />
+            <ModalProvider />
+            {children}
+          </ThemeProvider>
+        </SessionProvider>
+      </body>
+    </html>
   )
 }

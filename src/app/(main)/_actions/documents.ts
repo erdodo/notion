@@ -1,22 +1,14 @@
 "use server"
 
-import { auth } from "@clerk/nextjs/server"
+import { getCurrentUser } from "@/lib/session"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 
 export async function createDocument(title: string = "Untitled", parentDocumentId?: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const document = await db.page.create({
@@ -32,16 +24,8 @@ export async function createDocument(title: string = "Untitled", parentDocumentI
 }
 
 export async function getSidebarDocuments(parentDocumentId?: string | null) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    return []
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
     return []
   }
@@ -69,18 +53,10 @@ export async function updateDocument(
     coverImage?: string
   }
 ) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   try {
@@ -104,16 +80,8 @@ export async function updateDocument(
 }
 
 export async function getDocument(documentId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    return null
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
     return null
   }
@@ -147,18 +115,10 @@ async function archiveChildrenRecursively(pageId: string, userId: string) {
 }
 
 export async function archiveDocument(documentId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   // Verify ownership before archiving
@@ -194,18 +154,10 @@ export async function archiveDocument(documentId: string) {
 }
 
 export async function restoreDocument(documentId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const document = await db.page.findFirst({
@@ -253,18 +205,10 @@ export async function restoreDocument(documentId: string) {
 }
 
 export async function removeDocument(documentId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   // Get the document to check for cover image
@@ -289,21 +233,13 @@ export async function removeDocument(documentId: string) {
   revalidatePath("/documents")
   revalidatePath("/documents/[documentId]", "page")
   
-  // Return coverImage URL for client-side EdgeStore cleanup if needed
+  // Return coverImage URL for client-side cleanup if needed
   return { success: true, coverImage: document.coverImage }
 }
 
 export async function getArchivedDocuments() {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    return []
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
     return []
   }
@@ -322,18 +258,10 @@ export async function getArchivedDocuments() {
 }
 
 export async function togglePublish(documentId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   // Get current document

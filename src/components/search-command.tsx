@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { FileText, Loader2 } from "lucide-react"
 import { useSearch } from "@/hooks/use-search"
 import { searchPages } from "@/actions/page"
@@ -28,7 +28,7 @@ interface SearchResult {
 }
 
 export const SearchCommand = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -46,7 +46,7 @@ export const SearchCommand = () => {
 
   useEffect(() => {
     const performSearch = async () => {
-      if (!user) {
+      if (!session?.user) {
         setIsLoading(false)
         return
       }
@@ -70,7 +70,7 @@ export const SearchCommand = () => {
     }
 
     performSearch()
-  }, [debouncedQuery, user])
+  }, [debouncedQuery, session])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
