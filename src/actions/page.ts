@@ -1,22 +1,14 @@
 "use server"
 
-import { auth } from "@clerk/nextjs/server"
+import { getCurrentUser } from "@/lib/session"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 
 export async function createPage(parentId?: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const page = await db.page.create({
@@ -33,7 +25,7 @@ export async function createPage(parentId?: string) {
 
 export async function getPages(userId: string, parentId?: string | null) {
   const user = await db.user.findUnique({
-    where: { clerkId: userId }
+    where: { id: userId }
   })
 
   if (!user) {
@@ -58,18 +50,10 @@ export async function getPages(userId: string, parentId?: string | null) {
 }
 
 export async function getPageById(pageId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const page = await db.page.findFirst({
@@ -92,18 +76,10 @@ export async function updatePage(pageId: string, data: {
   coverImage?: string
   isPublished?: boolean
 }) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const page = await db.page.updateMany({
@@ -123,18 +99,10 @@ export async function updatePage(pageId: string, data: {
 }
 
 export async function archivePage(pageId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   // Archive the page and all its children
@@ -161,18 +129,10 @@ export async function archivePage(pageId: string) {
 }
 
 export async function restorePage(pageId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   const page = await db.page.findFirst({
@@ -220,18 +180,10 @@ export async function restorePage(pageId: string) {
 }
 
 export async function deletePage(pageId: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    throw new Error("User not found")
+    throw new Error("Unauthorized")
   }
 
   await db.page.delete({
@@ -244,18 +196,10 @@ export async function deletePage(pageId: string) {
 }
 
 export async function getArchivedPages() {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    throw new Error("Unauthorized")
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
-    return []
+    throw new Error("Unauthorized")
   }
 
   const pages = await db.page.findMany({
@@ -272,16 +216,8 @@ export async function getArchivedPages() {
 }
 
 export async function searchPages(query: string) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
   
-  if (!userId) {
-    return []
-  }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId }
-  })
-
   if (!user) {
     return []
   }

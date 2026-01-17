@@ -2,10 +2,10 @@
 
 import { useState, useRef } from "react"
 import { ImageIcon, Smile, X } from "lucide-react"
-import { useEdgeStore } from "@/lib/edgestore"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
 import { Publish } from "./publish"
+import { toast } from "sonner"
 
 interface ToolbarProps {
   page: any
@@ -13,7 +13,6 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ page, preview }: ToolbarProps) => {
-  const { edgestore } = useEdgeStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
 
@@ -28,13 +27,24 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   const handleCoverUpload = async (file: File) => {
     setIsUploading(true)
     try {
-      const res = await edgestore.publicFiles.upload({
-        file
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       })
 
-      await updateDocument(page.id, { coverImage: res.url })
+      if (!response.ok) {
+        throw new Error("Upload failed")
+      }
+
+      const data = await response.json()
+      await updateDocument(page.id, { coverImage: data.url })
+      toast.success("Cover image uploaded")
     } catch (error) {
       console.error("Error uploading cover:", error)
+      toast.error("Failed to upload cover image")
     } finally {
       setIsUploading(false)
     }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSettings } from "@/hooks/use-settings"
 import {
@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator"
 
 export const SettingsModal = () => {
   const settings = useSettings()
-  const { user } = useUser()
+  const { data: session } = useSession()
   const [activeTab, setActiveTab] = useState<"account" | "appearance">("account")
 
   return (
@@ -65,17 +65,17 @@ export const SettingsModal = () => {
                   <div className="space-y-2">
                     <Label>Name</Label>
                     <div className="text-sm text-muted-foreground">
-                      {user?.fullName || user?.firstName || "Not set"}
+                      {session?.user?.name || "Not set"}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
                     <div className="text-sm text-muted-foreground">
-                      {user?.primaryEmailAddress?.emailAddress || "Not set"}
+                      {session?.user?.email || "Not set"}
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground mt-4">
-                    To update your account details, please use your profile settings.
+                    To update your account details, please contact support.
                   </div>
                 </div>
               </div>
