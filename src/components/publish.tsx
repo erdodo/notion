@@ -61,10 +61,10 @@ export const Publish = ({ initialData }: PublishProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost">
+        <Button size="sm" className="bg-sky-500 hover:bg-sky-600 text-white font-bold transition-all shadow-md">
           Publish
           {isPublished && (
-            <Globe className="text-sky-500 w-4 h-4 ml-2" />
+            <Globe className="text-white w-4 h-4 ml-2 animate-pulse" />
           )}
         </Button>
       </PopoverTrigger>
