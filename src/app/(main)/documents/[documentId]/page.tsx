@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { getDocument } from "@/app/(main)/_actions/documents"
 import { DocumentHeader } from "@/components/editor/document-header"
@@ -8,19 +8,20 @@ import { Banner } from "@/components/banner"
 export const dynamic = 'force-dynamic'
 
 interface DocumentPageProps {
-  params: {
+  params: Promise<{
     documentId: string
-  }
+  }>
 }
 
 export default async function DocumentPage({ params }: DocumentPageProps) {
-  const { userId } = await auth()
+  const { documentId } = await params
+  const session = await auth()
 
-  if (!userId) {
-    redirect("/")
+  if (!session?.user) {
+    redirect("/sign-in")
   }
 
-  const page = await getDocument(params.documentId)
+  const page = await getDocument(documentId)
 
   if (!page) {
     redirect("/documents")
@@ -29,10 +30,10 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
   return (
     <div className="h-full">
       {page.isArchived && (
-        <Banner documentId={params.documentId} />
+        <Banner documentId={documentId} />
       )}
       <DocumentHeader page={page} />
-      <DocumentEditor 
+      <DocumentEditor
         documentId={page.id}
         initialContent={page.content}
         editable={true}

@@ -6,9 +6,9 @@ import { Cover } from "@/components/cover"
 import DocumentEditor from "@/components/editor/document-editor"
 
 interface PreviewPageProps {
-  params: {
+  params: Promise<{
     documentId: string
-  }
+  }>
 }
 
 // BlockNote block structure
@@ -23,17 +23,17 @@ interface BlockNoteBlock {
 // Helper function to extract text from content for description
 function extractDescription(content: string | null): string {
   if (!content) return "Shared document"
-  
+
   const HTML_TAG_REGEX = /<[^>]*>/g
   const MAX_DESCRIPTION_LENGTH = 155
-  
+
   try {
     // Try to parse as JSON (BlockNote format)
     const parsed = JSON.parse(content)
-    
+
     if (Array.isArray(parsed)) {
       const blocks = parsed as BlockNoteBlock[]
-      
+
       // Extract text from first few blocks
       const text = blocks
         .slice(0, 3)
@@ -48,7 +48,7 @@ function extractDescription(content: string | null): string {
         .filter(Boolean)
         .join(" ")
         .trim()
-      
+
       // Return first 155 characters for meta description
       return text.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
     }
@@ -57,14 +57,15 @@ function extractDescription(content: string | null): string {
     const plainText = content.replace(HTML_TAG_REGEX, "").trim()
     return plainText.substring(0, MAX_DESCRIPTION_LENGTH) || "Shared document"
   }
-  
+
   return "Shared document"
 }
 
 export async function generateMetadata({
   params
 }: PreviewPageProps): Promise<Metadata> {
-  const document = await getPublicDocument(params.documentId)
+  const { documentId } = await params
+  const document = await getPublicDocument(documentId)
 
   if (!document) {
     return {
@@ -96,7 +97,8 @@ export async function generateMetadata({
 export default async function PreviewPage({
   params
 }: PreviewPageProps) {
-  const document = await getPublicDocument(params.documentId)
+  const { documentId } = await params
+  const document = await getPublicDocument(documentId)
 
   if (!document) {
     return redirect("/")
@@ -120,7 +122,7 @@ export default async function PreviewPage({
             </h1>
           </div>
         </div>
-        <DocumentEditor 
+        <DocumentEditor
           documentId={document.id}
           initialContent={document.content}
           editable={false}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Check, Copy, Globe } from "lucide-react"
 import { toast } from "sonner"
 
@@ -23,8 +23,11 @@ export const Publish = ({ initialData }: PublishProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [copied, setCopied] = useState(false)
   const [isPublished, setIsPublished] = useState(initialData.isPublished)
+  const [url, setUrl] = useState("")
 
-  const url = `${window.location.origin}/preview/${initialData.id}`
+  useEffect(() => {
+    setUrl(`${window.location.origin}/preview/${initialData.id}`)
+  }, [initialData.id])
 
   const onPublish = async () => {
     setIsSubmitting(true)
@@ -32,7 +35,7 @@ export const Publish = ({ initialData }: PublishProps) => {
     try {
       const result = await togglePublish(initialData.id)
       setIsPublished(result.isPublished)
-      
+
       if (result.isPublished) {
         toast.success("Page published")
       } else {
@@ -49,7 +52,7 @@ export const Publish = ({ initialData }: PublishProps) => {
     navigator.clipboard.writeText(url)
     setCopied(true)
     toast.success("Link copied")
-    
+
     setTimeout(() => {
       setCopied(false)
     }, 1000)
@@ -65,8 +68,8 @@ export const Publish = ({ initialData }: PublishProps) => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent 
-        className="w-72" 
+      <PopoverContent
+        className="w-72"
         align="end"
         alignOffset={8}
         forceMount

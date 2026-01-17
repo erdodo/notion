@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import { ClerkProvider } from "@clerk/nextjs"
+import { AuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
@@ -17,9 +17,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className="font-sans">
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans">
+        <AuthProvider>
           <EdgeStoreProviderWrapper>
             <ThemeProvider
               attribute="class"
@@ -33,8 +33,8 @@ export default function RootLayout({
               {children}
             </ThemeProvider>
           </EdgeStoreProviderWrapper>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthProvider>
+      </body>
+    </html>
   )
 }

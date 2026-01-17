@@ -1,14 +1,14 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { FileText } from "lucide-react"
 
 export const dynamic = 'force-dynamic'
 
 export default async function DocumentsPage() {
-  const { userId } = await auth()
+  const session = await auth()
 
-  if (!userId) {
-    redirect("/")
+  if (!session?.user) {
+    redirect("/sign-in")
   }
 
   return (

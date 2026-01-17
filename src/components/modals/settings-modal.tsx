@@ -1,21 +1,22 @@
 "use client"
 
 import { useState } from "react"
-import { useUser } from "@clerk/nextjs"
+import { useSession, signOut } from "next-auth/react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useSettings } from "@/hooks/use-settings"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 
 export const SettingsModal = () => {
   const settings = useSettings()
-  const { user } = useUser()
+  const { data: session } = useSession()
   const [activeTab, setActiveTab] = useState<"account" | "appearance">("account")
 
   return (
@@ -24,7 +25,7 @@ export const SettingsModal = () => {
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex gap-6">
           {/* Sidebar */}
           <div className="flex flex-col gap-2 w-48">
@@ -65,17 +66,22 @@ export const SettingsModal = () => {
                   <div className="space-y-2">
                     <Label>Name</Label>
                     <div className="text-sm text-muted-foreground">
-                      {user?.fullName || user?.firstName || "Not set"}
+                      {session?.user?.name || "Not set"}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
                     <div className="text-sm text-muted-foreground">
-                      {user?.primaryEmailAddress?.emailAddress || "Not set"}
+                      {session?.user?.email || "Not set"}
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-4">
-                    To update your account details, please use your profile settings.
+                  <div className="pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                    >
+                      Sign out
+                    </Button>
                   </div>
                 </div>
               </div>

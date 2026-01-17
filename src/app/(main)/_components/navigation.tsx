@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useSettings } from "@/hooks/use-settings"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { DocumentList } from "./document-list"
 import { ItemSkeleton } from "./item-skeleton"
@@ -14,22 +14,59 @@ import { TrashBox } from "@/components/trash-box"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
+interface Document {
+  id: string
+  title: string
+  icon?: string | null
+  parentDocument?: string | null
+  isArchived: boolean
+  isPublished: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
 export const Navigation = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const { user } = useUser()
+  const { data: session } = useSession()
   const search = useSearch()
   const settings = useSettings()
   const isMobile = useMediaQuery("(max-width: 768px)")
-  
+
   const isResizingRef = useRef(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const [isResetting, setIsResetting] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(isMobile)
-  const [documents, setDocuments] = useState<any[]>([])
+  const [documents, setDocuments] = useState<Document[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
-  const [archivedDocuments, setArchivedDocuments] = useState<any[]>([])
+  const [archivedDocuments, setArchivedDocuments] = useState<Document[]>([])
+
+  const resetWidth = useCallback(() => {
+    if (sidebarRef.current) {
+      setIsCollapsed(false)
+      setIsResetting(true)
+
+      sidebarRef.current.style.width = isMobile ? "100%" : "240px"
+
+      setTimeout(() => {
+        setIsResetting(false)
+      }, 300)
+    }
+  }, [isMobile])
+
+  const collapse = useCallback(() => {
+    if (sidebarRef.current) {
+      setIsCollapsed(true)
+      setIsResetting(true)
+
+      sidebarRef.current.style.width = "0"
+
+      setTimeout(() => {
+        setIsResetting(false)
+      }, 300)
+    }
+  }, [])
 
   useEffect(() => {
     if (isMobile) {
@@ -37,13 +74,13 @@ export const Navigation = () => {
     } else {
       resetWidth()
     }
-  }, [isMobile])
+  }, [isMobile, collapse, resetWidth])
 
   useEffect(() => {
     if (isMobile) {
       collapse()
     }
-  }, [pathname, isMobile])
+  }, [pathname, isMobile, collapse])
 
   useEffect(() => {
     loadDocuments()
@@ -82,7 +119,7 @@ export const Navigation = () => {
 
   const handleMouseMove = (event: MouseEvent) => {
     if (!isResizingRef.current) return
-    
+
     let newWidth = event.clientX
 
     if (newWidth < 240) newWidth = 240
@@ -97,32 +134,6 @@ export const Navigation = () => {
     isResizingRef.current = false
     document.removeEventListener("mousemove", handleMouseMove)
     document.removeEventListener("mouseup", handleMouseUp)
-  }
-
-  const resetWidth = () => {
-    if (sidebarRef.current) {
-      setIsCollapsed(false)
-      setIsResetting(true)
-
-      sidebarRef.current.style.width = isMobile ? "100%" : "240px"
-
-      setTimeout(() => {
-        setIsResetting(false)
-      }, 300)
-    }
-  }
-
-  const collapse = () => {
-    if (sidebarRef.current) {
-      setIsCollapsed(true)
-      setIsResetting(true)
-
-      sidebarRef.current.style.width = "0"
-
-      setTimeout(() => {
-        setIsResetting(false)
-      }, 300)
-    }
   }
 
   const handleCreate = async () => {
@@ -148,25 +159,25 @@ export const Navigation = () => {
           isMobile && "w-0"
         )}
       >
-        <div
+        <button
           onClick={collapse}
-          role="button"
+          type="button"
           className={cn(
             "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
             isMobile && "opacity-100"
           )}
         >
           <ChevronsLeft className="h-6 w-6" />
-        </div>
-        
+        </button>
+
         <div className="p-3">
           <div className="flex items-center gap-x-2 mb-4">
             <div className="flex items-center gap-x-2 flex-1">
               <span className="text-sm font-medium">
-                {user?.firstName}'s Notion
+                {session?.user?.name?.split(' ')[0]}'s Notion
               </span>
             </div>
-            <button 
+            <button
               onClick={settings.onOpen}
               className="opacity-0 group-hover/sidebar:opacity-100 transition text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600 rounded-sm p-1"
             >
@@ -175,7 +186,7 @@ export const Navigation = () => {
           </div>
 
           <div className="space-y-1">
-            <button 
+            <button
               onClick={search.onOpen}
               className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
             >
@@ -186,7 +197,7 @@ export const Navigation = () => {
               </kbd>
             </button>
 
-            <button 
+            <button
               onClick={handleCreate}
               disabled={isCreating}
               className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
@@ -196,15 +207,15 @@ export const Navigation = () => {
             </button>
 
             <Popover>
-              <PopoverTrigger className="w-full">
-                <button 
+              <PopoverTrigger asChild>
+                <button
                   className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
                 >
                   <Trash className="h-4 w-4" />
                   <span>Trash</span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent 
+              <PopoverContent
                 className="p-0 w-72"
                 side={isMobile ? "bottom" : "right"}
               >
@@ -217,7 +228,7 @@ export const Navigation = () => {
             <p className="text-xs text-muted-foreground px-2 mb-2">
               Private
             </p>
-            
+
             {isLoading && (
               <div className="space-y-1">
                 <ItemSkeleton />
@@ -225,7 +236,7 @@ export const Navigation = () => {
                 <ItemSkeleton />
               </div>
             )}
-            
+
             {!isLoading && (
               <DocumentList data={documents} />
             )}

@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { FileText, Loader2 } from "lucide-react"
 import { useSearch } from "@/hooks/use-search"
 import { searchPages } from "@/actions/page"
 import { useDebounce } from "use-debounce"
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
 } from "@/components/ui/command"
 
 interface SearchResult {
@@ -28,7 +28,7 @@ interface SearchResult {
 }
 
 export const SearchCommand = () => {
-  const { user } = useUser()
+  const { data: session } = useSession()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -46,11 +46,11 @@ export const SearchCommand = () => {
 
   useEffect(() => {
     const performSearch = async () => {
-      if (!user) {
+      if (!session?.user) {
         setIsLoading(false)
         return
       }
-      
+
       if (!debouncedQuery || debouncedQuery.trim().length === 0) {
         setResults([])
         setIsLoading(false)
@@ -70,7 +70,7 @@ export const SearchCommand = () => {
     }
 
     performSearch()
-  }, [debouncedQuery, user])
+  }, [debouncedQuery, session])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -108,8 +108,8 @@ export const SearchCommand = () => {
 
   return (
     <CommandDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <CommandInput 
-        placeholder="Search pages by title or content..." 
+      <CommandInput
+        placeholder="Search pages by title or content..."
         value={searchQuery}
         onValueChange={setSearchQuery}
       />

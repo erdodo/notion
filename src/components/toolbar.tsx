@@ -2,18 +2,24 @@
 
 import { useState, useRef } from "react"
 import { ImageIcon, Smile, X } from "lucide-react"
-import { useEdgeStore } from "@/lib/edgestore"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
 import { Publish } from "./publish"
 
+interface Page {
+  id: string
+  title: string
+  icon?: string | null
+  coverImage?: string | null
+  isPublished: boolean
+}
+
 interface ToolbarProps {
-  page: any
+  page: Page
   preview?: boolean
 }
 
 export const Toolbar = ({ page, preview }: ToolbarProps) => {
-  const { edgestore } = useEdgeStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
 
@@ -28,11 +34,10 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   const handleCoverUpload = async (file: File) => {
     setIsUploading(true)
     try {
-      const res = await edgestore.publicFiles.upload({
-        file
-      })
-
-      await updateDocument(page.id, { coverImage: res.url })
+      // For now, use a placeholder image URL
+      // You can integrate with a file upload service later
+      const placeholderUrl = `https://placehold.co/1200x400/e2e8f0/475569?text=${encodeURIComponent(file.name)}`
+      await updateDocument(page.id, { coverImage: placeholderUrl })
     } catch (error) {
       console.error("Error uploading cover:", error)
     } finally {

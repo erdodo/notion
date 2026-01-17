@@ -4,26 +4,26 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Search, Settings, Trash } from "lucide-react"
 import { createPage, getPages } from "@/actions/page"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { PageItem } from "./page-item"
 
 export const Sidebar = () => {
   const router = useRouter()
-  const { user } = useUser()
+  const { data: session } = useSession()
   const [pages, setPages] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (user?.id) {
+    if (session?.user?.id) {
       loadPages()
     }
-  }, [user])
+  }, [session])
 
   const loadPages = async () => {
-    if (!user?.id) return
-    
+    if (!session?.user?.id) return
+
     try {
-      const fetchedPages = await getPages(user.id)
+      const fetchedPages = await getPages()
       setPages(fetchedPages)
     } catch (error) {
       console.error("Error loading pages:", error)
@@ -31,8 +31,8 @@ export const Sidebar = () => {
   }
 
   const handleCreatePage = async () => {
-    if (!user?.id) return
-    
+    if (!session?.user?.id) return
+
     setIsLoading(true)
     try {
       const page = await createPage()
@@ -51,7 +51,7 @@ export const Sidebar = () => {
         <div className="flex items-center gap-x-2 mb-4">
           <div className="flex items-center gap-x-2 flex-1">
             <span className="text-sm font-medium">
-              {user?.firstName}'s Notion
+              {session?.user?.name?.split(' ')[0]}'s Notion
             </span>
           </div>
           <button className="opacity-0 group-hover/sidebar:opacity-100 transition">
@@ -60,14 +60,14 @@ export const Sidebar = () => {
         </div>
 
         <div className="space-y-1">
-          <button 
+          <button
             className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm"
           >
             <Search className="h-4 w-4" />
             <span>Search</span>
           </button>
 
-          <button 
+          <button
             onClick={handleCreatePage}
             disabled={isLoading}
             className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm"
@@ -76,7 +76,7 @@ export const Sidebar = () => {
             <span>New Page</span>
           </button>
 
-          <button 
+          <button
             className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm"
           >
             <Trash className="h-4 w-4" />

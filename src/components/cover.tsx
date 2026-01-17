@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { useEdgeStore } from "@/lib/edgestore"
 import { updateDocument } from "@/app/(main)/_actions/documents"
-import { X, ImageIcon } from "lucide-react"
+import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface CoverProps {
@@ -14,7 +13,6 @@ interface CoverProps {
 }
 
 export const Cover = ({ url, pageId, preview }: CoverProps) => {
-  const { edgestore } = useEdgeStore()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleRemove = async () => {
@@ -22,12 +20,7 @@ export const Cover = ({ url, pageId, preview }: CoverProps) => {
 
     setIsLoading(true)
     try {
-      // Remove from EdgeStore
-      await edgestore.publicFiles.delete({
-        url: url
-      })
-
-      // Update database
+      // Update database - remove cover image URL
       await updateDocument(pageId, { coverImage: "" })
     } catch (error) {
       console.error("Error removing cover:", error)

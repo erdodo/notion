@@ -72,7 +72,6 @@ export const Item = ({
   return (
     <div
       onClick={handleClick}
-      role="button"
       className={cn(
         "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer",
       )}
@@ -81,15 +80,15 @@ export const Item = ({
       }}
     >
       {hasChildren && (
-        <div
-          role="button"
+        <button
+          type="button"
           onClick={handleExpand}
           className="h-full rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 mr-1"
         >
           <ChevronIcon className="h-4 w-4 shrink-0" />
-        </div>
+        </button>
       )}
-      
+
       {!hasChildren && (
         <div className="h-4 w-4 mr-1" />
       )}
@@ -111,9 +110,9 @@ export const Item = ({
         >
           <Plus className="h-4 w-4" />
         </button>
-        
+
         <DropdownMenu>
-          <DropdownMenuTrigger 
+          <DropdownMenuTrigger
             onClick={(e) => e.stopPropagation()}
             className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-0.5"
             asChild
@@ -122,7 +121,7 @@ export const Item = ({
               <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent 
+          <DropdownMenuContent
             className="w-60"
             align="start"
             side="right"

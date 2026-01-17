@@ -4,19 +4,26 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Search, Trash, Undo, FileText } from "lucide-react"
 import { toast } from "sonner"
-import { getArchivedDocuments, restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
+import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/spinner"
 import { ConfirmModal } from "@/components/modals/confirm-modal"
 
+interface Document {
+  id: string
+  title: string
+  icon?: string | null
+  isArchived: boolean
+}
+
 interface TrashBoxProps {
-  documents: any[]
+  documents: Document[]
 }
 
 export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
   const router = useRouter()
   const [search, setSearch] = useState("")
-  const [documents, setDocuments] = useState(initialDocuments)
+  const [documents, setDocuments] = useState<Document[]>(initialDocuments)
 
   const filteredDocuments = documents.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase())
@@ -27,11 +34,11 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
   }
 
   const onRestore = async (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     documentId: string,
   ) => {
     event.stopPropagation()
-    
+
     const promise = restoreDocument(documentId).then(() => {
       // Remove from local state
       setDocuments(documents.filter(doc => doc.id !== documentId))
@@ -85,9 +92,8 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
         {filteredDocuments?.map((document) => (
           <div
             key={document.id}
-            role="button"
             onClick={() => onClick(document.id)}
-            className="text-sm rounded-sm w-full hover:bg-primary/5 flex items-center text-primary justify-between"
+            className="text-sm rounded-sm w-full hover:bg-primary/5 flex items-center text-primary justify-between cursor-pointer"
           >
             <div className="flex items-center gap-x-2 pl-2">
               {document.icon ? (
@@ -100,20 +106,20 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
               </span>
             </div>
             <div className="flex items-center">
-              <div
+              <button
+                type="button"
                 onClick={(e) => onRestore(e, document.id)}
-                role="button"
                 className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
               >
                 <Undo className="h-4 w-4 text-muted-foreground" />
-              </div>
+              </button>
               <ConfirmModal onConfirm={() => onRemove(document.id)}>
-                <div
-                  role="button"
+                <button
+                  type="button"
                   className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 >
                   <Trash className="h-4 w-4 text-muted-foreground" />
-                </div>
+                </button>
               </ConfirmModal>
             </div>
           </div>
