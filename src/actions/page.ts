@@ -236,14 +236,12 @@ export async function searchPages(query: string) {
       OR: [
         {
           title: {
-            contains: searchQuery,
-            mode: 'insensitive'
+            contains: searchQuery
           }
         },
         {
           content: {
-            contains: searchQuery,
-            mode: 'insensitive'
+            contains: searchQuery
           }
         }
       ]

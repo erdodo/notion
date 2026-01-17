@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { getCurrentUser } from "@/lib/session"
 import { redirect } from "next/navigation"
 import { getDocument } from "@/app/(main)/_actions/documents"
 import { DocumentHeader } from "@/components/editor/document-header"
@@ -14,9 +14,9 @@ interface DocumentPageProps {
 }
 
 export default async function DocumentPage({ params }: DocumentPageProps) {
-  const { userId } = await auth()
+  const user = await getCurrentUser()
 
-  if (!userId) {
+  if (!user) {
     redirect("/")
   }
 

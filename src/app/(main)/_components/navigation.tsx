@@ -6,7 +6,7 @@ import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-re
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useSettings } from "@/hooks/use-settings"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { DocumentList } from "./document-list"
 import { ItemSkeleton } from "./item-skeleton"
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 export const Navigation = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const { user } = useUser()
+  const { data: session } = useSession()
   const search = useSearch()
   const settings = useSettings()
   const isMobile = useMediaQuery("(max-width: 768px)")
@@ -163,7 +163,7 @@ export const Navigation = () => {
           <div className="flex items-center gap-x-2 mb-4">
             <div className="flex items-center gap-x-2 flex-1">
               <span className="text-sm font-medium">
-                {user?.firstName}'s Notion
+                {session?.user?.name?.split(' ')[0] || session?.user?.email?.split('@')[0]}'s Notion
               </span>
             </div>
             <button 
