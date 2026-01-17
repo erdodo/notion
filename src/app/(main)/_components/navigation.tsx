@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { useSearch } from "@/hooks/use-search"
 import { useUser } from "@clerk/nextjs"
 import { getSidebarDocuments, createDocument } from "../_actions/documents"
 import { DocumentList } from "./document-list"
@@ -14,6 +15,7 @@ export const Navigation = () => {
   const router = useRouter()
   const pathname = usePathname()
   const { user } = useUser()
+  const search = useSearch()
   const isMobile = useMediaQuery("(max-width: 768px)")
   
   const isResizingRef = useRef(false)
@@ -156,10 +158,14 @@ export const Navigation = () => {
 
           <div className="space-y-1">
             <button 
+              onClick={search.onOpen}
               className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
             >
               <Search className="h-4 w-4" />
               <span>Search</span>
+              <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                <span className="text-xs">⌘</span>K
+              </kbd>
             </button>
 
             <button 
