@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
 
 export const metadata: Metadata = {
   title: "Notion Clone",
@@ -17,15 +18,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className="font-sans">
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="notion-theme"
-          >
-            {children}
-          </ThemeProvider>
+          <EdgeStoreProviderWrapper>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+              storageKey="notion-theme"
+            >
+              {children}
+            </ThemeProvider>
+          </EdgeStoreProviderWrapper>
         </body>
       </html>
     </ClerkProvider>
