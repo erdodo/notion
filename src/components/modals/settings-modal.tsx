@@ -1,0 +1,111 @@
+"use client"
+
+import { useState } from "react"
+import { useUser } from "@clerk/nextjs"
+import { ModeToggle } from "@/components/mode-toggle"
+import { useSettings } from "@/hooks/use-settings"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
+
+export const SettingsModal = () => {
+  const settings = useSettings()
+  const { user } = useUser()
+  const [activeTab, setActiveTab] = useState<"account" | "appearance">("account")
+
+  return (
+    <Dialog open={settings.isOpen} onOpenChange={settings.onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Settings</DialogTitle>
+        </DialogHeader>
+        
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <div className="flex flex-col gap-2 w-48">
+            <button
+              onClick={() => setActiveTab("account")}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === "account"
+                  ? "bg-secondary text-secondary-foreground"
+                  : "hover:bg-secondary/50"
+              }`}
+            >
+              Account
+            </button>
+            <button
+              onClick={() => setActiveTab("appearance")}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === "appearance"
+                  ? "bg-secondary text-secondary-foreground"
+                  : "hover:bg-secondary/50"
+              }`}
+            >
+              Appearance
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1">
+            {activeTab === "account" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-medium">Account</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Manage your account settings
+                  </p>
+                </div>
+                <Separator />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Name</Label>
+                    <div className="text-sm text-muted-foreground">
+                      {user?.fullName || user?.firstName || "Not set"}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <div className="text-sm text-muted-foreground">
+                      {user?.primaryEmailAddress?.emailAddress || "Not set"}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-4">
+                    To update your account details, please use your profile settings.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "appearance" && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-medium">Appearance</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Customize how the app looks
+                  </p>
+                </div>
+                <Separator />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Theme</Label>
+                      <div className="text-sm text-muted-foreground">
+                        Select your preferred theme
+                      </div>
+                    </div>
+                    <ModeToggle />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
