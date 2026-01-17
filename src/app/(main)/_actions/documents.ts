@@ -161,12 +161,26 @@ export async function archiveDocument(documentId: string) {
     throw new Error("User not found")
   }
 
+  // Verify ownership before archiving
+  const document = await db.page.findFirst({
+    where: {
+      id: documentId,
+      userId: user.id,
+    }
+  })
+
+  if (!document) {
+    throw new Error("Document not found")
+  }
+
   // Archive all children recursively first
   await archiveChildrenRecursively(documentId, user.id)
 
   // Then archive the parent
   await db.page.update({
-    where: { id: documentId },
+    where: { 
+      id: documentId,
+    },
     data: {
       isArchived: true,
     }
@@ -272,21 +286,10 @@ export async function removeDocument(documentId: string) {
     }
   })
 
-  // Cleanup cover image from EdgeStore if it exists
-  if (document.coverImage) {
-    try {
-      // EdgeStore cleanup will be handled by the client-side
-      // The URL contains the file info needed for deletion
-      // We'll return the coverImage URL so the client can delete it
-    } catch (error) {
-      console.error("Error deleting cover image:", error)
-      // Don't throw - document is already deleted
-    }
-  }
-
   revalidatePath("/documents")
   revalidatePath("/documents/[documentId]", "page")
   
+  // Return coverImage URL for client-side EdgeStore cleanup if needed
   return { success: true, coverImage: document.coverImage }
 }
 
