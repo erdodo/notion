@@ -81,19 +81,22 @@ export const SearchCommand = () => {
     return () => document.removeEventListener("keydown", down)
   }, [toggle])
 
-  const handleSelect = (id: string) => {
-    router.push(`/documents/${id}`)
-    onClose()
+  const clearSearchState = () => {
     setSearchQuery("")
     setResults([])
   }
 
+  const handleSelect = (id: string) => {
+    router.push(`/documents/${id}`)
+    onClose()
+    clearSearchState()
+  }
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      setSearchQuery("")
-      setResults([])
+      onClose()
+      clearSearchState()
     }
-    onClose()
   }
 
   if (!isMounted) {
