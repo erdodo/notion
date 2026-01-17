@@ -23,6 +23,9 @@ interface Document {
   isPublished: boolean
   createdAt: Date
   updatedAt: Date
+  _count: {
+    children: number
+  }
 }
 
 export const Navigation = () => {
@@ -154,7 +157,7 @@ export const Navigation = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
+          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-10",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0"
         )}
@@ -253,12 +256,12 @@ export const Navigation = () => {
       {isMobile && !isCollapsed && (
         <div
           onClick={collapse}
-          className="fixed inset-0 z-[99998] bg-black/50"
+          className="fixed inset-0 z-40 bg-black/50"
         />
       )}
 
       {isMobile && (
-        <div className="absolute top-0 left-0 z-[99999]">
+        <div className="absolute top-0 left-0 z-50">
           {isCollapsed && (
             <button
               onClick={resetWidth}

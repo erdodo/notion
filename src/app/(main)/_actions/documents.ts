@@ -64,6 +64,11 @@ export async function getSidebarDocuments(parentDocumentId?: string | null) {
       parentId: parentDocumentId === undefined ? null : parentDocumentId,
       isArchived: false,
     },
+    include: {
+      _count: {
+        select: { children: true }
+      }
+    },
     orderBy: {
       createdAt: 'desc'
     },

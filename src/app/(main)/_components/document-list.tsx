@@ -13,6 +13,9 @@ interface Document {
   title: string
   icon?: string | null
   parentId?: string | null
+  _count: {
+    children: number
+  }
 }
 
 interface DocumentListProps {
@@ -34,11 +37,11 @@ export const DocumentList = ({
 
   const onExpand = async (documentId: string) => {
     const isExpanded = expanded[documentId]
-    
+
     if (!isExpanded) {
       // Load children on-demand
       setLoading(prev => ({ ...prev, [documentId]: true }))
-      
+
       try {
         const docs = await getSidebarDocuments(documentId)
         setChildren(prev => ({ ...prev, [documentId]: docs }))
@@ -48,23 +51,23 @@ export const DocumentList = ({
         setLoading(prev => ({ ...prev, [documentId]: false }))
       }
     }
-    
+
     setExpanded(prev => ({ ...prev, [documentId]: !isExpanded }))
   }
 
   const onCreate = async (parentId?: string) => {
     setCreating(prev => ({ ...prev, [parentId || 'root']: true }))
-    
+
     try {
       const document = await createDocument("Untitled", parentId)
-      
+
       if (parentId) {
         // Refresh children for this parent
         const docs = await getSidebarDocuments(parentId)
         setChildren(prev => ({ ...prev, [parentId]: docs }))
         setExpanded(prev => ({ ...prev, [parentId]: true }))
       }
-      
+
       router.push(`/documents/${document.id}`)
     } catch (error) {
       console.error("Error creating document:", error)
@@ -99,7 +102,7 @@ export const DocumentList = ({
         const childDocs = children[document.id]
         const isLoading = loading[document.id]
         const isCreating = creating[document.id]
-        
+
         return (
           <div key={document.id}>
             <Item
@@ -110,10 +113,10 @@ export const DocumentList = ({
               expanded={isExpanded}
               onExpand={() => onExpand(document.id)}
               onCreate={() => onCreate(document.id)}
-              hasChildren={isExpanded || childDocs ? true : false}
+              hasChildren={document._count.children > 0}
               isCreating={isCreating}
             />
-            
+
             {isExpanded && (
               <>
                 {isLoading && (
@@ -122,7 +125,7 @@ export const DocumentList = ({
                     <ItemSkeleton level={level + 1} />
                   </>
                 )}
-                
+
                 {!isLoading && childDocs && (
                   <DocumentList
                     parentDocumentId={document.id}
