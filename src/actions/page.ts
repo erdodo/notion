@@ -1,11 +1,11 @@
 "use server"
 
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 
 export async function createPage(parentId?: string) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -58,7 +58,7 @@ export async function getPages(userId: string, parentId?: string | null) {
 }
 
 export async function getPageById(pageId: string) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -92,7 +92,7 @@ export async function updatePage(pageId: string, data: {
   coverImage?: string
   isPublished?: boolean
 }) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -123,7 +123,7 @@ export async function updatePage(pageId: string, data: {
 }
 
 export async function archivePage(pageId: string) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -161,7 +161,7 @@ export async function archivePage(pageId: string) {
 }
 
 export async function restorePage(pageId: string) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -220,7 +220,7 @@ export async function restorePage(pageId: string) {
 }
 
 export async function deletePage(pageId: string) {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")
@@ -244,7 +244,7 @@ export async function deletePage(pageId: string) {
 }
 
 export async function getArchivedPages() {
-  const { userId } = auth()
+  const { userId } = await auth()
   
   if (!userId) {
     throw new Error("Unauthorized")

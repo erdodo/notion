@@ -1,9 +1,11 @@
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { SignIn } from "@clerk/nextjs"
 
-export default function HomePage() {
-  const { userId } = auth()
+export const dynamic = 'force-dynamic'
+
+export default async function HomePage() {
+  const { userId } = await auth()
 
   if (userId) {
     redirect("/documents")

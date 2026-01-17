@@ -1,8 +1,10 @@
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { getPageById } from "@/actions/page"
 import { DocumentHeader } from "@/components/editor/document-header"
 import { DocumentEditor } from "@/components/editor/document-editor"
+
+export const dynamic = 'force-dynamic'
 
 interface DocumentPageProps {
   params: {
@@ -11,7 +13,7 @@ interface DocumentPageProps {
 }
 
 export default async function DocumentPage({ params }: DocumentPageProps) {
-  const { userId } = auth()
+  const { userId } = await auth()
 
   if (!userId) {
     redirect("/")
