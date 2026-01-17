@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
+import { useSettings } from "@/hooks/use-settings"
 import { useUser } from "@clerk/nextjs"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { DocumentList } from "./document-list"
@@ -18,6 +19,7 @@ export const Navigation = () => {
   const pathname = usePathname()
   const { user } = useUser()
   const search = useSearch()
+  const settings = useSettings()
   const isMobile = useMediaQuery("(max-width: 768px)")
   
   const isResizingRef = useRef(false)
@@ -164,7 +166,10 @@ export const Navigation = () => {
                 {user?.firstName}'s Notion
               </span>
             </div>
-            <button className="opacity-0 group-hover/sidebar:opacity-100 transition text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600 rounded-sm p-1">
+            <button 
+              onClick={settings.onOpen}
+              className="opacity-0 group-hover/sidebar:opacity-100 transition text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600 rounded-sm p-1"
+            >
               <Settings className="h-4 w-4" />
             </button>
           </div>
