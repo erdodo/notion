@@ -13,6 +13,8 @@ import { SlashMenu } from "./slash-menu"
 import { PageMentionPicker } from "./page-mention-picker"
 import { FormattingToolbar } from "./formatting-toolbar"
 import { getBlockColorStyle, BlockColor } from "@/lib/block-utils"
+import { useCollaboration } from "@/components/providers/collaboration-provider"
+
 
 interface BlockNoteEditorProps {
   initialContent?: string
@@ -68,6 +70,9 @@ export const BlockNoteEditorComponent = ({
     }
   }, [initialContent])
 
+  // Collaboration Context
+  const collaboration = useCollaboration()
+
   // Create editor instance
   const editor = useCreateBlockNote({
     schema,
@@ -76,24 +81,53 @@ export const BlockNoteEditorComponent = ({
       const res = await edgestore.editorMedia.upload({ file });
       return res.url;
     },
+    collaboration: {
+      provider: collaboration.provider,
+      fragment: collaboration.yDoc.getXmlFragment("document-store"),
+      user: {
+        name: collaboration.user?.name || "Anonymous",
+        color: collaboration.user?.color || "#505050",
+      }
+    }
   })
 
-  // Watch for external content updates (e.g. from real-time sync)
+  // Hydration / Synchronization Effect
   useEffect(() => {
     if (!editor || !parsedContent) return
 
-    // Get current blocks to compare
-    const currentBlocks = editor.document
+    const hydrate = async () => {
+      // Debug logs
+      console.log("Hydration Check initiated", {
+        hasParsed: !!parsedContent,
+        parsedLen: parsedContent?.length
+      })
 
-    // Simple comparison to avoid unnecessary updates/cursor resets
-    // Note: This is an expensive comparison for large docs, 
-    // but necessary to prevent replacing active user typing unless needed.
-    // In a real optimized app, we'd use Yjs for conflict resolution.
-    // Here we just overwrite if different.
-    if (JSON.stringify(currentBlocks) !== JSON.stringify(parsedContent)) {
-      // @ts-ignore - Type compatibility issue with backgroundColor prop
-      editor.replaceBlocks(editor.document, parsedContent)
+      if (!parsedContent || parsedContent.length === 0) return
+
+      const currentBlocks = editor.document
+
+      const isEditorEmpty = currentBlocks.length === 0 ||
+        (currentBlocks.length === 1 &&
+          currentBlocks[0].type === "paragraph" &&
+          (!currentBlocks[0].content || currentBlocks[0].content.length === 0))
+
+      console.log("Editor State:", { isEditorEmpty, currentLen: currentBlocks.length })
+
+      if (isEditorEmpty) {
+        console.log("Hydrating editor from initialContent...")
+        try {
+          editor.replaceBlocks(editor.document, parsedContent)
+          console.log("Hydration success")
+        } catch (e) {
+          console.error("Hydration failed", e)
+        }
+      }
     }
+
+    // Small delay to ensure editor is ready (Yjs sync, etc)
+    const timer = setTimeout(hydrate, 100)
+    return () => clearTimeout(timer)
+
   }, [editor, parsedContent])
 
   // Global Drag & Drop Handler

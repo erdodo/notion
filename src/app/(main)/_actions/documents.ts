@@ -498,3 +498,193 @@ export async function searchPages(query: string, filters?: {
 }
 
 
+// Helper for Deep Duplicate
+async function duplicateValuesRecursively(
+  originalPageId: string,
+  newPageId: string,
+  userId: string
+) {
+  // 1. Duplicate Content Blocks? (If stored separately? No, currently content is just string JSON in Page table)
+  // 2. Duplicate Database if exists?
+  // Note: If the page is a database, we need to copy properties and rows?
+  // For MVP "Deep Duplicate", if it's a simple page, we just copy children.
+  // If it's a database, we should copy structure. 
+  // Let's inspect `Page` model. `database` relation exists.
+
+  // Check if original is a database parent
+  const database = await db.database.findUnique({
+    where: { pageId: originalPageId },
+    include: { properties: true, rows: { include: { cells: true } } }
+  })
+
+  if (database) {
+    // Create new Database
+    const newDatabase = await db.database.create({
+      data: {
+        pageId: newPageId,
+        defaultView: database.defaultView,
+        // Linked databases? properties?
+      }
+    })
+
+    // Copy Properties
+    const propMap = new Map<string, string>() // Old ID -> New ID
+    for (const prop of database.properties) {
+      const newProp = await db.property.create({
+        data: {
+          name: prop.name,
+          type: prop.type,
+          databaseId: newDatabase.id,
+          order: prop.order,
+          width: prop.width,
+          isVisible: prop.isVisible,
+          options: prop.options || undefined,
+          relationConfig: prop.relationConfig || undefined,
+          rollupConfig: prop.rollupConfig || undefined,
+          formulaConfig: prop.formulaConfig || undefined,
+        }
+      })
+      propMap.set(prop.id, newProp.id)
+    }
+
+    // Copy Rows (which are also pages!) -> Recursive
+    // Wait, DatabaseRow also points to a Page.
+    // If we duplicate a Database, we usually duplicate its rows (pages) too?
+    // Yes, deep copy.
+    // But `archiveChildrenRecursively` implies rows are children of the database page?
+    // Yes `parentId` of a row page is usually the database page.
+    // So standard child recursion might handle the Page creation of rows, 
+    // but we need to link them to `DatabaseRow`.
+
+    // Actually, if we rely on `children` recursion, the child pages get created.
+    // But we need to recreate `DatabaseRow` records for them and link to the new Database.
+    // Complex.
+    // Simplified Logic: 
+    // Iterate current children. If child is a Row, duplicate it as a Row of new DB.
+    // If child is normal page, duplicate as normal child.
+  }
+}
+
+async function recursiveCopy(originalId: string, parentId: string | null | undefined, userId: string, isRoot: boolean) {
+  const original = await db.page.findUnique({
+    where: { id: originalId },
+    include: {
+      database: { include: { properties: true } },
+      databaseRow: true // If original is a row
+    }
+  })
+
+  if (!original) return
+
+  // Create Copy
+  const newTitle = isRoot ? `${original.title} (Copy)` : original.title
+
+  const newPage = await db.page.create({
+    data: {
+      title: newTitle,
+      content: original.content, // BlockNote JSON
+      icon: original.icon,
+      coverImage: original.coverImage,
+      userId: userId,
+      parentId: parentId || null,
+      isDatabase: original.isDatabase,
+      isPublished: false, // Reset publish
+      isArchived: false,
+    }
+  })
+
+  // If original was a Database, setup new Database structure
+  let newDatabaseId: string | undefined
+  let propMap = new Map<string, string>()
+
+  if (original.database) {
+    const newDb = await db.database.create({
+      data: {
+        pageId: newPage.id,
+        defaultView: original.database.defaultView,
+      }
+    })
+    newDatabaseId = newDb.id
+
+    // Copy Properties
+    for (const prop of original.database.properties) {
+      const newProp = await db.property.create({
+        data: {
+          name: prop.name,
+          type: prop.type,
+          databaseId: newDb.id,
+          order: prop.order,
+          width: prop.width,
+          isVisible: prop.isVisible,
+          options: prop.options || undefined,
+          // complex configs...
+          relationConfig: prop.relationConfig || undefined,
+          rollupConfig: prop.rollupConfig || undefined,
+          formulaConfig: prop.formulaConfig || undefined,
+        }
+      })
+      propMap.set(prop.id, newProp.id)
+    }
+  }
+
+  // Children (Recursive)
+  const children = await db.page.findMany({
+    where: { parentId: originalId, isArchived: false }
+  })
+
+  for (const child of children) {
+    // Recurse
+    const newChildId = await recursiveCopy(child.id, newPage.id, userId, false)
+
+    // If we are a database, and the child was a row, we need to link it
+    // Check if child had a databaseRow
+    const childRow = await db.databaseRow.findFirst({
+      where: { pageId: child.id, databaseId: original.database?.id }
+    })
+
+    if (newDatabaseId && childRow && newChildId) {
+      // Create Row entry for the new child page
+      const newRow = await db.databaseRow.create({
+        data: {
+          databaseId: newDatabaseId,
+          pageId: newChildId,
+          order: childRow.order
+        }
+      })
+
+      // Copy Cells
+      const cells = await db.cell.findMany({
+        where: { rowId: childRow.id }
+      })
+
+      for (const cell of cells) {
+        const newPropId = propMap.get(cell.propertyId)
+        if (newPropId) {
+          await db.cell.create({
+            data: {
+              rowId: newRow.id,
+              propertyId: newPropId,
+              value: cell.value || undefined
+            }
+          })
+        }
+      }
+    }
+  }
+
+  return newPage.id
+}
+
+export async function duplicateDocument(documentId: string) {
+  const user = await getCurrentUser()
+  if (!user) throw new Error("Unauthorized")
+
+  const document = await db.page.findUnique({
+    where: { id: documentId, userId: user.id }
+  })
+  if (!document) throw new Error("Not found")
+
+  await recursiveCopy(documentId, document.parentId, user.id, true)
+
+  revalidatePath("/documents")
+}

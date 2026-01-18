@@ -1,5 +1,5 @@
 import PusherServer from "pusher"
-import PusherClient from "pusher-js"
+
 
 // Server-side Pusher instance
 export const pusherServer = new PusherServer({
@@ -10,10 +10,4 @@ export const pusherServer = new PusherServer({
     useTLS: true,
 })
 
-// Client-side Pusher instance
-export const pusherClient = new PusherClient(
-    process.env.NEXT_PUBLIC_PUSHER_KEY!,
-    {
-        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    }
-)
+

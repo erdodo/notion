@@ -18,11 +18,22 @@ export async function GET(req: NextRequest) {
         }
 
         const page = await db.page.findUnique({
-            where: { id: pageId, userId: session.user.id }
+            where: { id: pageId }
         })
 
         if (!page) {
             return NextResponse.json({ error: "Page not found" }, { status: 404 })
+        }
+
+        // Access Check
+        const hasAccess = page.userId === session.user.id
+        if (!hasAccess) {
+            const share = await db.pageShare.findFirst({
+                where: { pageId, OR: [{ userId: session.user.id }, { email: session.user.email ?? "" }] }
+            })
+            if (!share) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+            }
         }
 
         let blocks = []
@@ -36,15 +47,16 @@ export async function GET(req: NextRequest) {
 
         const html = blocksToHTML(blocks, page.title)
 
-        return new Response(html, {
+        return new NextResponse(html, {
             headers: {
-                "Content-Type": "text/html; charset=utf-8",
-                "Content-Disposition": `attachment; filename="${sanitizeFilename(page.title)}.html"`,
-            },
+                "Content-Type": "text/html",
+                "Content-Disposition": `attachment; filename="${sanitizeFilename(page.title)}.html"`
+            }
         })
+
     } catch (error) {
-        console.error("HTML export error:", error)
-        return NextResponse.json({ error: "Export failed" }, { status: 500 })
+        console.error("Export error:", error)
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
 

@@ -12,78 +12,91 @@ export async function GET(req: NextRequest) {
         }
 
         const { searchParams } = new URL(req.url)
-        const databaseId = searchParams.get("databaseId")
+        const pageId = searchParams.get("pageId")
 
-        if (!databaseId) {
-            return NextResponse.json({ error: "databaseId is required" }, { status: 400 })
+        if (!pageId) {
+            return NextResponse.json({ error: "pageId is required" }, { status: 400 })
         }
 
-        // Database ve ilişkili verileri al
-        const database = await db.database.findUnique({
-            where: { id: databaseId },
+        const page = await db.page.findUnique({
+            where: { id: pageId },
             include: {
-                page: {
-                    select: { title: true, userId: true }
-                },
-                properties: {
-                    orderBy: { order: 'asc' }
-                },
-                rows: {
-                    where: {
-                        // Archived olmayan row'lar
-                    },
+                database: {
                     include: {
-                        cells: true,
-                        page: { select: { title: true } }
-                    },
-                    orderBy: { order: 'asc' }
+                        properties: { orderBy: { order: 'asc' } },
+                        rows: {
+                            include: {
+                                cells: true,
+                                page: true // to get row page title if needed
+                            },
+                            orderBy: { order: 'asc' }
+                        }
+                    }
                 }
             }
         })
 
-        if (!database || database.page.userId !== session.user.id) {
-            return NextResponse.json({ error: "Database not found" }, { status: 404 })
+        if (!page) {
+            return NextResponse.json({ error: "Page not found" }, { status: 404 })
         }
 
-        // Headers (property isimleri)
-        const headers = database.properties.map(p => p.name)
-        // Add "Name" property (which is usually the row page title) if not handled as a property explicitly?
-        // In Notion, the Title property is just a property. 
-        // If the data model has it in `properties`, we are good.
-        // If Title is special and not in `properties`, we might need to add it manually.
-        // Usually DB schema in this project puts Title in properties? Let's assume yes or check schema.
-        // Checking schema from previous prompt context: `model Property { ... }`.
-        // It seems safe to assume it's in properties.
-
-        // Data rows
-        const data = database.rows.map(row => {
-            const rowData: Record<string, string> = {}
-
-            database.properties.forEach(prop => {
-                const cell = row.cells.find(c => c.propertyId === prop.id)
-                rowData[prop.name] = formatCellValueForCSV(cell?.value, prop.type)
+        // Access Check
+        const hasAccess = page.userId === session.user.id
+        if (!hasAccess) {
+            const share = await db.pageShare.findFirst({
+                where: { pageId, OR: [{ userId: session.user.id }, { email: session.user.email ?? "" }] }
             })
+            if (!share) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+            }
+        }
 
-            return rowData
+        if (!page.database) {
+            return NextResponse.json({ error: "This page is not a database. CSV export is only supported for databases." }, { status: 400 })
+        }
+
+        const properties = page.database.properties
+        const rows = page.database.rows
+
+        // Headers
+        const headers = properties.map(p => p.name)
+
+        // Rows data
+        const csvData = rows.map(row => {
+            const rowObject: Record<string, string> = {}
+
+            properties.forEach(prop => {
+                const cell = row.cells.find(c => c.propertyId === prop.id)
+                // Special handling for TITLE if cell is missing? 
+                // Usually Cell exists. If not, maybe fallback to row.page.title if TITLE type?
+
+                let val = ""
+                if (prop.type === "TITLE" && row.page) {
+                    val = row.page.title
+                } else {
+                    val = formatCellValueForCSV(cell?.value, prop.type)
+                }
+
+                rowObject[prop.name] = val
+            })
+            return rowObject
         })
 
-        // CSV'ye çevir
-        const csv = Papa.unparse(data, {
-            columns: headers,
-            header: true
+        const csv = Papa.unparse({
+            fields: headers,
+            data: csvData
         })
 
-        const filename = sanitizeFilename(database.page.title || "database")
-
-        return new Response(csv, {
+        return new NextResponse(csv, {
             headers: {
-                "Content-Type": "text/csv; charset=utf-8",
-                "Content-Disposition": `attachment; filename="${filename}.csv"`,
-            },
+                "Content-Type": "text/csv",
+                "Content-Disposition": `attachment; filename="${sanitizeFilename(page.title)}.csv"`
+            }
         })
+
     } catch (error) {
-        console.error("CSV export error:", error)
-        return NextResponse.json({ error: "Export failed" }, { status: 500 })
+        console.error("Export error:", error)
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
 

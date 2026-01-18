@@ -17,7 +17,7 @@ import {
     markAsRead,
     markAllAsRead
 } from "@/app/(main)/_actions/notifications"
-import { pusherClient } from "@/lib/pusher"
+import { pusherClient } from "@/lib/pusher-client"
 import { useSession } from "next-auth/react"
 import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"

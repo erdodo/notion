@@ -1,9 +1,10 @@
 "use client"
 
-import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash, LucideIcon } from "lucide-react"
+import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash, Copy, LucideIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { archiveDocument } from "../_actions/documents"
+import { archiveDocument, duplicateDocument } from "../_actions/documents"
 import { useMovePage } from "@/hooks/use-move-page"
+import { toast } from "sonner"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -141,6 +142,18 @@ export const Item = ({
               Delete
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={async (e) => {
+              e.stopPropagation()
+              const promise = duplicateDocument(id)
+              toast.promise(promise, {
+                loading: "Duplicating...",
+                success: "Page duplicated!",
+                error: "Failed to duplicate."
+              })
+            }}>
+              <Copy className="h-4 w-4 mr-2" />
+              Duplicate
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={(e) => {
               e.stopPropagation()
               onOpen(id, parentId || null)

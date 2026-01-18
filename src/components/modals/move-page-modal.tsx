@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Command, CommandInput, CommandList, CommandItem, CommandEmpty, CommandGroup } from "@/components/ui/command"
 import { FileText, FolderOpen, Home, Check } from "lucide-react"
-import { getSidebarDocuments } from "@/app/(main)/_actions/documents"
+import { getSidebarDocuments, searchPages } from "@/app/(main)/_actions/documents"
 import { movePage } from "@/app/(main)/_actions/navigation"
 import { useMovePage } from "@/hooks/use-move-page"
 import { toast } from "sonner"
@@ -39,24 +39,32 @@ export function MovePageModal() {
     const [moving, setMoving] = useState(false)
 
     useEffect(() => {
-        if (isOpen) {
+        const fetchPages = async () => {
             setLoading(true)
-            // Implementation note: The prompt's example used `getDocuments`.
-            // Since I don't recall implementing `getDocuments` (only getSidebarDocuments), 
-            // I might need to add it or use another way.
-            // I'll assume for now I should use `getSidebarDocuments` and maybe recurse or search?
-            // Actually `searchPages` exists in prompts.
-            // Or I can just fetch root docs.
-            // Let's verify `getDocuments` existence or implement a simple fetcher here.
-            // I'll try to import `getDocuments` and if it fails I'll fix it.
-            // But wait, I can just define a fetcher here or use `getSidebarDocuments` for now.
-
-            // Temporary: fetch existing sidebar docs as candidates
-            getSidebarDocuments()
-                .then(docs => setPages(docs)) // This only gets roots. Better than nothing.
-                .finally(() => setLoading(false))
+            try {
+                // Use searchPages to fetch candidates. passing query="" gets recent/all depending on impl?
+                // The searchPages actully requires query. If empty, it might return empty.
+                // However, we want to Browse?
+                // For MVP, "Search to Move" is acceptable.
+                // But let's try to get ALL pages if query is empty? 
+                // searchPages implementation: AND... title.contains(query). If query empty, contains "" matches all?
+                // Let's rely on searchPages logic.
+                const results = await searchPages(query, { includeDatabases: true, limit: 50 })
+                setPages(results)
+            } catch (error) {
+                console.error(error)
+            } finally {
+                setLoading(false)
+            }
         }
-    }, [isOpen])
+
+        if (isOpen) {
+            fetchPages()
+        } else {
+            // Reset query on close?
+            setQuery("")
+        }
+    }, [isOpen, query]) // Re-fetch on query change
 
     const handleMove = async (targetParentId: string | null) => {
         if (!pageId) return

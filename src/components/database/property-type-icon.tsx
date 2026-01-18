@@ -15,6 +15,8 @@ import {
     ArrowUpRight,
     Calculator,
     Sigma,
+    User,
+    UserCheck,
     LucideIcon
 } from "lucide-react"
 import { PropertyType } from "@prisma/client"
@@ -35,6 +37,8 @@ export const propertyTypeIcons: Record<PropertyType, LucideIcon> = {
     RELATION: ArrowUpRight,
     ROLLUP: Calculator,
     FORMULA: Sigma,
+    CREATED_BY: User,
+    LAST_EDITED_BY: UserCheck,
 }
 
 interface PropertyTypeIconProps {

@@ -8,8 +8,8 @@ export const ItemSkeleton = ({ level = 0 }: { level?: number }) => {
         paddingLeft: level > 0 ? `${(level * 12) + 12}px` : "12px"
       }}
     >
-      <div className="h-4 w-4 rounded-sm bg-muted animate-pulse" />
-      <div className="h-4 flex-1 rounded-sm bg-muted animate-pulse" />
+      <div className="h-4 w-4 rounded-sm bg-gray-200 dark:bg-gray-800 animate-pulse" />
+      <div className="h-4 flex-1 rounded-sm bg-gray-200 dark:bg-gray-800 animate-pulse" />
     </div>
   )
 }

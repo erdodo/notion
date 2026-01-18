@@ -7,6 +7,7 @@ import { getFavorites } from "@/app/(main)/_actions/navigation"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "../ui/skeleton"
 
 interface Page {
     id: string
@@ -22,7 +23,7 @@ interface FavoritesSectionProps {
 export function FavoritesSection({ className }: FavoritesSectionProps) {
     const [favorites, setFavorites] = useState<Page[]>([])
     const [loading, setLoading] = useState(true)
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
 
     // Custom event listener for updates
     useEffect(() => {
@@ -42,7 +43,10 @@ export function FavoritesSection({ className }: FavoritesSectionProps) {
         return () => document.removeEventListener('favorite-changed', handleFavoriteChange)
     }, [])
 
-    if (loading || favorites.length === 0) return null
+    if (favorites.length === 0) return null
+    if (loading) {
+        return <Skeleton className="h-4 w-[60%]" />
+    }
 
     return (
         <Collapsible

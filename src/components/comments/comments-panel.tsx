@@ -21,7 +21,7 @@ import {
 } from "@/app/(main)/_actions/comments"
 import { formatDistanceToNow } from "date-fns"
 // import { tr } from "date-fns/locale" // Removed locale to avoid issues if not needed or not setup
-import { pusherClient } from "@/lib/pusher"
+import { pusherClient } from "@/lib/pusher-client"
 import { UserMentionInput } from "./user-mention-input"
 import { cn } from "@/lib/utils"
 

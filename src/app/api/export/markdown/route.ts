@@ -12,23 +12,37 @@ export async function GET(req: NextRequest) {
 
         const { searchParams } = new URL(req.url)
         const pageId = searchParams.get("pageId")
-        const includeChildren = searchParams.get("includeChildren") === "true"
 
         if (!pageId) {
             return NextResponse.json({ error: "pageId is required" }, { status: 400 })
         }
 
-        // Sayfa ve child'ları al
         const page = await db.page.findUnique({
-            where: { id: pageId, userId: session.user.id },
-            include: includeChildren ? { children: true } : undefined
+            where: { id: pageId }
         })
 
         if (!page) {
             return NextResponse.json({ error: "Page not found" }, { status: 404 })
         }
 
-        // Content'i parse et
+        // Check access? (Simplified: if userId matches or shared... assuming page access logic is roughly handled or I should check)
+        // For strictness, check userId or shares. (Ref `documents.ts` `getDocument` logic).
+        // Since `findUnique` above doesn't check owner/share, this is insecure if I don't check.
+        // Let's check owner or share.
+
+        // Quick access check:
+        const hasAccess = page.userId === session.user.id
+        // TODO: check shares if complex
+        if (!hasAccess) {
+            // Let's do a proper check if simplified check fails
+            const share = await db.pageShare.findFirst({
+                where: { pageId, OR: [{ userId: session.user.id }, { email: session.user.email ?? "" }] }
+            })
+            if (!share) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
+            }
+        }
+
         let blocks = []
         if (page.content) {
             try {
@@ -38,34 +52,24 @@ export async function GET(req: NextRequest) {
             }
         }
 
-        // Markdown'a çevir
-        let markdown = `# ${page.title}\n\n`
-        markdown += blocksToMarkdown(blocks)
+        const markdown = blocksToMarkdown(blocks)
 
-        // Child sayfaları da ekle
-        if (includeChildren && (page as any).children?.length > 0) {
-            markdown += "\n\n---\n\n## Sub-pages\n\n"
-            for (const child of (page as any).children) {
-                markdown += `- [${child.title}](#${child.id})\n`
-            }
-        }
+        // Add Title
+        const finalContent = `# ${page.title}\n\n${markdown}`
 
-        // Dosya olarak döndür
-        return new Response(markdown, {
+        return new NextResponse(finalContent, {
             headers: {
-                "Content-Type": "text/markdown; charset=utf-8",
-                "Content-Disposition": `attachment; filename="${sanitizeFilename(page.title)}.md"`,
-            },
+                "Content-Type": "text/markdown",
+                "Content-Disposition": `attachment; filename="${sanitizeFilename(page.title)}.md"`
+            }
         })
+
     } catch (error) {
-        console.error("Markdown export error:", error)
-        return NextResponse.json({ error: "Export failed" }, { status: 500 })
+        console.error("Export error:", error)
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
 
 function sanitizeFilename(name: string): string {
-    return name
-        .replace(/[<>:"/\\|?*]/g, "_")
-        .replace(/\s+/g, "_")
-        .substring(0, 100) || "document"
+    return name.replace(/[<>:"/\\|?*]/g, "_").replace(/\s+/g, "_").substring(0, 100) || "document"
 }

@@ -159,6 +159,56 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         getRowId: row => row.id,
     })
 
+    const [scrollTop, setScrollTop] = useState(0)
+
+    // Virtualization Logic
+    const rowHeight = 33 // 32px + border approx
+    const containerHeight = 600 // Estimate or measure? Ideally dynamic.
+    // For manual virtualization without ResizeObserver on container, strict height is hard.
+    // But `tableContainerRef` is used. We can use it.
+
+    const [containerH, setContainerH] = useState(600)
+
+    useEffect(() => {
+        if (!tableContainerRef.current) return
+        const el = tableContainerRef.current
+        const onScroll = () => setScrollTop(el.scrollTop)
+        const onResize = () => setContainerH(el.clientHeight)
+
+        el.addEventListener('scroll', onScroll)
+        // Initial set
+        setContainerH(el.clientHeight)
+        setScrollTop(el.scrollTop)
+
+        window.addEventListener('resize', onResize)
+
+        return () => {
+            el.removeEventListener('scroll', onScroll)
+            window.removeEventListener('resize', onResize)
+        }
+    }, [])
+
+    const totalRows = table.getRowModel().rows.length
+    const totalHeight = totalRows * rowHeight
+
+    const overscan = 5
+    let startIndex = Math.floor(scrollTop / rowHeight) - overscan
+    startIndex = Math.max(0, startIndex)
+
+    let endIndex = Math.floor((scrollTop + containerH) / rowHeight) + overscan
+    endIndex = Math.min(totalRows, endIndex)
+
+    const virtualRows = []
+    for (let i = startIndex; i < endIndex; i++) {
+        virtualRows.push({ index: i })
+    }
+
+    const paddingTop = startIndex * rowHeight
+    const paddingBottom = (totalRows - endIndex) * rowHeight
+
+    // When used in React Table, `data` is the source. `table.getRowModel().rows` gives all rows (sorted/filtered).
+    // We only render `virtualRows`.
+
     const handleAddRow = async () => {
         // Create optimistic row
         const tempId = crypto.randomUUID()
@@ -340,25 +390,40 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                                     ))
                                 ) : (
                                     table.getRowModel().rows?.length ? (
-                                        table.getRowModel().rows.map((row) => (
-                                            <TableRow
-                                                key={row.id}
-                                                data-state={row.getIsSelected() && "selected"}
-                                                className="group h-[32px] hover:bg-muted/50 transition-colors border-b border-border/50"
-                                            >
-                                                {row.getVisibleCells().map((cell) => (
-                                                    <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top" style={{ width: cell.column.getSize() }}>
-                                                        {flexRender(
-                                                            cell.column.columnDef.cell,
-                                                            cell.getContext()
-                                                        )}
-                                                    </TableCell>
-                                                ))}
-                                                <TableCell className="border-l border-border/50 bg-transparent p-0 min-w-[50px]">
-                                                    <div className="h-full w-full" />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
+                                        <>
+                                            {paddingTop > 0 && (
+                                                <TableRow>
+                                                    <TableCell style={{ height: `${paddingTop}px` }} colSpan={columns.length + 1} className="p-0 border-none" />
+                                                </TableRow>
+                                            )}
+                                            {virtualRows.map((virtualRow) => {
+                                                const row = table.getRowModel().rows[virtualRow.index];
+                                                return (
+                                                    <TableRow
+                                                        key={row.id}
+                                                        data-state={row.getIsSelected() && "selected"}
+                                                        className="group h-[32px] hover:bg-muted/50 transition-colors border-b border-border/50"
+                                                    >
+                                                        {row.getVisibleCells().map((cell) => (
+                                                            <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top" style={{ width: cell.column.getSize() }}>
+                                                                {flexRender(
+                                                                    cell.column.columnDef.cell,
+                                                                    cell.getContext()
+                                                                )}
+                                                            </TableCell>
+                                                        ))}
+                                                        <TableCell className="border-l border-border/50 bg-transparent p-0 min-w-[50px]">
+                                                            <div className="h-full w-full" />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                            {paddingBottom > 0 && (
+                                                <TableRow>
+                                                    <TableCell style={{ height: `${paddingBottom}px` }} colSpan={columns.length + 1} className="p-0 border-none" />
+                                                </TableRow>
+                                            )}
+                                        </>
                                     ) : (
                                         <TableRow>
                                             <TableCell

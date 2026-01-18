@@ -46,7 +46,7 @@ export function SharedSection({ label = "Public" }: SharedSectionProps) {
     if (isLoading) {
         return (
             <div className="mb-2">
-                <div className="flex items-center gap-2 group/title px-3 py-1 text-sm font-medium text-muted-foreground">
+                <div className="text-xs text-muted-foreground px-2 mb-2 pt-4">
                     <span className="truncate">{label}</span>
                 </div>
                 <div className="px-3">

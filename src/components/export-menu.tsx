@@ -66,7 +66,7 @@ export function ExportMenu({
                         toast.error("No database to export")
                         return
                     }
-                    url = `/api/export/csv?databaseId=${databaseId}`
+                    url = `/api/export/csv?pageId=${pageId}`
                     filename = `${pageTitle}.csv`
                     break
             }

@@ -22,7 +22,7 @@ interface PublishedSectionProps {
 export function PublishedSection({ className }: PublishedSectionProps) {
     const [publishedPages, setPublishedPages] = useState<Page[]>([])
     const [loading, setLoading] = useState(true)
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         const fetchPublished = () => {

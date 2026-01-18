@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { parseCSVToDatabase } from "@/lib/import-utils"
+import Papa from "papaparse"
 
 export async function POST(req: NextRequest) {
     try {
@@ -11,28 +11,35 @@ export async function POST(req: NextRequest) {
         }
 
         const formData = await req.formData()
-        const file = formData.get("file") as File | null
+        const file = formData.get("file") as File
         const parentId = formData.get("parentId") as string | null
 
         if (!file) {
-            return NextResponse.json({ error: "File is required" }, { status: 400 })
+            return NextResponse.json({ error: "No file provided" }, { status: 400 })
         }
 
-        const text = await file.text()
-        const { headers, rows } = parseCSVToDatabase(text)
+        const csvText = await file.text()
+        const parseResult = Papa.parse(csvText, { header: true, skipEmptyLines: true })
+
+        if (parseResult.errors.length > 0) {
+            return NextResponse.json({ error: "Invalid CSV format" }, { status: 400 })
+        }
+
+        const rows = parseResult.data as any[]
+        const headers = parseResult.meta.fields || []
 
         if (headers.length === 0) {
-            return NextResponse.json({ error: "Empty or invalid CSV" }, { status: 400 })
+            return NextResponse.json({ error: "CSV has no headers" }, { status: 400 })
         }
 
-        const title = file.name.replace(/\.csv$/, "")
+        const title = file.name.replace(/\.csv$/i, "")
 
-        // 1. Create Database Page
+        // 1. Create Page (Database Container)
         const page = await db.page.create({
             data: {
                 title,
                 userId: session.user.id,
-                parentId: parentId || undefined,
+                parentId: parentId || null,
                 isDatabase: true
             }
         })
@@ -40,117 +47,98 @@ export async function POST(req: NextRequest) {
         // 2. Create Database
         const database = await db.database.create({
             data: {
-                pageId: page.id
+                pageId: page.id,
+                defaultView: "table"
             }
         })
 
         // 3. Create Properties
-        // Assume first column is Title (optional logic, but standard)
-        // Or just create TEXT properties for all columns
-
-        const propertyMap = new Map() // header -> propertyId
+        const propIdMap = new Map<string, string>() // Header -> Property ID
 
         for (let i = 0; i < headers.length; i++) {
-            const name = headers[i]
-            // Guess type? For now default to TEXT
-            const type = "TEXT"
+            const header = headers[i]
+            // First column is TITLE, others TEXT
+            const type = i === 0 ? "TITLE" : "TEXT"
 
             const prop = await db.property.create({
                 data: {
+                    name: header,
+                    type,
                     databaseId: database.id,
-                    name: name,
-                    type: type, // You might want deeper type inference logic here later
                     order: i
                 }
             })
-            propertyMap.set(name, prop.id)
+            propIdMap.set(header, prop.id)
         }
 
-        // 4. Create Rows
+        // 4. Create Rows & Cells
         for (let i = 0; i < rows.length; i++) {
             const rowData = rows[i]
 
-            // Create row (which is also a page/item)
-            // Usually rows have a linked page.
-            // In this schema `DatabaseRow` is main entity? 
-            // Checking `csv/route.ts` export: `database.rows` has `page: { select: { title: true } }`
-            // So a row is linked to a page? Or validation?
-
-            // Export logic:
-            /*
-            model Database {
-                rows        DatabaseRow[]
-            }
-            */
-
-            // I need to check the schema to create a row correctly. 
-            // Based on common Notion clone schema:
-            // A DatabaseRow usually links to a Page (which holds the content/title of the row).
-            // Let's verify `schema.prisma` if possible, but I don't have it open.
-            // Assuming `DatabaseRow` creation involves creating a `Page` first or simultaneously if relational.
-
-            // Let's look at `csv/export`:
-            /*
-              const data = database.rows.map(row => {
-                   // ...
-              })
-            */
-
-            // Import needs to do the reverse.
-            // Let's Create a Page for the row first (standard Notion)
-
-            const rowPage = await db.page.create({
-                data: {
-                    title: "Untitled", // Will set title via property?
-                    userId: session.user.id,
-                    isDatabase: false,
-                    parentId: page.id // Parenting to the database page
-                    // Usually database rows are children of the database page conceptually
-                }
-            })
-
+            // Create Row
             const row = await db.databaseRow.create({
                 data: {
                     databaseId: database.id,
-                    pageId: rowPage.id,
                     order: i
                 }
             })
 
-            // 5. Create Cells
+            // Create Cells
             for (const header of headers) {
-                const propId = propertyMap.get(header)
                 const value = rowData[header]
+                const propId = propIdMap.get(header)
 
-                if (propId) {
-                    await db.cell.create({
-                        data: {
-                            rowId: row.id,
-                            propertyId: propId,
-                            value: value // Simple text value
-                        }
-                    })
+                if (propId && value !== undefined && value !== "") {
+                    // For TITLE: Also create a Page if we want rows to be openable?
+                    // Currently `DatabaseRow` has `pageId` (optional).
+                    // Usually rows ARE pages.
+                    // If it is the TITLE property, let's create the Page for the Row.
+
+                    if (headers.indexOf(header) === 0) {
+                        // Title column -> Create linked Page
+                        const rowPage = await db.page.create({
+                            data: {
+                                title: String(value), // Use as title
+                                userId: session.user.id,
+                                parentId: page.id, // Parent is the Database Page
+                            }
+                        })
+                        // Update Row to link page
+                        await db.databaseRow.update({
+                            where: { id: row.id },
+                            data: { pageId: rowPage.id }
+                        })
+
+                        // Also create Cell for TITLE property
+                        await db.cell.create({
+                            data: {
+                                rowId: row.id,
+                                propertyId: propId,
+                                value: String(value)
+                            }
+                        })
+                    } else {
+                        // Regular TEXT cell
+                        await db.cell.create({
+                            data: {
+                                rowId: row.id,
+                                propertyId: propId,
+                                value: String(value)
+                            }
+                        })
+                    }
                 }
-            }
-
-            // Update row page title if we have a "Name" or "Title" column
-            // Or just the first column
-            const titleCol = headers.find(h => h.toLowerCase() === "name" || h.toLowerCase() === "title") || headers[0]
-            if (titleCol && rowData[titleCol]) {
-                await db.page.update({
-                    where: { id: rowPage.id },
-                    data: { title: rowData[titleCol] }
-                })
             }
         }
 
         return NextResponse.json({
             success: true,
-            pageId: page.id,
-            title: page.title
+            message: "Imported CSV successfully",
+            pageId: page.id
         })
+
     } catch (error) {
-        console.error("CSV import error:", error)
-        return NextResponse.json({ error: "Import failed" }, { status: 500 })
+        console.error("Import error:", error)
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }

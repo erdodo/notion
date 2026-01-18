@@ -219,26 +219,27 @@ export const Navigation = () => {
           isMobile && "w-0"
         )}
       >
-        <button
-          onClick={handleCollapse}
-          type="button"
-          className={cn(
-            "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
-            isMobile && "opacity-100"
-          )}
-        >
-          <ChevronsLeft className="h-6 w-6" />
-        </button>
+
 
         <div className="flex flex-col h-full">
           <div className="p-3 flex-1 overflow-y-auto">
-            <div className="flex items-center gap-x-2 mb-4">
-              <div className="flex items-center gap-x-2 flex-1">
+            <div className="flex items-center justify-between gap-x-2 mb-4">
+              <div className="flex items-center gap-x-1 flex-1">
                 <span className="text-sm font-medium">
                   {session?.user?.name?.split(' ')[0]}'s Notion
                 </span>
+                <NotificationsDropdown />
               </div>
-              <NotificationsDropdown />
+
+              <button
+                onClick={handleCollapse}
+                type="button"
+                className={cn(
+                  "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover/sidebar:opacity-100 transition opacity-100"
+                )}
+              >
+                <ChevronsLeft className="h-6 w-6" />
+              </button>
             </div>
 
             <div className="space-y-1">
@@ -262,40 +263,9 @@ export const Navigation = () => {
                 <span>New Page</span>
               </button>
 
-              <button
-                onClick={handleCreateDatabase}
-                disabled={isCreating}
-                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-              >
-                <Database className="h-4 w-4" />
-                <span>New Database</span>
-              </button>
-
-              <button
-                onClick={() => setIsImportModalOpen(true)}
-                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Import</span>
-              </button>
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-                  >
-                    <Trash className="h-4 w-4" />
-                    <span>Trash</span>
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="p-0 w-72"
-                  side={isMobile ? "bottom" : "right"}
-                >
-                  <TrashBox documents={archivedDocuments} />
-                </PopoverContent>
-              </Popover>
             </div>
+
+            <hr className="my-2" />
 
             <div className="mt-4">
               {/* Favorites Section */}
@@ -307,6 +277,7 @@ export const Navigation = () => {
               {/* Recent Section */}
               <RecentSection />
 
+              <hr className="my-2" />
               {/* Shared Section (Public) */}
               <SharedSection label="Public" />
 
@@ -335,13 +306,40 @@ export const Navigation = () => {
           {/* Bottom Section - Settings */}
           <div className="p-3 border-t bg-secondary/50">
             <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Import</span>
+            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+                >
+                  <Trash className="h-4 w-4" />
+                  <span>Trash</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0 w-72"
+                side={isMobile ? "bottom" : "right"}
+              >
+                <TrashBox documents={archivedDocuments} />
+              </PopoverContent>
+            </Popover>
+            <button
               onClick={settings.onOpen}
               className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
             >
               <Settings className="h-4 w-4" />
               <span>Settings</span>
             </button>
+
+
+
           </div>
+
         </div>
 
         <div
@@ -358,7 +356,7 @@ export const Navigation = () => {
         />
       )}
 
-      {isMobile && (
+      {(
         <div className="absolute top-0 left-0 z-50">
           {isCollapsed && (
             <button

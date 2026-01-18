@@ -11,6 +11,8 @@ import { ExportMenu } from "@/components/export-menu"
 import { recordPageView } from "@/app/(main)/_actions/navigation"
 import { PageRenderer } from "@/components/page/page-renderer"
 import { Banner } from "@/components/banner"
+import { CollaborationProvider } from "@/components/providers/collaboration-provider"
+import { PresenceIndicators } from "@/components/presence-indicators"
 
 export const dynamic = 'force-dynamic'
 
@@ -43,44 +45,47 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Top Navigation */}
-      <nav className="flex items-center justify-between px-3 py-2 w-full border-b bg-background z-50">
-        <Breadcrumbs pageId={page.id} />
-        <div className="flex items-center gap-2">
-          <DocumentNavbarActions
-            pageId={page.id}
-            pageTitle={page.title}
-            isPublished={page.isPublished}
+    <CollaborationProvider documentId={documentId} key={documentId}>
+      <div className="h-full flex flex-col">
+        {/* Top Navigation */}
+        <nav className="flex items-center justify-between px-3 py-2 w-full border-b bg-background z-50">
+          <Breadcrumbs pageId={page.id} />
+          <div className="flex items-center gap-2">
+            <PresenceIndicators />
+            <DocumentNavbarActions
+              pageId={page.id}
+              pageTitle={page.title}
+              isPublished={page.isPublished}
+            />
+            <ExportMenu
+              pageId={page.id}
+              pageTitle={page.title}
+              isDatabase={page.isDatabase}
+              databaseId={database?.id}
+            />
+            {!page.isArchived && (
+              <FavoriteButton pageId={page.id} />
+            )}
+          </div>
+        </nav >
+
+        {page.isArchived && (
+          <Banner documentId={documentId} />
+        )}
+
+        {page.isDatabase && database ? (
+          <DatabaseView database={database as any} />
+        ) : (
+          <PageRenderer
+            page={page}
+            row={row as any}
           />
-          <ExportMenu
-            pageId={page.id}
-            pageTitle={page.title}
-            isDatabase={page.isDatabase}
-            databaseId={database?.id}
-          />
-          {!page.isArchived && (
-            <FavoriteButton pageId={page.id} />
-          )}
+        )}
+
+        <div className="pb-40">
+          <BacklinksPanel pageId={page.id} />
         </div>
-      </nav >
-
-      {page.isArchived && (
-        <Banner documentId={documentId} />
-      )}
-
-      {page.isDatabase && database ? (
-        <DatabaseView database={database as any} />
-      ) : (
-        <PageRenderer
-          page={page}
-          row={row as any}
-        />
-      )}
-
-      <div className="pb-40">
-        <BacklinksPanel pageId={page.id} />
       </div>
-    </div>
+    </CollaborationProvider>
   )
 }

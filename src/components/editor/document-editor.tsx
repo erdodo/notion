@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { useDebouncedCallback } from "use-debounce"
 import { updateDocument } from "@/app/(main)/_actions/documents"
-import { pusherClient } from "@/lib/pusher"
+import { pusherClient } from "@/lib/pusher-client"
 
 // Import BlockNote editor dynamically to prevent SSR issues
 const BlockNoteEditorComponent = dynamic(
