@@ -322,3 +322,25 @@ export async function updateCellByPosition(propertyId: string, rowId: string, va
 
     return cell
 }
+
+// Board View Actions
+export async function moveRowToGroup(rowId: string, propertyId: string, groupId: string) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+
+    // Find the cell for this row and property
+    // We update the cell value to the new group ID (or name)
+    await updateCellByPosition(propertyId, rowId, groupId)
+}
+
+export async function updateDatabaseDefaultView(databaseId: string, view: string) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+
+    await db.database.update({
+        where: { id: databaseId },
+        data: { defaultView: view }
+    })
+
+    revalidatePath(`/documents`)
+}

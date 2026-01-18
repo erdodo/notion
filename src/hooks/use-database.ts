@@ -45,6 +45,36 @@ interface DatabaseState {
     // UI State
     editingCell: { propertyId: string, rowId: string } | null
     setEditingCell: (cell: { propertyId: string, rowId: string } | null) => void
+
+    // View State
+    currentView: 'table' | 'list' | 'board' | 'calendar' | 'gallery'
+    setCurrentView: (view: 'table' | 'list' | 'board' | 'calendar' | 'gallery') => void
+
+    // Board View Configuration
+    boardGroupByProperty: string | null
+    setBoardGroupByProperty: (propertyId: string | null) => void
+    boardHiddenGroups: string[]
+    toggleBoardGroup: (optionId: string) => void
+
+    // Calendar View Configuration
+    calendarDateProperty: string | null
+    setCalendarDateProperty: (propertyId: string | null) => void
+    calendarView: 'month' | 'week'
+    setCalendarView: (view: 'month' | 'week') => void
+    calendarDate: Date
+    setCalendarDate: (date: Date) => void
+
+    // Gallery View Configuration
+    galleryCardSize: 'small' | 'medium' | 'large'
+    setGalleryCardSize: (size: string) => void
+    galleryCoverProperty: string | null
+    setGalleryCoverProperty: (propertyId: string | null) => void
+    galleryFitImage: boolean
+    toggleGalleryFitImage: () => void
+
+    // Shared Card Configuration
+    visibleProperties: string[]
+    togglePropertyVisibility: (propertyId: string) => void
 }
 
 export const useDatabase = create<DatabaseState>((set) => ({
@@ -93,4 +123,44 @@ export const useDatabase = create<DatabaseState>((set) => ({
 
     editingCell: null,
     setEditingCell: (cell) => set({ editingCell: cell }),
+
+    // View State Initial Values
+    currentView: 'table',
+    setCurrentView: (view) => set({ currentView: view }),
+
+    boardGroupByProperty: null,
+    setBoardGroupByProperty: (propertyId) => set({ boardGroupByProperty: propertyId }),
+    boardHiddenGroups: [],
+    toggleBoardGroup: (optionId) => set((state) => {
+        const isHidden = state.boardHiddenGroups.includes(optionId)
+        return {
+            boardHiddenGroups: isHidden
+                ? state.boardHiddenGroups.filter(id => id !== optionId)
+                : [...state.boardHiddenGroups, optionId]
+        }
+    }),
+
+    calendarDateProperty: null,
+    setCalendarDateProperty: (propertyId) => set({ calendarDateProperty: propertyId }),
+    calendarView: 'month',
+    setCalendarView: (view) => set({ calendarView: view }),
+    calendarDate: new Date(),
+    setCalendarDate: (date) => set({ calendarDate: date }),
+
+    galleryCardSize: 'medium',
+    setGalleryCardSize: (size) => set({ galleryCardSize: size as any }),
+    galleryCoverProperty: null,
+    setGalleryCoverProperty: (propertyId) => set({ galleryCoverProperty: propertyId }),
+    galleryFitImage: false,
+    toggleGalleryFitImage: () => set((state) => ({ galleryFitImage: !state.galleryFitImage })),
+
+    visibleProperties: [],
+    togglePropertyVisibility: (propertyId) => set((state) => {
+        const isVisible = state.visibleProperties.includes(propertyId)
+        return {
+            visibleProperties: isVisible
+                ? state.visibleProperties.filter(id => id !== propertyId)
+                : [...state.visibleProperties, propertyId]
+        }
+    }),
 }))

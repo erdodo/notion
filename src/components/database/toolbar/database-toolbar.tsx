@@ -1,59 +1,38 @@
-
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    DropdownMenuCheckboxItem
-} from "@/components/ui/dropdown-menu"
 import { Filter, ArrowUpDown, MoreHorizontal, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useDatabase } from "@/hooks/use-database"
 import { FilterPopover } from "./filter-popover"
 import { SortPopover } from "./sort-popover"
+import { ViewSwitcher } from "./view-switcher"
+import { ViewOptions } from "./view-options"
+import { Database, Property } from "@prisma/client"
 
 interface DatabaseToolbarProps {
-    view: string
-    onViewChange: (view: string) => void
-    properties: any[]
+    database: Database & { properties: Property[] }
 }
 
-export function DatabaseToolbar({ view, onViewChange, properties }: DatabaseToolbarProps) {
+export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
     const { searchQuery, setSearchQuery } = useDatabase()
 
     return (
-        <div className="flex items-center justify-between px-2 py-3 border-b mb-2">
-            <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between px-2 py-3 border-b mb-2 gap-4">
+            <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
                 {/* View Switcher */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 gap-1 font-medium px-2">
-                            {view === 'table' ? 'Table' : 'List'} View
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuLabel>Views</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuCheckboxItem checked={view === 'table'} onCheckedChange={() => onViewChange('table')}>
-                            Table
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem checked={view === 'list'} onCheckedChange={() => onViewChange('list')}>
-                            List
-                        </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <ViewSwitcher />
 
-                <div className="w-[1px] h-4 bg-border mx-2" />
+                <div className="w-[1px] h-4 bg-border mx-2 shrink-0" />
 
-                <FilterPopover properties={properties} />
-                <SortPopover properties={properties} />
+                <ViewOptions database={database} />
+
+                <div className="w-[1px] h-4 bg-border mx-2 shrink-0" />
+
+                <FilterPopover properties={database.properties} />
+                <SortPopover properties={database.properties} />
             </div>
 
-            <div className="flex items-center gap-1">
-                <div className="relative">
+            <div className="flex items-center gap-1 shrink-0">
+                <div className="relative hidden sm:block">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                     <Input
                         placeholder="Search"
