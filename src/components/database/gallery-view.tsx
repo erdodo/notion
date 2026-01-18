@@ -2,13 +2,14 @@
 
 import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
-import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { GalleryCard } from "./gallery-card"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
 import { addRow } from "@/app/(main)/_actions/database"
+import { useEffect } from "react"
 
 interface GalleryViewProps {
     database: Database & {
@@ -25,7 +26,7 @@ export function GalleryView({ database }: GalleryViewProps) {
         setSelectedRowId
     } = useDatabase()
 
-    const filteredRows = useFilteredSortedData(database)
+    const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
 
     const gridClasses = {
         small: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
@@ -48,6 +49,13 @@ export function GalleryView({ database }: GalleryViewProps) {
 
         await addRow(database.id)
     }
+
+
+    useEffect(() => {
+        const handleAddEvent = () => handleAddRow()
+        window.addEventListener('database-add-row', handleAddEvent)
+        return () => window.removeEventListener('database-add-row', handleAddEvent)
+    }, [])
 
     return (
         <div className="p-4 h-full overflow-y-auto">

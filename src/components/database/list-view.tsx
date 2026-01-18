@@ -1,9 +1,10 @@
 "use client"
 
 import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
-import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { ListItem } from "./list-item"
 import { Plus } from "lucide-react"
+import { useEffect } from "react"
 
 import { useDatabase } from "@/hooks/use-database"
 import { addRow } from "@/app/(main)/_actions/database"
@@ -17,7 +18,7 @@ interface ListViewProps {
 
 export function ListView({ database }: ListViewProps) {
     const { setSelectedRowId } = useDatabase()
-    const filteredRows = useFilteredSortedData(database)
+    const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
 
     const handleAddRow = async () => {
         const tempId = crypto.randomUUID()
@@ -34,6 +35,13 @@ export function ListView({ database }: ListViewProps) {
 
         await addRow(database.id)
     }
+
+
+    useEffect(() => {
+        const handleAddEvent = () => handleAddRow()
+        window.addEventListener('database-add-row', handleAddEvent)
+        return () => window.removeEventListener('database-add-row', handleAddEvent)
+    }, [])
 
     return (
         <div className="p-2 h-full overflow-y-auto">

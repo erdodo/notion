@@ -10,6 +10,7 @@ import { ListView } from "./list-view"
 import { RowDetailModal } from "./row-detail-modal"
 import { useDatabase } from "@/hooks/use-database"
 import { DatabaseToolbar } from "./toolbar/database-toolbar"
+import { RowDetailDrawer } from "./row-detail-drawer"
 import { useEffect } from "react"
 
 interface DatabaseViewProps {
@@ -26,7 +27,8 @@ export function DatabaseView({ database }: DatabaseViewProps) {
         return <div className="p-4 text-muted-foreground">Database not found</div>
     }
 
-    const { currentView, selectedRowId, setSelectedRowId } = useDatabase()
+
+    const { currentView, selectedRowId, setSelectedRowId, openMode } = useDatabase()
 
     // Find selected row for modal (safely)
     const rows = database.rows || []
@@ -50,12 +52,21 @@ export function DatabaseView({ database }: DatabaseViewProps) {
             </div>
 
             {selectedRow && (
-                <RowDetailModal
-                    row={selectedRow}
-                    properties={database.properties}
-                    isOpen={!!selectedRow}
-                    onClose={() => setSelectedRowId(null)}
-                />
+                openMode === 'side' ? (
+                    <RowDetailDrawer
+                        row={selectedRow}
+                        database={database}
+                        isOpen={!!selectedRow}
+                        onClose={() => setSelectedRowId(null)}
+                    />
+                ) : (
+                    <RowDetailModal
+                        row={selectedRow}
+                        database={database}
+                        isOpen={!!selectedRow}
+                        onClose={() => setSelectedRowId(null)}
+                    />
+                )
             )}
         </div>
     )

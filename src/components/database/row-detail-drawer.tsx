@@ -1,33 +1,30 @@
 "use client"
 
 import { DatabaseRow, Cell, Property, Page, Database } from "@prisma/client"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PageRenderer } from "@/components/page/page-renderer"
 
-interface RowDetailModalProps {
+interface RowDetailDrawerProps {
     row: DatabaseRow & { cells: Cell[]; page: Page | null }
     database: Database & { properties: Property[] }
     isOpen: boolean
     onClose: () => void
 }
 
-export function RowDetailModal({ row, database, isOpen, onClose }: RowDetailModalProps) {
+export function RowDetailDrawer({ row, database, isOpen, onClose }: RowDetailDrawerProps) {
     if (!row.page) {
         return null
-        // Or render a spinner?
     }
 
-    // Construct the row object with database for PageProperties
     const rowWithDatabase = {
         ...row,
         database: database
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-4xl h-[85vh] overflow-hidden flex flex-col p-0 gap-0 border-none bg-background shadow-2xl">
-                <DialogTitle className="sr-only">{row.page.title}</DialogTitle>
-
+        <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <SheetContent className="w-[900px] sm:w-[540px] md:w-[700px] lg:w-[900px] sm:max-w-none p-0 border-l border-border/50 bg-background shadow-2xl flex flex-col h-full">
+                <SheetTitle className="sr-only">{row.page.title}</SheetTitle>
                 <div className="flex-1 h-full overflow-hidden">
                     <PageRenderer
                         page={row.page}
@@ -35,7 +32,7 @@ export function RowDetailModal({ row, database, isOpen, onClose }: RowDetailModa
                         isPreview={true}
                     />
                 </div>
-            </DialogContent>
-        </Dialog>
+            </SheetContent>
+        </Sheet>
     )
 }

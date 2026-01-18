@@ -41,10 +41,17 @@ export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                </Button>
-                <Button size="sm" className="h-7 text-xs bg-primary text-primary-foreground ml-2">
+                {/* Removed useless multiple horizontal button */}
+                <Button
+                    size="sm"
+                    className="h-7 text-xs bg-primary text-primary-foreground ml-2"
+                    onClick={() => {
+                        // TODO: trigger add row for current view
+                        // We will implement a global trigger mechanism next.
+                        const event = new CustomEvent('database-add-row')
+                        window.dispatchEvent(event)
+                    }}
+                >
                     New
                 </Button>
             </div>

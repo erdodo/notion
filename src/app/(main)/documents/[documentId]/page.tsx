@@ -1,10 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { getDocument } from "@/app/(main)/_actions/documents"
-import { DocumentHeader } from "@/components/editor/document-header"
-import DocumentEditor from "@/components/editor/document-editor"
-import { Banner } from "@/components/banner"
-import { getDatabase } from "@/app/(main)/_actions/database"
+import { getDatabase, getRowDetails } from "@/app/(main)/_actions/database"
 import { DatabaseView } from "@/components/database/database-view"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { BacklinksPanel } from "@/components/backlinks-panel"
@@ -12,6 +9,8 @@ import { FavoriteButton } from "@/components/favorite-button"
 import { DocumentNavbarActions } from "@/components/document-navbar-actions"
 import { ExportMenu } from "@/components/export-menu"
 import { recordPageView } from "@/app/(main)/_actions/navigation"
+import { PageRenderer } from "@/components/page/page-renderer"
+import { Banner } from "@/components/banner"
 
 export const dynamic = 'force-dynamic'
 
@@ -36,6 +35,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
   }
 
   const database = page.isDatabase ? await getDatabase(page.id) : null
+  const row = page.databaseRow ? await getRowDetails(page.databaseRow.id) : undefined
 
   // Record view
   if (session?.user) {
@@ -68,42 +68,19 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
       {page.isArchived && (
         <Banner documentId={documentId} />
       )}
-      <DocumentHeader page={page} />
-
-      {/* Database Properties Section */}
-      {page.databaseRow && (
-        <RowPropertiesLoader rowId={page.databaseRow.id} />
-      )}
 
       {page.isDatabase && database ? (
         <DatabaseView database={database as any} />
       ) : (
-        <DocumentEditor
-          documentId={page.id}
-          initialContent={page.content}
-          editable={true}
+        <PageRenderer
+          page={page}
+          row={row as any}
         />
       )}
 
       <div className="pb-40">
         <BacklinksPanel pageId={page.id} />
       </div>
-    </div>
-  )
-}
-
-// Server component to fetch row details
-async function RowPropertiesLoader({ rowId }: { rowId: string }) {
-  const { getRowDetails } = await import("@/app/(main)/_actions/database")
-  const row = await getRowDetails(rowId)
-
-  if (!row) return null
-
-  const { PageProperties } = await import("@/components/database/page-properties")
-
-  return (
-    <div className="px-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
-      <PageProperties row={row as any} />
     </div>
   )
 }

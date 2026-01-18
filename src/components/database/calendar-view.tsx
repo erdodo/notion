@@ -2,12 +2,13 @@
 
 import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
-import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { MonthGrid } from "./calendar-month-grid"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { addMonths, format, subMonths } from "date-fns"
 import { addRow, updateCellByPosition } from "@/app/(main)/_actions/database"
+import { useEffect } from "react"
 
 interface CalendarViewProps {
     database: Database & {
@@ -25,7 +26,7 @@ export function CalendarView({ database }: CalendarViewProps) {
         setCalendarView
     } = useDatabase()
 
-    const filteredRows = useFilteredSortedData(database)
+    const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
 
     // Resolve Date Property
     // Default to first DATE property or Created Time
@@ -66,6 +67,13 @@ export function CalendarView({ database }: CalendarViewProps) {
             await updateCellByPosition(dateProperty.id, createdRow.id, date)
         }
     }
+
+
+    useEffect(() => {
+        const handleAddEvent = () => handleAddRow(calendarDate) // Use current calendar date or today
+        window.addEventListener('database-add-row', handleAddEvent)
+        return () => window.removeEventListener('database-add-row', handleAddEvent)
+    }, [calendarDate])
 
     return (
         <div className="flex flex-col h-full bg-background rounded-md">

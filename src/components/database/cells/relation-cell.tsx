@@ -46,7 +46,7 @@ export function RelationCell({
         } else {
             setLinkedRows([])
         }
-    }, [linkedRowIds, config?.targetDatabaseId])
+    }, [JSON.stringify(linkedRowIds), config?.targetDatabaseId])
 
     // Popover açılınca mevcut rows'ları fetch et
     // Note: fetchDatabaseRows implementation needs to be defined or imported.

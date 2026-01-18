@@ -16,11 +16,12 @@ import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
 import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
-import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { addRow, updateCellByPosition, updateProperty } from "@/app/(main)/_actions/database"
 import { BoardColumn } from "./board-column"
 import { BoardCard } from "./board-card"
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react"
 
 interface BoardViewProps {
     database: Database & {
@@ -31,7 +32,8 @@ interface BoardViewProps {
 
 export function BoardView({ database }: BoardViewProps) {
     const { boardGroupByProperty } = useDatabase()
-    const filteredRows = useFilteredSortedData(database)
+    // Cast result to FilteredDataResult and use sortedRows
+    const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
 
     const [activeId, setActiveId] = useState<string | null>(null)
 
@@ -223,6 +225,18 @@ export function BoardView({ database }: BoardViewProps) {
         // Server update
         await updateProperty(property.id, { options: newOptions })
     }
+
+
+
+    useEffect(() => {
+        const handleAddEvent = () => {
+            // Default to first group or uncategorized
+            const firstGroup = groups[0]?.id || 'uncategorized'
+            handleAddRow(firstGroup)
+        }
+        window.addEventListener('database-add-row', handleAddEvent)
+        return () => window.removeEventListener('database-add-row', handleAddEvent)
+    }, [groups])
 
     return (
         <DndContext

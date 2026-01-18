@@ -26,12 +26,14 @@ import { AddRowButton } from "./add-row-button"
 import { AddPropertyButton } from "./add-property-button"
 import { updateCellByPosition, addRow, addProperty, updateProperty } from "@/app/(main)/_actions/database"
 import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
-import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { cn } from "@/lib/utils"
 import { PropertyConfigDialog } from "./property-config-dialog"
 import { useDatabase } from "@/hooks/use-database"
 import { DndContext, closestCenter, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from "@dnd-kit/core"
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
+import { ChevronRight, ChevronDown } from "lucide-react"
+import { GroupSection } from "./shared/group-section"
 
 interface TableViewProps {
     database: Database & {
@@ -49,18 +51,52 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
     const { focusedCell, setFocusedCell, setEditingCell } = useDatabase()
     const tableContainerRef = useRef<HTMLDivElement>(null)
 
-    const filteredRows = useFilteredSortedData(database)
+
+
+    // Cast result to FilteredDataResult because the hook return might be any[] or object based on changes
+    // But since we own both, we know it returns object now.
+    const { sortedRows, groupedRows, isGrouped } = useFilteredSortedData(database) as unknown as FilteredDataResult
 
     // Update data memo to use filtered rows
+    // Since React Table expects flat data, we might need a workaround for grouping if we want to use React Table's features fully.
+    // However, React Table v8 supports grouping but requires a different data shape.
+    // For simplicity and speed, we can:
+    // 1. If NOT grouped, pass sortedRows to table.
+    // 2. If grouped, we render multiple tables? Or one table with sub-headers?
+    // A common pattern is rendering a Table for each group if we want custom group headers.
+    // OR we can flatten the data with group headers as rows? No, that messes up columns.
+    // Let's go with: TableView renders Group Accordions if grouped, each containing a Table (or just rows).
+    // If we use multiple tables, column widths must sync. `min-w-full` helps.
+    // Actually, preserving one table instance is better for column state.
+    // Let's feed `sortedRows` to `useReactTable` always, but we handle rendering differently?
+    // No, if we just feed sortedRows, we lose grouping.
+    // Let's start simple: If grouped, we will render a `GroupedTableView` component (inline here).
+    // But we need shared column state (width, order).
+
+    // Better approach for minimal disruption:
+    // Use `sortedRows` as the default `data` for the main table instance so definitions are valid.
+    // But in the rendering part (`TableBody`), we iterate over `groupedRows` if `isGrouped`.
+    // Wait, React Table expects its own rows.
+    // If we bypass React Table's row model for rendering, we lose some features but basic cell rendering works.
+    // Let's try: `data` is `sortedRows` (flat).
+    // In `TableBody`, if !isGrouped, render `table.getRowModel().rows`.
+    // If isGrouped, we need to map `groupedRows` and for each group, find corresponding rows in `table.getRowModel().rows`.
+    // We can match by ID.
+
     const data = useMemo(() => {
-        return filteredRows.map(row => {
+        return sortedRows.map(row => {
             const rowData: any = { id: row.id, originalRow: row }
-            row.cells.forEach(cell => {
-                rowData[cell.propertyId] = cell.value
-            })
-            return rowData
+            if (row.cells) { // Check if converted data or raw
+                // It seems sortedRows from hook is already converted in `useFilteredSortedData` implementation above?
+                // Let's check hook implementation.
+                // Hook returns: `rows` which are mapped with `row.cells.forEach...`.
+                // So sortedRows are already flat objects with properties.
+                return row
+            }
+            // Fallback if hook returned raw DB rows
+            return row
         })
-    }, [filteredRows])
+    }, [sortedRows])
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
         return database.properties.map(property => ({
@@ -146,7 +182,14 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         await addRow(database.id)
     }
 
+
     // Keyboard Navigation
+    useEffect(() => {
+        const handleAddEvent = () => handleAddRow()
+        window.addEventListener('database-add-row', handleAddEvent)
+        return () => window.removeEventListener('database-add-row', handleAddEvent)
+    }, [handleAddRow])
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!focusedCell) return
@@ -255,6 +298,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
 
     return (
         <DndContext
+            id="table-view-dnd"
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
@@ -285,37 +329,47 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                                 ))}
                             </TableHeader>
                             <TableBody>
-                                {table.getRowModel().rows?.length ? (
-                                    table.getRowModel().rows.map((row) => (
-                                        <TableRow
-                                            key={row.id}
-                                            data-state={row.getIsSelected() && "selected"}
-                                            className="group h-[32px] hover:bg-muted/50 transition-colors"
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top">
-                                                    {flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext()
-                                                    )}
-                                                </TableCell>
-                                            ))}
-                                            <TableCell className="border-l border-border/50 bg-transparent p-0">
-                                                <div className="h-full w-full" />
-                                            </TableCell>
-                                        </TableRow>
+                                {isGrouped ? (
+                                    groupedRows.map((group) => (
+                                        <GroupSection
+                                            key={group.groupKey}
+                                            group={group}
+                                            table={table}
+                                            columns={columns}
+                                        />
                                     ))
                                 ) : (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={columns.length + 1}
-                                            className="h-24 text-center text-muted-foreground text-sm"
-                                        >
-                                            No entries.
-                                        </TableCell>
-                                    </TableRow>
+                                    table.getRowModel().rows?.length ? (
+                                        table.getRowModel().rows.map((row) => (
+                                            <TableRow
+                                                key={row.id}
+                                                data-state={row.getIsSelected() && "selected"}
+                                                className="group h-[32px] hover:bg-muted/50 transition-colors border-b border-border/50"
+                                            >
+                                                {row.getVisibleCells().map((cell) => (
+                                                    <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top" style={{ width: cell.column.getSize() }}>
+                                                        {flexRender(
+                                                            cell.column.columnDef.cell,
+                                                            cell.getContext()
+                                                        )}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell className="border-l border-border/50 bg-transparent p-0 min-w-[50px]">
+                                                    <div className="h-full w-full" />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={columns.length + 1}
+                                                className="h-24 text-center text-muted-foreground text-sm"
+                                            >
+                                                No entries.
+                                            </TableCell>
+                                        </TableRow>
+                                    )
                                 )}
-
                             </TableBody>
                         </Table>
                     </div>
@@ -462,5 +516,8 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
                 onPropertyUpdate={onPropertyUpdate}
             />
         </div>
+
     )
 }
+
+
