@@ -5,15 +5,43 @@ import { format } from "date-fns"
 import { Check, Link as LinkIcon, Calendar, Type, Hash, List, Tag } from "lucide-react"
 import { cn } from "@/lib/utils"
 // import { Badge } from "@/components/ui/badge" 
+import { RelationCell } from "@/components/database/cells/relation-cell"
+import { RollupCell } from "@/components/database/cells/rollup-cell"
+import { FormulaCell } from "@/components/database/cells/formula-cell"
+import { RelationConfig } from "@/lib/relation-service"
+import { RollupConfig } from "@/lib/rollup-service"
 
 interface PropertyValueProps {
     property: Property
     value: any
     compact?: boolean
+    rowId?: string
 }
 
-export function PropertyValue({ property, value, compact }: PropertyValueProps) {
-    if (value === null || value === undefined) {
+export function PropertyValue({ property, value, compact, rowId }: PropertyValueProps) {
+    // RowId is needed for advanced cells, but PropertyValue currently only gets property and value.
+    // We need to refactor PropertyValue to accept rowId if we want to use the smart cells that fetch data.
+    // However, existing usages might not pass rowId.
+    // For now, let's assume value might contain what we need OR checking if we can get rowId context.
+    // Actually, the new cells (RelationCell etc) take rowId and propertyId and fetch their own data or use value.
+    // If PropertyValue is used in a context where we want "display only" from pre-fetched data (like in a list item), 
+    // we might need to support passing just the value.
+    // BUT the new cells are designed to be self-contained/interactive.
+    // Let's check where PropertyValue is used. It is used in TableView, BoardView etc.
+    // Just looking at the props `value`, it seems we might be missing rowId here.
+
+    // TEMPORARY FIX: We will return simple representation if rowId is missing, 
+    // but ideally we should update all call sites to pass rowId. 
+    // But since I cannot easily update all call sites in one go without reading them, 
+    // I will add optional rowId to props and use it if available.
+
+    // Wait, let's look at the usage in `table-view.tsx`.
+
+    // const rowId = (value as any)?.rowId // Check if value object has rowId attached? Unlikely. // This line is now redundant as rowId is passed as a prop.
+
+    // I will look at adding rowId to props.
+
+    if ((value === null || value === undefined) && ['TEXT', 'NUMBER', 'SELECT', 'MULTI_SELECT', 'DATE', 'URL', 'EMAIL', 'PHONE'].includes(property.type)) {
         return <span className="text-muted-foreground/50 text-xs">Empty</span>
     }
 
@@ -74,6 +102,38 @@ export function PropertyValue({ property, value, compact }: PropertyValueProps) 
                     {!compact && <LinkIcon className="h-3 w-3" />}
                     <span className="truncate max-w-[150px]">{urlStr}</span>
                 </a>
+            )
+
+        case 'RELATION':
+            if (!rowId) return <span className="text-xs text-muted-foreground">No context</span>
+            return (
+                <RelationCell
+                    propertyId={property.id}
+                    rowId={rowId}
+                    value={value}
+                    config={property.relationConfig as unknown as RelationConfig}
+                    editable={!compact}
+                />
+            )
+
+        case 'ROLLUP':
+            if (!rowId) return <span className="text-xs text-muted-foreground">No context</span>
+            return (
+                <RollupCell
+                    propertyId={property.id}
+                    rowId={rowId}
+                    config={property.rollupConfig as unknown as RollupConfig}
+                />
+            )
+
+        case 'FORMULA':
+            if (!rowId) return <span className="text-xs text-muted-foreground">No context</span>
+            return (
+                <FormulaCell
+                    propertyId={property.id}
+                    rowId={rowId}
+                    config={property.formulaConfig as any}
+                />
             )
 
         default:

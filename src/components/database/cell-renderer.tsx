@@ -8,7 +8,12 @@ import { DateCell } from "./cells/date-cell"
 import { CheckboxCell } from "./cells/checkbox-cell"
 import { UrlCell } from "./cells/url-cell"
 import { CreatedTimeCell, UpdatedTimeCell } from "./cells/time-cells"
+import { RelationCell } from "./cells/relation-cell"
+import { RollupCell } from "./cells/rollup-cell"
+import { FormulaCell } from "./cells/formula-cell"
 import { CellProps } from "./cells/types"
+import { RelationConfig } from "@/lib/relation-service"
+import { RollupConfig } from "@/lib/rollup-service"
 
 // Map other types to TextCell for now if implementation missing
 const PlaceholderCell = TextCell
@@ -31,6 +36,25 @@ export function CellRenderer(props: CellProps) {
         case 'PHONE': return <PlaceholderCell {...props} />
         case 'CREATED_TIME': return <CreatedTimeCell {...props} />
         case 'UPDATED_TIME': return <UpdatedTimeCell {...props} />
+        case 'RELATION':
+            return <RelationCell
+                propertyId={props.propertyId}
+                rowId={props.rowId}
+                value={props.cell?.value}
+                config={(props.column.columnDef.meta as any)?.property?.relationConfig as unknown as RelationConfig}
+            />
+        case 'ROLLUP':
+            return <RollupCell
+                propertyId={props.propertyId}
+                rowId={props.rowId}
+                config={(props.column.columnDef.meta as any)?.property?.rollupConfig as unknown as RollupConfig}
+            />
+        case 'FORMULA':
+            return <FormulaCell
+                propertyId={props.propertyId}
+                rowId={props.rowId}
+                config={(props.column.columnDef.meta as any)?.property?.formulaConfig}
+            />
         default: return <TextCell {...props} />
     }
 }

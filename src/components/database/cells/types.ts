@@ -10,4 +10,5 @@ export interface CellProps {
     startEditing: () => void
     stopEditing: () => void
     updateValue: (value: any) => void
+    row?: any // Optional row object for direct access
 }

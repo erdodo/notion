@@ -8,10 +8,11 @@ import { ImageIcon } from "lucide-react"
 
 interface GalleryCardProps {
     row: DatabaseRow & { cells: Cell[] }
-    properties: Property[]
+    properties: Property[] // Full properties to render fields
     coverPropertyId: string | null
     fitImage: boolean
     size: 'small' | 'medium' | 'large'
+    onClick?: () => void
 }
 
 export function GalleryCard({
@@ -19,7 +20,8 @@ export function GalleryCard({
     properties,
     coverPropertyId,
     fitImage,
-    size
+    size,
+    onClick
 }: GalleryCardProps) {
 
     // Resolve Cover Image
@@ -46,7 +48,10 @@ export function GalleryCard({
     }
 
     return (
-        <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow group">
+        <Card
+            className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow group"
+            onClick={onClick}
+        >
             {/* Cover Image Area */}
             <div className={cn(
                 "bg-muted relative w-full overflow-hidden",

@@ -3,17 +3,19 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import { FileText, Loader2 } from "lucide-react"
+import { FileText, Loader2, Plus, Database } from "lucide-react"
 import { useSearch } from "@/hooks/use-search"
 import { searchPages } from "@/actions/page"
+import { createDocument } from "@/app/(main)/_actions/documents"
+import { createDatabase } from "@/app/(main)/_actions/database"
 import { useDebounce } from "use-debounce"
 import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command"
 
 interface SearchResult {
@@ -102,6 +104,26 @@ export const SearchCommand = () => {
     }
   }
 
+  const onSelectNewPage = async () => {
+    try {
+      const doc = await createDocument()
+      router.push(`/documents/${doc.id}`)
+      onClose()
+    } catch (error) {
+      console.error("Failed to create page", error)
+    }
+  }
+
+  const onSelectNewDatabase = async () => {
+    try {
+      const { page } = await createDatabase()
+      router.push(`/documents/${page.id}`)
+      onClose()
+    } catch (error) {
+      console.error("Failed to create database", error)
+    }
+  }
+
   if (!isMounted) {
     return null
   }
@@ -122,9 +144,21 @@ export const SearchCommand = () => {
           ) : searchQuery.trim().length > 0 ? (
             "No results found."
           ) : (
-            "Start typing to search..."
+            "Start typing to search or select an action..."
           )}
         </CommandEmpty>
+
+        <CommandGroup heading="Actions">
+          <CommandItem onSelect={onSelectNewPage} value="new page /page">
+            <Plus className="mr-2 h-4 w-4" />
+            <span>New Page</span>
+          </CommandItem>
+          <CommandItem onSelect={onSelectNewDatabase} value="new database /database">
+            <Database className="mr-2 h-4 w-4" />
+            <span>New Database</span>
+          </CommandItem>
+        </CommandGroup>
+
         {results.length > 0 && (
           <CommandGroup heading="Pages">
             {results.map((page) => (

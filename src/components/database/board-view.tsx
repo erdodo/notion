@@ -17,6 +17,7 @@ import { createPortal } from "react-dom"
 import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
+import { addRow, updateCellByPosition, updateProperty } from "@/app/(main)/_actions/database"
 import { BoardColumn } from "./board-column"
 import { BoardCard } from "./board-card"
 import { Button } from "@/components/ui/button"
@@ -154,6 +155,74 @@ export function BoardView({ database }: BoardViewProps) {
 
     const activeRow = activeId ? filteredRows.find(r => r.id === activeId) : null
 
+    const handleAddRow = async (groupId: string) => {
+        // Prepare initial cell values if necessary
+        // For a board view, we want to set the grouping property to the column's group
+        const groupByPropId = boardGroupByProperty
+
+        const tempId = crypto.randomUUID()
+        const newRow: any = {
+            id: tempId,
+            databaseId: database.id,
+            pageId: null,
+            order: database.rows.length,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            cells: []
+        }
+
+        // Optimistically add row (Note: cells are empty initially)
+        addOptimisticRow(newRow)
+
+        // Server Call
+        const createdRow = await addRow(database.id)
+
+        // If we have a group ID and it's not uncategorized, set the property
+        if (groupByPropId && groupId !== 'uncategorized') {
+            // Find the option
+            const property = database.properties.find(p => p.id === groupByPropId)
+            // Construct value based on property type (assuming SELECT)
+            let value: any = groupId // Default to string ID/Name
+
+            if (property?.type === 'SELECT' || property?.type === 'MULTI_SELECT') {
+                const options = (property.options as any[]) || []
+                const option = options.find((o: any) => o.id === groupId || o.name === groupId)
+                if (option) {
+                    value = { id: option.id, name: option.name, color: option.color }
+                }
+            }
+
+            // Optimistic update cell (complex without current row in state, but row just added)
+            // We can just trigger server update. The UI might lag slightly or we use updateCell if we had row index.
+            // updateCell(tempId, groupByPropId, value) -> won't work easily as tempId might mismatch or race.
+            // Rely on server update for the cell value
+            await updateCellByPosition(groupByPropId, createdRow.id, value)
+        }
+    }
+
+    const handleAddGroup = async () => {
+        const groupByPropId = boardGroupByProperty
+        if (!groupByPropId) return
+
+        const property = database.properties.find(p => p.id === groupByPropId)
+        if (!property || (property.type !== 'SELECT' && property.type !== 'MULTI_SELECT')) return
+
+        const name = prompt("New Group Name:")
+        if (!name) return
+
+        const newOption = {
+            id: crypto.randomUUID(),
+            name,
+            color: 'default'
+        }
+
+        const currentOptions = (property.options as any[]) || []
+        const newOptions = [...currentOptions, newOption]
+
+        // Server update
+        await updateProperty(property.id, { options: newOptions })
+    }
+
     return (
         <DndContext
             sensors={sensors}
@@ -169,10 +238,14 @@ export function BoardView({ database }: BoardViewProps) {
                         group={group}
                         rows={groupedRows[group.id] || []}
                         properties={database.properties}
+                        onAddRow={() => handleAddRow(group.id)}
                     />
                 ))}
 
-                <div className="shrink-0 w-72 h-10 border-2 border-dashed rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer">
+                <div
+                    className="shrink-0 w-72 h-10 border-2 border-dashed rounded-lg flex items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer"
+                    onClick={handleAddGroup}
+                >
                     <span className="flex items-center text-sm font-medium">Add Group</span>
                 </div>
             </div>
@@ -180,7 +253,7 @@ export function BoardView({ database }: BoardViewProps) {
             {typeof document !== 'undefined' && createPortal(
                 <DragOverlay>
                     {activeRow && (
-                        <div className="w-72"> {/* Constrain width to column width */}
+                        <div className="w-72">
                             <BoardCard row={activeRow} properties={database.properties} />
                         </div>
                     )}

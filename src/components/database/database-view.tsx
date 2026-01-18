@@ -7,6 +7,7 @@ import { BoardView } from "./board-view"
 import { CalendarView } from "./calendar-view"
 import { GalleryView } from "./gallery-view"
 import { ListView } from "./list-view"
+import { RowDetailModal } from "./row-detail-modal"
 import { useDatabase } from "@/hooks/use-database"
 import { DatabaseToolbar } from "./toolbar/database-toolbar"
 import { useEffect } from "react"
@@ -16,10 +17,15 @@ interface DatabaseViewProps {
         properties: Property[]
         rows: (DatabaseRow & { cells: Cell[] })[]
     }
+    viewConfig?: any
+    isLinked?: boolean
 }
 
 export function DatabaseView({ database }: DatabaseViewProps) {
-    const { currentView, setCurrentView } = useDatabase()
+    const { currentView, selectedRowId, setSelectedRowId } = useDatabase()
+
+    // Find selected row for modal
+    const selectedRow = selectedRowId ? database.rows.find(r => r.id === selectedRowId) : null
 
     // Initialize view from database default if needed or just rely on default 'table'
     // Ideally we sync this with server state later
@@ -37,6 +43,15 @@ export function DatabaseView({ database }: DatabaseViewProps) {
                     {currentView === 'list' && <ListView database={database} />}
                 </div>
             </div>
+
+            {selectedRow && (
+                <RowDetailModal
+                    row={selectedRow}
+                    properties={database.properties}
+                    isOpen={!!selectedRow}
+                    onClose={() => setSelectedRowId(null)}
+                />
+            )}
         </div>
     )
 }

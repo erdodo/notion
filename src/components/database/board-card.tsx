@@ -69,7 +69,10 @@ export function BoardCard({ row, properties }: BoardCardProps) {
             style={style}
             {...attributes}
             {...listeners}
+            {...attributes}
+            {...listeners}
             className="group"
+            onClick={() => useDatabase.getState().setSelectedRowId(row.id)}
         >
             <Card
                 className={cn(

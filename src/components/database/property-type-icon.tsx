@@ -12,6 +12,9 @@ import {
     Phone,
     Clock,
     RefreshCw,
+    ArrowUpRight,
+    Calculator,
+    Sigma,
     LucideIcon
 } from "lucide-react"
 import { PropertyType } from "@prisma/client"
@@ -29,6 +32,9 @@ export const propertyTypeIcons: Record<PropertyType, LucideIcon> = {
     PHONE: Phone,
     CREATED_TIME: Clock,
     UPDATED_TIME: RefreshCw,
+    RELATION: ArrowUpRight,
+    ROLLUP: Calculator,
+    FORMULA: Sigma,
 }
 
 interface PropertyTypeIconProps {

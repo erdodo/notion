@@ -75,6 +75,10 @@ interface DatabaseState {
     // Shared Card Configuration
     visibleProperties: string[]
     togglePropertyVisibility: (propertyId: string) => void
+
+    // UI Interactions
+    selectedRowId: string | null
+    setSelectedRowId: (rowId: string | null) => void
 }
 
 export const useDatabase = create<DatabaseState>((set) => ({
@@ -163,4 +167,7 @@ export const useDatabase = create<DatabaseState>((set) => ({
                 : [...state.visibleProperties, propertyId]
         }
     }),
+
+    selectedRowId: null,
+    setSelectedRowId: (id) => set({ selectedRowId: id }),
 }))

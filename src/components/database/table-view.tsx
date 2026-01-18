@@ -57,7 +57,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         return database.properties.map(property => ({
             accessorKey: property.id,
             header: ({ column }) => (
-                <PropertyHeader property={property} column={column} />
+                <PropertyHeader property={property} column={column} databaseId={database.id} />
             ),
             cell: ({ getValue, row, column, table }) => {
                 // Stable update callback
@@ -76,24 +76,18 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                         table={table}
                         column={column}
                         updateValue={updateValue}
+                        row={row}
                     />
                 )
             },
             meta: {
                 property: property,
-                // Access pageId directly from row data which we ensure has originalRow
-                getPageId: (rowId: string) => {
-                    // This function might be called with just ID, but usually we avail row context.
-                    // If we must find by ID, we need access to rows. 
-                    // BUT, putting rows in dependency kills performance.
-                    // Better to rely on row data in the UI where this meta is used (TitleCell).
-                    return null
-                }
+                getPageId: (rowId: string) => null
             },
             enableSorting: true,
             size: property.width || 200,
         }))
-    }, [database.properties]) // REMOVED database.rows dependency to prevent re-creation on data changes
+    }, [database.properties])
 
     const table = useReactTable({
         data,
@@ -127,7 +121,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         addOptimisticRow(newRow)
 
         // Server Call
-        const createdRow: any = await addRow(database.id)
+        await addRow(database.id)
     }
 
     return (
@@ -156,7 +150,6 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                                                     onMouseDown={(e) => {
                                                         header.getResizeHandler()(e)
                                                         const onMouseUp = () => {
-                                                            // Give React Table a moment to update state completely
                                                             setTimeout(() => {
                                                                 const width = header.column.getSize()
                                                                 updateProperty(header.column.id, { width })
@@ -231,7 +224,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
     )
 }
 
-function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue }: any) {
+function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row }: any) {
     const [isEditing, setIsEditing] = useState(false)
     return (
         <CellRenderer
@@ -245,6 +238,7 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue }
             startEditing={() => setIsEditing(true)}
             stopEditing={() => setIsEditing(false)}
             updateValue={updateValue}
+            row={row}
         />
     )
 }

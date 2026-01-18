@@ -15,6 +15,7 @@ interface BlockNoteEditorProps {
   initialContent?: string
   onChange: (content: string) => void
   editable?: boolean
+  documentId?: string
 }
 
 // Simple filter implementation since export is missing/changed
@@ -34,7 +35,8 @@ const insertOrUpdateBlock = (editor: typeof schema.BlockNoteEditor, block: any) 
 export const BlockNoteEditorComponent = ({
   initialContent,
   onChange,
-  editable = true
+  editable = true,
+  documentId
 }: BlockNoteEditorProps) => {
   const { resolvedTheme } = useTheme()
   const { edgestore } = useEdgeStore()
@@ -277,6 +279,46 @@ export const BlockNoteEditorComponent = ({
         icon: "🔗",
         subtext: "Link with preview",
       },
+      {
+        title: "Page",
+        onItemClick: async () => {
+          const { createDocument } = await import("@/app/(main)/_actions/documents")
+          const doc = await createDocument("Untitled", documentId) // Pass documentId as parent
+          // Insert link to page
+          editor.insertBlocks(
+            [{
+              type: "paragraph",
+              content: [{ type: "link", href: `/documents/${doc.id}`, content: "Untitled Page" }]
+            } as any],
+            editor.getTextCursorPosition().block,
+            "after"
+          )
+        },
+        aliases: ["page", "new page"],
+        group: "Basic",
+        icon: <div className="text-xl">📄</div>,
+        subtext: "Embed a sub-page",
+      },
+      {
+        title: "Database - Full Page",
+        onItemClick: async () => {
+          const { createDatabase } = await import("@/app/(main)/_actions/database")
+          const { page } = await createDatabase(documentId) // Pass documentId as parent
+          // Insert link to database
+          editor.insertBlocks(
+            [{
+              type: "paragraph",
+              content: [{ type: "link", href: `/documents/${page.id}`, content: "Untitled Database" }]
+            } as any],
+            editor.getTextCursorPosition().block,
+            "after"
+          )
+        },
+        aliases: ["database", "table", "db", "full page database"],
+        group: "Basic",
+        icon: <div className="text-xl">🗄️</div>,
+        subtext: "Create a full page database",
+      },
     ]
 
     // Filter out ANY default item if its title matches one of our custom items
@@ -285,7 +327,16 @@ export const BlockNoteEditorComponent = ({
     const filteredDefaultItems = defaultItems.filter(i => !customTitles.has(i.title) && i.title !== "Image")
 
     // Combine all items
-    const allItems = [...filteredDefaultItems, ...customItems]
+    const combinedItems = [...filteredDefaultItems, ...customItems]
+
+    // Deduplicate items by title
+    const uniqueItemsMap = new Map()
+    combinedItems.forEach(item => {
+      if (!uniqueItemsMap.has(item.title)) {
+        uniqueItemsMap.set(item.title, item)
+      }
+    })
+    const allItems = Array.from(uniqueItemsMap.values())
 
     // Group items
     const groupedItems: Record<string, typeof allItems> = {}

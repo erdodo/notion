@@ -17,10 +17,12 @@ interface MonthGridProps {
     date: Date
     rows: (DatabaseRow & { cells: Cell[] })[]
     datePropertyId: string
-    properties: Property[] // Needed to find title property
+    properties: Property[]
+    onAddRow?: (date: Date) => void
+    onEventClick?: (rowId: string) => void
 }
 
-export function MonthGrid({ date, rows, datePropertyId, properties }: MonthGridProps) {
+export function MonthGrid({ date, rows, datePropertyId, properties, onAddRow, onEventClick }: MonthGridProps) {
     const monthStart = startOfMonth(date)
     const monthEnd = endOfMonth(date)
     const startDate = startOfWeek(monthStart)
@@ -85,7 +87,8 @@ export function MonthGrid({ date, rows, datePropertyId, properties }: MonthGridP
                                 date={dayDate}
                                 events={dayEvents}
                                 isToday={isSameDay(dayDate, new Date())}
-                            // onAddEvent={}
+                                onAddEvent={onAddRow}
+                                onEventClick={onEventClick}
                             />
                         </div>
                     )

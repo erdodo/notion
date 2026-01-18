@@ -8,10 +8,11 @@ import { FileIcon } from "lucide-react"
 
 interface ListItemProps {
     row: DatabaseRow & { cells: Cell[] }
-    properties: Property[]
+    properties: Property[] // Full properties to render fields
+    onClick?: () => void
 }
 
-export function ListItem({ row, properties }: ListItemProps) {
+export function ListItem({ row, properties, onClick }: ListItemProps) {
     const titleProp = properties.find(p => p.type === 'TITLE')
     const titleCell = row.cells.find(c => c.propertyId === titleProp?.id)
     const rawTitle = titleCell?.value
@@ -22,7 +23,10 @@ export function ListItem({ row, properties }: ListItemProps) {
     const otherProps = properties.filter(p => p.type !== 'TITLE')
 
     return (
-        <div className="group flex items-center gap-3 p-2 hover:bg-muted/50 rounded-md cursor-pointer border-b border-border/40 last:border-0">
+        <div
+            className="group flex items-center gap-3 p-2 hover:bg-muted/50 rounded-md cursor-pointer border-b border-border/40 last:border-0"
+            onClick={onClick}
+        >
             {/* Icon */}
             <div className="w-6 flex justify-center shrink-0">
                 {row.icon ? (

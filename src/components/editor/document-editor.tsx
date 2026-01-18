@@ -61,6 +61,7 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
           initialContent={content}
           onChange={handleContentChange}
           editable={editable}
+          documentId={documentId}
         />
       </div>
     </div>

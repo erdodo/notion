@@ -1,7 +1,7 @@
 "use client"
 
 import { DatabaseRow, Cell, Property } from "@prisma/client"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CellRenderer } from "./cell-renderer"
@@ -32,6 +32,8 @@ export function RowDetailModal({ row, properties, isOpen, onClose }: RowDetailMo
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="max-w-4xl h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
+                <DialogTitle className="sr-only">{row.id}</DialogTitle>
+
                 {/* Cover / Icon Area Placeholder */}
                 <div className="h-32 bg-secondary/30 relative shrink-0 group">
                     {row.pageId && (

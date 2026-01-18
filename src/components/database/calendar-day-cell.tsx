@@ -11,9 +11,10 @@ interface CalendarDayCellProps {
     events: (DatabaseRow & { title: string })[]
     isToday?: boolean
     onAddEvent?: (date: Date) => void
+    onEventClick?: (rowId: string) => void
 }
 
-export function CalendarDayCell({ date, events, isToday, onAddEvent }: CalendarDayCellProps) {
+export function CalendarDayCell({ date, events, isToday, onAddEvent, onEventClick }: CalendarDayCellProps) {
     return (
         <div
             className={cn(
@@ -35,7 +36,7 @@ export function CalendarDayCell({ date, events, isToday, onAddEvent }: CalendarD
                     <CalendarEvent
                         key={event.id}
                         event={event}
-                    // onClick={() => openRow(event.id)} 
+                        onClick={() => onEventClick?.(event.id)}
                     />
                 ))}
                 {events.length > 4 && (

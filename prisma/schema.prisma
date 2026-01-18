@@ -62,6 +62,7 @@ model User {
   sessions  Session[]
   pages     Page[]
   favorites Favorite[]
+  pageViews PageView[]
 
   @@index([email])
 }
@@ -92,6 +93,19 @@ model Page {
   databaseRow DatabaseRow? @relation("RowPage")
   isDatabase  Boolean      @default(false)
 
+  linkedDatabases LinkedDatabase[]
+
+  // YENİ: Sıralama için
+  order       Int       @default(0)
+  
+  // YENİ: Son ziyaret takibi (user başına)
+  pageViews   PageView[]
+  
+  // YENİ: Backlinks için - bu sayfadan link verilen sayfalar
+  outgoingLinks PageLink[] @relation("OutgoingLinks")
+  // Bu sayfaya link veren sayfalar
+  incomingLinks PageLink[] @relation("IncomingLinks")
+
   @@index([userId])
   @@index([parentId])
   @@index([isArchived])
@@ -113,6 +127,34 @@ model Favorite {
   @@index([pageId])
 }
 
+// YENİ: Sayfa ziyaret kaydı (recent pages için)
+model PageView {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  viewedAt  DateTime @default(now())
+  
+  @@unique([userId, pageId])
+  @@index([userId, viewedAt(sort: Desc)])
+  @@index([pageId])
+}
+
+// YENİ: Sayfa linkleri (backlinks için)
+model PageLink {
+  id           String   @id @default(uuid())
+  sourcePageId String
+  sourcePage   Page     @relation("OutgoingLinks", fields: [sourcePageId], references: [id], onDelete: Cascade)
+  targetPageId String
+  targetPage   Page     @relation("IncomingLinks", fields: [targetPageId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  
+  @@unique([sourcePageId, targetPageId])
+  @@index([sourcePageId])
+  @@index([targetPageId])
+}
+
 // Database - Page ile 1:1 ilişki (her database bir sayfa)
 model Database {
   id          String   @id @default(uuid())
@@ -123,6 +165,9 @@ model Database {
   defaultView String   @default("table") // table, board, calendar, gallery, list
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  templates       DatabaseTemplate[]
+  linkedDatabases LinkedDatabase[]   @relation("LinkedDatabases")
   
   @@index([pageId])
 }
@@ -142,6 +187,31 @@ model Property {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   
+  
+  // YENİ: Relation yapılandırması
+  relationConfig Json?
+  // {
+  //   targetDatabaseId: string,     // Hedef database
+  //   bidirectional: boolean,       // Çift yönlü mü?
+  //   reversePropertyId?: string,   // Ters property ID
+  //   limitType: 'none' | 'one'     // Tek mi çok mu link
+  // }
+  
+  // YENİ: Rollup yapılandırması
+  rollupConfig Json?
+  // {
+  //   relationPropertyId: string,   // Hangi relation
+  //   targetPropertyId: string,     // Hangi property'den
+  //   aggregation: string           // Aggregation tipi
+  // }
+  
+  // YENİ: Formula yapılandırması
+  formulaConfig Json?
+  // {
+  //   expression: string,           // "prop('Price') * prop('Qty')"
+  //   resultType: 'string' | 'number' | 'boolean' | 'date'
+  // }
+
   @@index([databaseId])
 }
 
@@ -159,6 +229,11 @@ enum PropertyType {
   PHONE
   CREATED_TIME
   UPDATED_TIME
+  
+  // YENİ: İleri tipler
+  RELATION      // Database ilişkisi
+  ROLLUP        // Relation üzerinden hesaplama
+  FORMULA       // Formül ile hesaplama
 }
 
 // Database Row - Satırlar (aynı zamanda alt sayfa)
@@ -189,4 +264,36 @@ model Cell {
   @@unique([propertyId, rowId])
   @@index([propertyId])
   @@index([rowId])
+}
+
+// YENİ: Linked Database (Database view alias)
+model LinkedDatabase {
+  id              String   @id @default(uuid())
+  pageId          String   // Hangi sayfada gösteriliyor
+  page            Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  sourceDatabaseId String  // Kaynak database
+  sourceDatabase  Database @relation("LinkedDatabases", fields: [sourceDatabaseId], references: [id])
+  title           String?  // Override title
+  viewConfig      Json?    // View-specific config (filters, sorts, hidden columns)
+  createdAt       DateTime @default(now())
+  
+  @@index([pageId])
+  @@index([sourceDatabaseId])
+}
+
+// YENİ: Database Template
+model DatabaseTemplate {
+  id          String   @id @default(uuid())
+  databaseId  String
+  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  name        String   @default("New Template")
+  icon        String?
+  content     String?  @db.Text   // BlockNote JSON (sayfa içeriği)
+  defaultCells Json?              // { propertyId: defaultValue }
+  isDefault   Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([databaseId])
 }
