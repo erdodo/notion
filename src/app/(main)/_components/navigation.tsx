@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Database } from "lucide-react"
+import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Database, Upload } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useSettings } from "@/hooks/use-settings"
@@ -16,6 +16,7 @@ import { PublishedSection } from "@/components/navigation/published-section"
 import { RecentSection } from "@/components/navigation/recent-section"
 import { ItemSkeleton } from "./item-skeleton"
 import { TrashBox } from "@/components/trash-box"
+import { ImportModal } from "@/components/modals/import-modal"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
@@ -49,6 +50,7 @@ export const Navigation = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const [archivedDocuments, setArchivedDocuments] = useState<Document[]>([])
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
   const resetWidth = useCallback(() => {
     if (sidebarRef.current) {
@@ -256,6 +258,14 @@ export const Navigation = () => {
                 <span>New Database</span>
               </button>
 
+              <button
+                onClick={() => setIsImportModalOpen(true)}
+                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              >
+                <Upload className="h-4 w-4" />
+                <span>Import</span>
+              </button>
+
               <Popover>
                 <PopoverTrigger asChild>
                   <button
@@ -344,6 +354,8 @@ export const Navigation = () => {
           )}
         </div>
       )}
+
+      <ImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
     </>
   )
 }

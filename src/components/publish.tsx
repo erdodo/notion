@@ -19,6 +19,8 @@ interface PublishProps {
   }
 }
 
+import { cn } from "@/lib/utils"
+
 export const Publish = ({ initialData }: PublishProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -27,7 +29,7 @@ export const Publish = ({ initialData }: PublishProps) => {
 
   useEffect(() => {
     setUrl(`${window.location.origin}/preview/${initialData.id}`)
-  }, [initialData.id])
+  }, [initialData.id, initialData.isPublished]) // Added initialData.isPublished to dep array if needed, logically only id matters for URL but isPublished for state
 
   const onPublish = async () => {
     setIsSubmitting(true)
@@ -61,11 +63,11 @@ export const Publish = ({ initialData }: PublishProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" className="bg-sky-500 hover:bg-sky-600 text-white font-bold transition-all shadow-md">
-          Publish
-          {isPublished && (
-            <Globe className="text-white w-4 h-4 ml-2 animate-pulse" />
-          )}
+        <Button size="icon" variant="ghost">
+          <Globe className={cn(
+            "h-4 w-4 text-muted-foreground",
+            isPublished && "text-sky-500 animate-pulse"
+          )} />
         </Button>
       </PopoverTrigger>
       <PopoverContent

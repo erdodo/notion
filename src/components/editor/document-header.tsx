@@ -5,7 +5,7 @@ import { updateDocument } from "@/app/(main)/_actions/documents"
 import { Cover } from "@/components/cover"
 import { Toolbar } from "@/components/toolbar"
 
-import { Publish } from "@/components/publish"
+
 import TextareaAutosize from "react-textarea-autosize"
 
 interface DocumentHeaderProps {
@@ -32,12 +32,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
     <div className="pb-10 group/header relative">
       <Cover url={page.coverImage} pageId={page.id} preview={preview} />
 
-      {/* Publish button - Top Right */}
-      {!preview && (
-        <div className="absolute top-4 right-4 z-50">
-          <Publish initialData={{ id: page.id, isPublished: page.isPublished }} />
-        </div>
-      )}
+
 
       <div className="px-12 pt-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
         {/* Negative margin to pull icon up if cover exists */}

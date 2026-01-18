@@ -9,6 +9,8 @@ import { DatabaseView } from "@/components/database/database-view"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { BacklinksPanel } from "@/components/backlinks-panel"
 import { FavoriteButton } from "@/components/favorite-button"
+import { Publish } from "@/components/publish"
+import { ExportMenu } from "@/components/export-menu"
 import { recordPageView } from "@/app/(main)/_actions/navigation"
 
 export const dynamic = 'force-dynamic'
@@ -46,6 +48,13 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
       <nav className="flex items-center justify-between px-3 py-2 w-full border-b bg-background z-50">
         <Breadcrumbs pageId={page.id} />
         <div className="flex items-center gap-2">
+          <Publish initialData={{ id: page.id, isPublished: page.isPublished }} />
+          <ExportMenu
+            pageId={page.id}
+            pageTitle={page.title}
+            isDatabase={page.isDatabase}
+            databaseId={database?.id}
+          />
           {!page.isArchived && (
             <FavoriteButton pageId={page.id} />
           )}
