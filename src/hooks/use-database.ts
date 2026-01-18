@@ -46,6 +46,10 @@ interface DatabaseState {
     editingCell: { propertyId: string, rowId: string } | null
     setEditingCell: (cell: { propertyId: string, rowId: string } | null) => void
 
+    // Focus State
+    focusedCell: { propertyId: string, rowId: string } | null
+    setFocusedCell: (cell: { propertyId: string, rowId: string } | null) => void
+
     // View State
     currentView: 'table' | 'list' | 'board' | 'calendar' | 'gallery'
     setCurrentView: (view: 'table' | 'list' | 'board' | 'calendar' | 'gallery') => void
@@ -127,6 +131,9 @@ export const useDatabase = create<DatabaseState>((set) => ({
 
     editingCell: null,
     setEditingCell: (cell) => set({ editingCell: cell }),
+
+    focusedCell: null,
+    setFocusedCell: (cell) => set({ focusedCell: cell }),
 
     // View State Initial Values
     currentView: 'table',

@@ -26,7 +26,7 @@ export function AddRowButton({ databaseId, onAdd }: AddRowButtonProps) {
 
     return (
         <div
-            className="flex items-center text-muted-foreground hover:bg-muted/50 cursor-pointer p-2 border-t mt-1 text-sm select-none"
+            className="flex items-center text-muted-foreground hover:bg-muted/50 cursor-pointer p-2 text-sm select-none"
             onClick={onClick}
         >
             <Plus className="h-4 w-4 mr-2" />
