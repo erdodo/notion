@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTheme } from "next-themes"
 import { PartialBlock } from "@blocknote/core"
-import { useCreateBlockNote, getDefaultReactSlashMenuItems, SuggestionMenuController } from "@blocknote/react"
+import { useCreateBlockNote, getDefaultReactSlashMenuItems } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
 import "@blocknote/mantine/style.css"
 import { ChevronRight } from "lucide-react"
 import { schema } from "./schema"
 import { useEdgeStore } from "@/lib/edgestore"
 import { SlashMenu } from "./slash-menu"
+import { PageMentionPicker } from "./page-mention-picker"
 
 interface BlockNoteEditorProps {
   initialContent?: string
@@ -18,7 +19,7 @@ interface BlockNoteEditorProps {
   documentId?: string
 }
 
-// Simple filter implementation since export is missing/changed
+// Simple filter implementation
 const filterSuggestionItems = (items: any[], query: string) => {
   return items.filter((item) =>
     item.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -41,6 +42,7 @@ export const BlockNoteEditorComponent = ({
   const { resolvedTheme } = useTheme()
   const { edgestore } = useEdgeStore()
   const [mounted, setMounted] = useState(false)
+
   // Slash menu state
   const [slashMenuOpen, setSlashMenuOpen] = useState(false)
   const [slashMenuPosition, setSlashMenuPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -48,12 +50,14 @@ export const BlockNoteEditorComponent = ({
   const [slashMenuIndex, setSlashMenuIndex] = useState(0)
   const [filteredItems, setFilteredItems] = useState<any[]>([])
 
+  // Mention menu state
+  const [mentionOpen, setMentionOpen] = useState(false)
+  const [mentionPosition, setMentionPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+  const [mentionQuery, setMentionQuery] = useState("")
+
   // Parse initial content from JSON string
   const parsedContent = useMemo(() => {
-    if (!initialContent) {
-      return undefined
-    }
-
+    if (!initialContent) return undefined
     try {
       return JSON.parse(initialContent) as PartialBlock[]
     } catch (error) {
@@ -62,12 +66,10 @@ export const BlockNoteEditorComponent = ({
     }
   }, [initialContent])
 
-  // Create editor instance using the hook
+  // Create editor instance
   const editor = useCreateBlockNote({
     schema,
     initialContent: parsedContent,
-    // We disable default uploadFile because we handle it via onDrop to support different block types
-    // or we can keep it for paste events (typically images)
     uploadFile: async (file: File) => {
       const res = await edgestore.editorMedia.upload({ file });
       return res.url;
@@ -99,41 +101,29 @@ export const BlockNoteEditorComponent = ({
     const files = e.dataTransfer.files
     if (files.length === 0) return
 
-    // Find insertion position
-    // If dropped on the editor, BlockNote might attempt to handle it if we propagate?
-    // But we prevented default.
-    // Ideally we insert at the best guess or at the end of current selection.
-
-    // Process files
     for (const file of Array.from(files)) {
       try {
-        // Determine bucket and block type
         let bucket = edgestore.editorMedia
         let blockType = "file"
         let props: any = { title: file.name }
 
         if (file.type.startsWith("image/")) {
-          bucket = edgestore.editorMedia
           blockType = "image"
           props = { caption: "" }
         } else if (file.type.startsWith("video/")) {
-          bucket = edgestore.editorMedia
           blockType = "video"
           props = { caption: "" }
         } else if (file.type.startsWith("audio/")) {
-          bucket = edgestore.editorMedia
           blockType = "audio"
           props = { title: file.name, caption: "" }
         } else {
           bucket = edgestore.documentFiles
-          blockType = "file"
           props = { name: file.name, size: file.size, type: file.type }
         }
 
         const res = await bucket.upload({ file })
-
-        // Insert block
         const currentBlock = editor.getTextCursorPosition().block
+
         editor.insertBlocks(
           [{
             type: blockType,
@@ -141,11 +131,10 @@ export const BlockNoteEditorComponent = ({
               url: res.url,
               ...props
             }
-          } as any], // Type casting to satisfy BlockNote's specific block types union
+          } as any],
           currentBlock,
           "after"
         )
-
       } catch (error) {
         console.error("Drop upload failed", error)
       }
@@ -154,16 +143,36 @@ export const BlockNoteEditorComponent = ({
 
   // Define custom slash menu items
   const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor) => {
-    // Get default items
     const defaultItems = getDefaultReactSlashMenuItems(editor)
 
-    // Create new items
     const customItems = [
       {
-        title: "Image",
+        title: "Page Mention",
         onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "image", })
+          // Instead of handling it here, we open the mention picker?
+          // Or we just insert a block? But we need to SELECT a page.
+          // So we should open the mention picker logic.
+          // Trigger mention logic manually:
+          const currentBlock = editor.getTextCursorPosition().block
+          // We can simulate an @ typed or just open the picker.
+          // Let's open the picker at cursor.
+          // But the picker needs a position. 
+          // We'll reuse the slash menu position logic but switch mode.
+          setMentionOpen(true)
+          setSlashMenuOpen(false)
+          // Position is already set if we clicked via slash menu? 
+          // Actually Slash menu closes. We use its position.
+          setMentionPosition({ top: slashMenuPosition.y, left: slashMenuPosition.x })
         },
+        aliases: ["mention", "page mention", "link page"],
+        group: "Basic",
+        icon: <div className="text-xl">↗️</div>,
+        subtext: "Link to an existing page",
+      },
+      // ... existing custom items ...
+      {
+        title: "Image",
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "image" }),
         aliases: ["image", "img", "picture"],
         group: "Media",
         icon: <div className="text-xl">🖼️</div>,
@@ -171,9 +180,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Video",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "video" })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "video" }),
         aliases: ["video", "movie", "film"],
         group: "Media",
         icon: <div className="text-xl">🎥</div>,
@@ -181,9 +188,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Audio",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "audio" })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "audio" }),
         aliases: ["audio", "music", "sound"],
         group: "Media",
         icon: <div className="text-xl">🎵</div>,
@@ -191,9 +196,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "File",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "file" })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "file" }),
         aliases: ["file", "attachment", "document"],
         group: "Media",
         icon: <div className="text-xl">📄</div>,
@@ -201,9 +204,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Embed",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "embed" })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "embed" }),
         aliases: ["embed", "iframe"],
         group: "Media",
         icon: <div className="text-xl">🔗</div>,
@@ -211,9 +212,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Toggle List",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, { type: "toggle", })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "toggle" }),
         aliases: ["toggle", "collapse"],
         group: "Advanced",
         icon: <div className="text-xl"><ChevronRight size={18} /></div>,
@@ -221,11 +220,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Callout",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, {
-            type: "callout",
-          })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "callout" }),
         aliases: ["callout", "attention", "alert"],
         group: "Advanced",
         icon: "💡",
@@ -233,11 +228,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Quote",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, {
-            type: "quote",
-          })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "quote" }),
         aliases: ["quote", "citation"],
         group: "Basic",
         icon: "❝",
@@ -245,11 +236,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Divider",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, {
-            type: "divider",
-          })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "divider" }),
         aliases: ["divider", "hr", "separator"],
         group: "Basic",
         icon: "―",
@@ -257,11 +244,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Table of Contents",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, {
-            type: "toc",
-          })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "toc" }),
         aliases: ["toc", "outline"],
         group: "Advanced",
         icon: "📑",
@@ -269,11 +252,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Bookmark",
-        onItemClick: () => {
-          insertOrUpdateBlock(editor, {
-            type: "bookmark",
-          })
-        },
+        onItemClick: () => insertOrUpdateBlock(editor, { type: "bookmark" }),
         aliases: ["bookmark", "link", "embed"],
         group: "Media",
         icon: "🔗",
@@ -283,8 +262,7 @@ export const BlockNoteEditorComponent = ({
         title: "Page",
         onItemClick: async () => {
           const { createDocument } = await import("@/app/(main)/_actions/documents")
-          const doc = await createDocument("Untitled", documentId) // Pass documentId as parent
-          // Insert link to page
+          const doc = await createDocument("Untitled", documentId)
           editor.insertBlocks(
             [{
               type: "paragraph",
@@ -303,8 +281,7 @@ export const BlockNoteEditorComponent = ({
         title: "Database - Full Page",
         onItemClick: async () => {
           const { createDatabase } = await import("@/app/(main)/_actions/database")
-          const { page } = await createDatabase(documentId) // Pass documentId as parent
-          // Insert link to database
+          const { page } = await createDatabase(documentId)
           editor.insertBlocks(
             [{
               type: "paragraph",
@@ -321,15 +298,11 @@ export const BlockNoteEditorComponent = ({
       },
     ]
 
-    // Filter out ANY default item if its title matches one of our custom items
     const customTitles = new Set(customItems.map(i => i.title))
-    // Also filter out default media items we are replacing (e.g. Image if blocknote has one)
     const filteredDefaultItems = defaultItems.filter(i => !customTitles.has(i.title) && i.title !== "Image")
-
-    // Combine all items
     const combinedItems = [...filteredDefaultItems, ...customItems]
 
-    // Deduplicate items by title
+    // Deduplicate
     const uniqueItemsMap = new Map()
     combinedItems.forEach(item => {
       if (!uniqueItemsMap.has(item.title)) {
@@ -338,7 +311,6 @@ export const BlockNoteEditorComponent = ({
     })
     const allItems = Array.from(uniqueItemsMap.values())
 
-    // Group items
     const groupedItems: Record<string, typeof allItems> = {}
     const groupOrder: string[] = []
 
@@ -351,7 +323,6 @@ export const BlockNoteEditorComponent = ({
       groupedItems[group].push(item)
     })
 
-    // Flatten back to array
     return groupOrder.flatMap(group => groupedItems[group])
   }
 
@@ -365,14 +336,14 @@ export const BlockNoteEditorComponent = ({
       const allItems = getCustomSlashMenuItems(editor)
       const filtered = filterSuggestionItems(allItems, slashMenuQuery)
       setFilteredItems(filtered)
-      setSlashMenuIndex(0) // Reset selection
+      setSlashMenuIndex(0)
     }
   }, [slashMenuOpen, slashMenuQuery, editor])
 
 
-  // Manual Slash Menu Trigger
+  // Trigger Logic (Slash and @)
   useEffect(() => {
-    const checkSlashMenu = () => {
+    const checkTrigger = () => {
       const selection = window.getSelection()
       if (!selection || selection.rangeCount === 0) return
 
@@ -380,48 +351,58 @@ export const BlockNoteEditorComponent = ({
       const text = range.startContainer.textContent || ""
       const offset = range.startOffset
 
-      // Text before cursor
       const textBefore = text.slice(0, offset)
 
-      // Regex: / followed by search term, at start of line or after space
-      const match = textBefore.match(/(?:^|\s)\/([a-zA-Z0-9]*)$/)
-
-      if (match) {
-        // Found slash command!
-        const query = match[1]
-        setSlashMenuQuery(query)
+      // Check for Slash Command
+      const slashMatch = textBefore.match(/(?:^|\s)\/([a-zA-Z0-9]*)$/)
+      if (slashMatch) {
+        setSlashMenuQuery(slashMatch[1])
         setSlashMenuOpen(true)
 
-        // Calculate position
         const rect = range.getBoundingClientRect()
         setSlashMenuPosition({ x: rect.left, y: rect.bottom })
+        setMentionOpen(false) // Close mention if open
+        return
       } else {
-        // Close if no match (and maybe we were open)
-        // But we need to be careful not to close on every selection change if we want it to persist?
-        // Actually, if you type away the slash, it should close.
-        // If you click elsewhere, it should close.
         setSlashMenuOpen(false)
+      }
+
+      // Check for Mention Command
+      const mentionMatch = textBefore.match(/(?:^|\s)@([a-zA-Z0-9\s]*)$/)
+      if (mentionMatch) {
+        setMentionQuery(mentionMatch[1])
+        setMentionOpen(true)
+
+        const rect = range.getBoundingClientRect()
+        setMentionPosition({ top: rect.bottom, left: rect.left })
+        return
+      } else {
+        setMentionOpen(false)
       }
     }
 
-    // Listen to selection change and keyup (for text updates)
-    document.addEventListener("selectionchange", checkSlashMenu)
-    document.addEventListener("keyup", checkSlashMenu)
-    // also click
-    document.addEventListener("click", checkSlashMenu)
+    document.addEventListener("selectionchange", checkTrigger)
+    document.addEventListener("keyup", checkTrigger)
+    document.addEventListener("click", checkTrigger)
 
     return () => {
-      document.removeEventListener("selectionchange", checkSlashMenu)
-      document.removeEventListener("keyup", checkSlashMenu)
-      document.removeEventListener("click", checkSlashMenu)
+      document.removeEventListener("selectionchange", checkTrigger)
+      document.removeEventListener("keyup", checkTrigger)
+      document.removeEventListener("click", checkTrigger)
     }
   }, [editor])
 
-  // Keyboard navigation for menu
+  // Keyboard navigation for Slash menu
   useEffect(() => {
     if (!slashMenuOpen) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(e.key)) {
+        // Let custom logic handle, prevent default
+      } else {
+        return // Let other keys type
+      }
+
       if (e.key === "ArrowDown") {
         e.preventDefault()
         setSlashMenuIndex(prev => (prev + 1) % filteredItems.length)
@@ -432,16 +413,6 @@ export const BlockNoteEditorComponent = ({
         e.preventDefault()
         const item = filteredItems[slashMenuIndex]
         if (item) {
-          // Before executing, we might want to cleanup the slash command text?
-          // Default BlockNote behavior usually replaces the block text or inserts block.
-          // insertOrUpdateBlock replaces current block logic.
-          // Since our current block HAS the slash text, replacing it is correct.
-          // But if we are mid-line?
-          // `insertOrUpdateBlock` typically replaces the *whole* block.
-          // If we want inline replacement (like Notion's turn into), standard API replaces block.
-          // Our implementation: `insertOrUpdateBlock` -> `replaceBlocks([currentBlock], ...)`
-          // This is fine for simple "Turn into" or "Create new".
-
           item.onItemClick(editor)
           setSlashMenuOpen(false)
         }
@@ -462,6 +433,33 @@ export const BlockNoteEditorComponent = ({
     onChange(jsonContent)
   }
 
+  const handleMentionSelect = (pageId: string) => {
+    // Insert mention block
+    const currentBlock = editor.getTextCursorPosition().block
+
+    // If we were triggered by @ query, we might want to replace the text?
+    // BlockNote doesn't easily expose "replace range" for the React wrapper.
+    // But we can just replace the whole block or insert after.
+    // For now, let's insert the mention block.
+    // Ideally we delete the '@query' text first.
+    // But clearing partial text is hard without better selection awareness.
+    // We will just insert the mention block, user can delete the text if they want? 
+    // Or we can try to replace. `replaceBlocks` replaces the *whole* block.
+    // Since it's a void block, it will replace the current paragraph if it's empty, 
+    // or split?
+    // Custom block is "content: none".
+    // If we use `insertBlocks` with `currentBlock`, it inserts *after* (by default).
+    // If we want to replace the current text block (which has '@...'), we can use `replaceBlocks`.
+
+    editor.replaceBlocks(
+      [currentBlock],
+      [{
+        type: "pageMention",
+        props: { pageId }
+      } as any]
+    )
+  }
+
   if (!mounted) {
     return null
   }
@@ -479,7 +477,7 @@ export const BlockNoteEditorComponent = ({
         editable={editable}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
         onChange={handleEditorChange}
-        slashMenu={false} // Disable default menu
+        slashMenu={false}
       >
         {/* We use our custom menu outside */}
       </BlockNoteView>
@@ -492,14 +490,19 @@ export const BlockNoteEditorComponent = ({
             item.onItemClick(editor)
             setSlashMenuOpen(false)
           }}
-          onClose={() => {
-            setSlashMenuOpen(false)
-          }}
+          onClose={() => setSlashMenuOpen(false)}
           position={slashMenuPosition}
         />
       )}
 
-      {/* Overlay for drop indication */}
+      <PageMentionPicker
+        isOpen={mentionOpen}
+        onClose={() => setMentionOpen(false)}
+        onSelect={handleMentionSelect}
+        position={mentionPosition}
+        currentPageId={documentId}
+      />
+
       {isDragging && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-[1px] rounded-md pointer-events-none">
           <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full font-medium shadow-lg">

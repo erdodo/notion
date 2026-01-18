@@ -340,3 +340,28 @@ export async function getPublicDocument(documentId: string) {
 
   return document
 }
+
+export async function searchPages(query: string) {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return []
+  }
+
+  const documents = await db.page.findMany({
+    where: {
+      userId: user.id,
+      isArchived: false,
+      title: {
+        contains: query,
+        mode: "insensitive",
+      }
+    },
+    take: 10,
+    orderBy: {
+      updatedAt: 'desc'
+    }
+  })
+
+  return documents
+}

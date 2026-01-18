@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { archiveDocument } from "../_actions/documents"
+import { useMovePage } from "@/hooks/use-move-page"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -16,6 +17,7 @@ interface ItemProps {
   id: string
   title: string
   icon?: string
+  parentId?: string | null
   level?: number
   expanded?: boolean
   onExpand?: () => void
@@ -29,6 +31,7 @@ export const Item = ({
   id,
   title,
   icon,
+  parentId,
   level = 0,
   expanded = false,
   onExpand,
@@ -38,6 +41,7 @@ export const Item = ({
   isCreating = false
 }: ItemProps) => {
   const router = useRouter()
+  const { onOpen } = useMovePage()
 
   const handleExpand = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -130,6 +134,14 @@ export const Item = ({
             <DropdownMenuItem onClick={handleArchive}>
               <Trash className="h-4 w-4 mr-2" />
               Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={(e) => {
+              e.stopPropagation()
+              onOpen(id, parentId || null)
+            }}>
+              <MoreHorizontal className="h-4 w-4 mr-2" />
+              Move to...
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <div className="text-xs text-muted-foreground p-2">

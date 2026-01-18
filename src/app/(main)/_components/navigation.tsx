@@ -10,6 +10,10 @@ import { useSession } from "next-auth/react"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { createDatabase as createDatabaseAction } from "../_actions/database"
 import { DocumentList } from "./document-list"
+import { SortableDocumentList } from "./sortable-document-list"
+import { FavoritesSection } from "@/components/navigation/favorites-section"
+import { PublishedSection } from "@/components/navigation/published-section"
+import { RecentSection } from "@/components/navigation/recent-section"
 import { ItemSkeleton } from "./item-skeleton"
 import { TrashBox } from "@/components/trash-box"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
@@ -212,85 +216,105 @@ export const Navigation = () => {
           <ChevronsLeft className="h-6 w-6" />
         </button>
 
-        <div className="p-3">
-          <div className="flex items-center gap-x-2 mb-4">
-            <div className="flex items-center gap-x-2 flex-1">
-              <span className="text-sm font-medium">
-                {session?.user?.name?.split(' ')[0]}'s Notion
-              </span>
+        <div className="flex flex-col h-full">
+          <div className="p-3 flex-1 overflow-y-auto">
+            <div className="flex items-center gap-x-2 mb-4">
+              <div className="flex items-center gap-x-2 flex-1">
+                <span className="text-sm font-medium">
+                  {session?.user?.name?.split(' ')[0]}'s Notion
+                </span>
+              </div>
             </div>
+
+            <div className="space-y-1">
+              <button
+                onClick={search.onOpen}
+                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              >
+                <Search className="h-4 w-4" />
+                <span>Search</span>
+                <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </button>
+
+              <button
+                onClick={handleCreate}
+                disabled={isCreating}
+                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              >
+                <Plus className="h-4 w-4" />
+                <span>New Page</span>
+              </button>
+
+              <button
+                onClick={handleCreateDatabase}
+                disabled={isCreating}
+                className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              >
+                <Database className="h-4 w-4" />
+                <span>New Database</span>
+              </button>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+                  >
+                    <Trash className="h-4 w-4" />
+                    <span>Trash</span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="p-0 w-72"
+                  side={isMobile ? "bottom" : "right"}
+                >
+                  <TrashBox documents={archivedDocuments} />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="mt-4">
+              {/* Favorites Section */}
+              <FavoritesSection />
+
+              {/* Published Section */}
+              <PublishedSection />
+
+              {/* Recent Section */}
+              <RecentSection />
+
+              <p className="text-xs text-muted-foreground px-2 mb-2 pt-4">
+                Private
+              </p>
+
+              {isLoading && (
+                <div className="space-y-1">
+                  <ItemSkeleton />
+                  <ItemSkeleton />
+                  <ItemSkeleton />
+                </div>
+              )}
+
+              {!isLoading && (
+                <SortableDocumentList
+                  documents={documents}
+                  parentId={null}
+                  level={0}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Section - Settings */}
+          <div className="p-3 border-t bg-secondary/50">
             <button
               onClick={settings.onOpen}
-              className="opacity-0 group-hover/sidebar:opacity-100 transition text-muted-foreground hover:bg-neutral-300 dark:hover:bg-neutral-600 rounded-sm p-1"
+              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
             >
               <Settings className="h-4 w-4" />
+              <span>Settings</span>
             </button>
-          </div>
-
-          <div className="space-y-1">
-            <button
-              onClick={search.onOpen}
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-            >
-              <Search className="h-4 w-4" />
-              <span>Search</span>
-              <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                <span className="text-xs">⌘</span>K
-              </kbd>
-            </button>
-
-            <button
-              onClick={handleCreate}
-              disabled={isCreating}
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-            >
-              <Plus className="h-4 w-4" />
-              <span>New Page</span>
-            </button>
-
-            <button
-              onClick={handleCreateDatabase}
-              disabled={isCreating}
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-            >
-              <Database className="h-4 w-4" />
-              <span>New Database</span>
-            </button>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
-                >
-                  <Trash className="h-4 w-4" />
-                  <span>Trash</span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="p-0 w-72"
-                side={isMobile ? "bottom" : "right"}
-              >
-                <TrashBox documents={archivedDocuments} />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="mt-4">
-            <p className="text-xs text-muted-foreground px-2 mb-2">
-              Private
-            </p>
-
-            {isLoading && (
-              <div className="space-y-1">
-                <ItemSkeleton />
-                <ItemSkeleton />
-                <ItemSkeleton />
-              </div>
-            )}
-
-            {!isLoading && (
-              <DocumentList data={documents} />
-            )}
           </div>
         </div>
 

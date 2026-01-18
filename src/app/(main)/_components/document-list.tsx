@@ -109,6 +109,7 @@ export const DocumentList = ({
               id={document.id}
               title={document.title}
               icon={document.icon || undefined}
+              parentId={document.parentId}
               level={level}
               expanded={isExpanded}
               onExpand={() => onExpand(document.id)}

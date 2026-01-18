@@ -81,12 +81,38 @@ export async function isFavorite(pageId: string): Promise<boolean> {
     return !!favorite
 }
 
+// ============ PUBLISHED PAGES ============
+
+// Yayınlanan sayfaları getir
+export async function getPublishedPages() {
+    const session = await auth()
+    if (!session?.user?.id) return []
+
+    const publishedPages = await db.page.findMany({
+        where: {
+            userId: session.user.id,
+            isPublished: true,
+            isArchived: false
+        },
+        select: {
+            id: true,
+            title: true,
+            icon: true,
+            parentId: true
+        },
+        orderBy: { updatedAt: 'desc' }
+    })
+
+    return publishedPages
+}
+
+
 // ============ RECENT PAGES ============
 
 // Sayfa ziyaretini kaydet
 export async function recordPageView(pageId: string): Promise<void> {
     const session = await auth()
-    if (!session?.user?.id) return
+    if (!session?.user?.id) return []
 
     await db.pageView.upsert({
         where: {
