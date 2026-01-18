@@ -9,6 +9,7 @@ import { getDatabase } from "@/app/(main)/_actions/database"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LinkedDatabase, Database } from "@prisma/client"
 import { DatabaseView } from "./database-view" // Trying to import assuming it exists.
+import { DetailedDatabase } from "@/hooks/use-filtered-sorted-data"
 
 interface LinkedDatabaseProps {
     linkedDb: LinkedDatabase
@@ -16,7 +17,7 @@ interface LinkedDatabaseProps {
 }
 
 export function LinkedDatabaseView({ linkedDb, editable = true }: LinkedDatabaseProps) {
-    const [sourceDatabase, setSourceDatabase] = useState<Database | null>(null)
+    const [sourceDatabase, setSourceDatabase] = useState<DetailedDatabase | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {

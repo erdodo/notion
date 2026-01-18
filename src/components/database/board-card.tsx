@@ -4,17 +4,17 @@ import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { DatabaseRow, Property, Cell } from "@prisma/client"
+import { DatabaseRow, Property, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { PropertyBadge } from "./shared/property-badge"
 
 interface BoardCardProps {
-    row: DatabaseRow & { cells: Cell[] }
+    row: DatabaseRow & { cells: Cell[]; page: Page | null }
     properties: Property[]
 }
 
 export function BoardCard({ row, properties }: BoardCardProps) {
-    const { filteredRows, visibleProperties } = useDatabase()
+    const { visibleProperties } = useDatabase()
 
     const {
         attributes,
@@ -83,7 +83,7 @@ export function BoardCard({ row, properties }: BoardCardProps) {
                 <CardContent className="p-3 space-y-2">
                     {/* Icon + Title */}
                     <div className="flex items-start gap-2">
-                        {row.icon && <span className="text-lg leading-relaxed shadow-sm">{row.icon}</span>}
+                        {row.page?.icon && <span className="text-lg leading-relaxed shadow-sm">{row.page.icon}</span>}
                         <p className="font-medium text-sm text-foreground/90 leading-relaxed break-words select-none">
                             {title}
                         </p>

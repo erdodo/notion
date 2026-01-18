@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { pusherServer } from "@/lib/pusher"
 import { revalidatePath } from "next/cache"
 
 async function getCurrentUser() {
@@ -63,6 +64,9 @@ export async function getSidebarDocuments(parentDocumentId?: string | null) {
       userId: user.id,
       parentId: parentDocumentId === undefined ? null : parentDocumentId,
       isArchived: false,
+      shares: {
+        none: {}
+      }
     },
     include: {
       _count: {
@@ -71,6 +75,50 @@ export async function getSidebarDocuments(parentDocumentId?: string | null) {
     },
     orderBy: {
       createdAt: 'desc'
+    },
+  })
+
+  return documents
+}
+
+export async function getSharedDocuments() {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return []
+  }
+
+  const documents = await db.page.findMany({
+    where: {
+      isArchived: false,
+      OR: [
+        // Pages I own and have shared with others
+        {
+          userId: user.id,
+          shares: {
+            some: {}
+          }
+        },
+        // Pages shared with me (I am not necessarily the owner)
+        {
+          shares: {
+            some: {
+              OR: [
+                { userId: user.id },
+                { email: user.email }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    include: {
+      _count: {
+        select: { children: true }
+      }
+    },
+    orderBy: {
+      updatedAt: 'desc'
     },
   })
 
@@ -104,6 +152,13 @@ export async function updateDocument(
       }
     })
 
+    // Trigger update for real-time sync
+    await pusherServer.trigger(
+      `document-${documentId}`,
+      "document-update",
+      data
+    )
+
     revalidatePath(`/documents/${documentId}`)
     return document
   } catch (error) {
@@ -122,7 +177,19 @@ export async function getDocument(documentId: string) {
   const document = await db.page.findFirst({
     where: {
       id: documentId,
-      userId: user.id,
+      OR: [
+        { userId: user.id },
+        {
+          shares: {
+            some: {
+              OR: [
+                { userId: user.id },
+                { email: user.email }
+              ]
+            }
+          }
+        }
+      ]
     }
   })
 

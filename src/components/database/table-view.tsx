@@ -10,7 +10,7 @@ import {
     SortingState,
 } from "@tanstack/react-table"
 import { useState, useMemo, useEffect } from "react"
-import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import {
     Table,
     TableBody,
@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils"
 interface TableViewProps {
     database: Database & {
         properties: Property[]
-        rows: (DatabaseRow & { cells: Cell[] })[]
+        rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     }
 }
 

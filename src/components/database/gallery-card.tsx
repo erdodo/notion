@@ -1,13 +1,13 @@
 "use client"
 
-import { DatabaseRow, Cell, Property } from "@prisma/client"
+import { DatabaseRow, Cell, Property, Page } from "@prisma/client"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { PropertyBadge } from "./shared/property-badge"
 import { ImageIcon } from "lucide-react"
 
 interface GalleryCardProps {
-    row: DatabaseRow & { cells: Cell[] }
+    row: DatabaseRow & { cells: Cell[]; page: Page | null }
     properties: Property[] // Full properties to render fields
     coverPropertyId: string | null
     fitImage: boolean
@@ -68,8 +68,8 @@ export function GalleryCard({
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground/30">
-                        {row.icon ? (
-                            <span className="text-4xl">{row.icon}</span>
+                        {row.page?.icon ? (
+                            <span className="text-4xl">{row.page.icon}</span>
                         ) : (
                             <ImageIcon className="h-10 w-10" />
                         )}
@@ -79,7 +79,7 @@ export function GalleryCard({
 
             <CardContent className="p-3">
                 <div className="flex items-center gap-2 mb-2">
-                    {row.icon && <span className="text-lg">{row.icon}</span>}
+                    {row.page?.icon && <span className="text-lg">{row.page.icon}</span>}
                     <h3 className="font-medium text-sm truncate">{title}</h3>
                 </div>
 

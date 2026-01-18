@@ -76,6 +76,23 @@ export const BlockNoteEditorComponent = ({
     },
   })
 
+  // Watch for external content updates (e.g. from real-time sync)
+  useEffect(() => {
+    if (!editor || !parsedContent) return
+
+    // Get current blocks to compare
+    const currentBlocks = editor.document
+
+    // Simple comparison to avoid unnecessary updates/cursor resets
+    // Note: This is an expensive comparison for large docs, 
+    // but necessary to prevent replacing active user typing unless needed.
+    // In a real optimized app, we'd use Yjs for conflict resolution.
+    // Here we just overwrite if different.
+    if (JSON.stringify(currentBlocks) !== JSON.stringify(parsedContent)) {
+      editor.replaceBlocks(editor.document, parsedContent)
+    }
+  }, [editor, parsedContent])
+
   // Global Drag & Drop Handler
   const [isDragging, setIsDragging] = useState(false)
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash } from "lucide-react"
+import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash, LucideIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { archiveDocument } from "../_actions/documents"
 import { useMovePage } from "@/hooks/use-move-page"
@@ -25,6 +25,8 @@ interface ItemProps {
   onCreate?: () => void
   hasChildren?: boolean
   isCreating?: boolean
+  fallbackIcon?: LucideIcon
+  active?: boolean
 }
 
 export const Item = ({
@@ -38,7 +40,9 @@ export const Item = ({
   onClick,
   onCreate,
   hasChildren = false,
-  isCreating = false
+  isCreating = false,
+  fallbackIcon: FallbackIcon = FileText,
+  active
 }: ItemProps) => {
   const router = useRouter()
   const { onOpen } = useMovePage()
@@ -78,6 +82,7 @@ export const Item = ({
       onClick={handleClick}
       className={cn(
         "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer",
+        active && "bg-primary/5 text-primary"
       )}
       style={{
         paddingLeft: level > 0 ? `${(level * 12) + 12}px` : "12px"
@@ -101,7 +106,7 @@ export const Item = ({
         {icon ? (
           <span className="shrink-0 text-[18px]">{icon}</span>
         ) : (
-          <FileText className="shrink-0 h-[18px] w-[18px]" />
+          <FallbackIcon className="shrink-0 h-[18px] w-[18px]" />
         )}
         <span className="truncate">{title}</span>
       </div>

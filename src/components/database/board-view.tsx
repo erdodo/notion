@@ -14,7 +14,7 @@ import {
 import { arrayMove } from "@dnd-kit/sortable"
 import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
-import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
 import { addRow, updateCellByPosition, updateProperty } from "@/app/(main)/_actions/database"
@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button"
 interface BoardViewProps {
     database: Database & {
         properties: Property[]
-        rows: (DatabaseRow & { cells: Cell[] })[]
+        rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     }
 }
 
@@ -172,7 +172,8 @@ export function BoardView({ database }: BoardViewProps) {
         }
 
         // Optimistically add row (Note: cells are empty initially)
-        addOptimisticRow(newRow)
+        // Optimistically add row (Note: cells are empty initially)
+        // addOptimisticRow(newRow) - TODO: Implement optimistic update hook
 
         // Server Call
         const createdRow = await addRow(database.id)

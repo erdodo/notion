@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
+        const userId = session.user.id
 
         const formData = await req.formData()
         const file = formData.get("file") as File | null
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
         // Replace modunda mevcut sayfaları sil
         if (mode === "replace") {
             await db.page.deleteMany({
-                where: { userId: session.user.id }
+                where: { userId: userId }
             })
         }
 
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
                     title: node.title,
                     icon: node.icon,
                     content: content && !isDatabase ? content : null,
-                    userId: session.user.id,
+                    userId: userId,
                     parentId,
                     isDatabase
                 }

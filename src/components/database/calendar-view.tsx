@@ -1,6 +1,6 @@
 "use client"
 
-import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
 import { MonthGrid } from "./calendar-month-grid"
@@ -12,7 +12,7 @@ import { addRow, updateCellByPosition } from "@/app/(main)/_actions/database"
 interface CalendarViewProps {
     database: Database & {
         properties: Property[]
-        rows: (DatabaseRow & { cells: Cell[] })[]
+        rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     }
 }
 

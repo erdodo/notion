@@ -112,7 +112,7 @@ export async function getPublishedPages() {
 // Sayfa ziyaretini kaydet
 export async function recordPageView(pageId: string): Promise<void> {
     const session = await auth()
-    if (!session?.user?.id) return []
+    if (!session?.user?.id) return
 
     await db.pageView.upsert({
         where: {
@@ -180,7 +180,7 @@ export async function getPageBreadcrumbs(pageId: string): Promise<BreadcrumbItem
     // Maximum 10 seviye (sonsuz döngü koruması)
     let depth = 0
     while (currentId && depth < 10) {
-        const page = await db.page.findUnique({
+        const page: { id: string; title: string; icon: string | null; parentId: string | null } | null = await db.page.findUnique({
             where: { id: currentId },
             select: {
                 id: true,
@@ -398,7 +398,7 @@ export async function movePage(
             if (currentId === pageId) {
                 throw new Error("Cannot create circular reference")
             }
-            const parent = await db.page.findUnique({
+            const parent: { parentId: string | null } | null = await db.page.findUnique({
                 where: { id: currentId },
                 select: { parentId: true }
             })

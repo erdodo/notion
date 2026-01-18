@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Plus, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { BoardCard } from "./board-card"
-import { DatabaseRow, Property, Cell } from "@prisma/client"
+import { DatabaseRow, Property, Cell, Page } from "@prisma/client"
 import { useMemo } from "react"
 import { Badge } from "@/components/ui/badge"
 
@@ -19,11 +19,12 @@ interface BoardGroup {
 
 interface BoardColumnProps {
     group: BoardGroup
-    rows: (DatabaseRow & { cells: Cell[] })[]
+    rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     properties: Property[]
+    onAddRow: () => void
 }
 
-export function BoardColumn({ group, rows, properties }: BoardColumnProps) {
+export function BoardColumn({ group, rows, properties, onAddRow }: BoardColumnProps) {
     const { setNodeRef } = useDroppable({
         id: group.id,
         data: {
@@ -70,6 +71,7 @@ export function BoardColumn({ group, rows, properties }: BoardColumnProps) {
                 {/* Add Card Button */}
                 <Button
                     variant="ghost"
+                    onClick={onAddRow}
                     className="w-full justify-start text-muted-foreground h-8 hover:bg-secondary/50 font-normal px-2"
                 >
                     <Plus className="h-4 w-4 mr-2" />

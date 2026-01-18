@@ -1,6 +1,6 @@
 "use client"
 
-import { DatabaseRow, Cell, Property } from "@prisma/client"
+import { DatabaseRow, Cell, Property, Page } from "@prisma/client"
 import {
     startOfMonth,
     endOfMonth,
@@ -15,7 +15,7 @@ import { CalendarDayCell } from "./calendar-day-cell"
 
 interface MonthGridProps {
     date: Date
-    rows: (DatabaseRow & { cells: Cell[] })[]
+    rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     datePropertyId: string
     properties: Property[]
     onAddRow?: (date: Date) => void

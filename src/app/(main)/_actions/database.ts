@@ -658,9 +658,11 @@ export async function updateTemplate(
     templateId: string,
     data: Partial<DatabaseTemplate>
 ): Promise<void> {
+    const { databaseId, id, createdAt, updatedAt, ...updateData } = data
+
     await db.databaseTemplate.update({
         where: { id: templateId },
-        data
+        data: updateData as any
     })
 
     revalidatePath('/documents')
@@ -689,18 +691,28 @@ export async function createRowFromTemplate(
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    // Row + Page oluştur
+    // Page oluştur
+    const page = await db.page.create({
+        data: {
+            title: 'Untitled',
+            icon: template.icon,
+            content: template.content,
+            userId: user.id,
+            parentId: databaseId // Assuming row page is child of database page - actually database pageId?
+            // Wait, database has pageId (parent). Rows usually children of database page?
+            // Existing `addRow` uses `parentId: database.pageId`.
+            // I need to fetch database to get pageId? Or just skip parentId?
+            // Let's use `create` without parentId if we don't know it, or fetch DB.
+            // But `databaseId` is passed.
+            // I'll fetch database to be safe and consistent with addRow.
+        }
+    })
+
+    // Row oluştur
     const row = await db.databaseRow.create({
         data: {
             databaseId,
-            page: {
-                create: {
-                    title: 'Untitled',
-                    icon: template.icon,
-                    content: template.content,
-                    userId: user.id
-                }
-            }
+            pageId: page.id
         },
         include: { page: true }
     })

@@ -1,11 +1,11 @@
 
 import { useState, useCallback, useEffect } from "react"
-import { Database, Property, DatabaseRow, Cell, PropertyType } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, PropertyType, Page } from "@prisma/client"
 import { useRouter } from "next/navigation"
 
 export type DetailedDatabase = Database & {
     properties: Property[]
-    rows: (DatabaseRow & { cells: Cell[] })[]
+    rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
 }
 
 export function useOptimisticDatabase(initialDatabase: DetailedDatabase) {
@@ -44,7 +44,7 @@ export function useOptimisticDatabase(initialDatabase: DetailedDatabase) {
         })
     }, [])
 
-    const addRow = useCallback((newRow: DatabaseRow & { cells: Cell[] }) => {
+    const addRow = useCallback((newRow: DatabaseRow & { cells: Cell[]; page: Page | null }) => {
         setDatabase(prev => ({
             ...prev,
             rows: [...prev.rows, newRow]

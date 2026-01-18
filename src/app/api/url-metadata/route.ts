@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             success: 1,
             meta: {
-                title: result.ogTitle || result.twitterTitle || result.pageName,
+                title: result.ogTitle || result.twitterTitle,
                 description: result.ogDescription || result.twitterDescription,
                 image: {
                     url: result.ogImage?.[0]?.url || result.twitterImage?.[0]?.url

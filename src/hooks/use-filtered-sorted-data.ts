@@ -1,11 +1,11 @@
 
 import { useDatabase } from "./use-database"
 import { useMemo } from "react"
-import { Database, Property, DatabaseRow, Cell, PropertyType } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, PropertyType, Page } from "@prisma/client"
 
 export type DetailedDatabase = Database & {
     properties: Property[]
-    rows: (DatabaseRow & { cells: Cell[] })[]
+    rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
 }
 
 export function useFilteredSortedData(database: DetailedDatabase) {

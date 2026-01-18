@@ -12,12 +12,14 @@ import { createDatabase as createDatabaseAction } from "../_actions/database"
 import { DocumentList } from "./document-list"
 import { SortableDocumentList } from "./sortable-document-list"
 import { FavoritesSection } from "@/components/navigation/favorites-section"
+import { SharedSection } from "@/components/navigation/shared-section"
 import { PublishedSection } from "@/components/navigation/published-section"
 import { RecentSection } from "@/components/navigation/recent-section"
 import { ItemSkeleton } from "./item-skeleton"
 import { TrashBox } from "@/components/trash-box"
 import { ImportModal } from "@/components/modals/import-modal"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+import { NotificationsDropdown } from "@/components/notifications-dropdown"
 import { cn } from "@/lib/utils"
 
 interface Document {
@@ -226,6 +228,7 @@ export const Navigation = () => {
                   {session?.user?.name?.split(' ')[0]}'s Notion
                 </span>
               </div>
+              <NotificationsDropdown />
             </div>
 
             <div className="space-y-1">
@@ -293,6 +296,9 @@ export const Navigation = () => {
 
               {/* Recent Section */}
               <RecentSection />
+
+              {/* Shared Section (Public) */}
+              <SharedSection label="Public" />
 
               <p className="text-xs text-muted-foreground px-2 mb-2 pt-4">
                 Private

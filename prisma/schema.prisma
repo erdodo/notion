@@ -63,6 +63,24 @@ model User {
   pages     Page[]
   favorites Favorite[]
   pageViews PageView[]
+  
+  // Paylaşım ilişkileri
+  sharedPages     PageShare[]   @relation("SharedPages")
+  sentInvites     PageShare[]   @relation("SentInvites")
+  
+  // Yorum ilişkileri
+  comments        Comment[]
+  
+  // Mention ilişkileri
+  mentions        UserMention[] @relation("Mentions")
+  mentionedOthers UserMention[] @relation("MentionedBy")
+  
+  // Bildirimler
+  notifications   Notification[]
+  actorNotifications Notification[] @relation("NotificationActor")
+  
+  // Presence
+  presence        UserPresence[]
 
   @@index([email])
 }
@@ -105,6 +123,21 @@ model Page {
   outgoingLinks PageLink[] @relation("OutgoingLinks")
   // Bu sayfaya link veren sayfalar
   incomingLinks PageLink[] @relation("IncomingLinks")
+
+  // Paylaşım
+  shares          PageShare[]
+  
+  // Yorumlar
+  comments        Comment[]
+  
+  // Mentions (sayfa içeriğinde)
+  mentions        UserMention[]
+  
+  // Notifications
+  notifications   Notification[]
+  
+  // Presence
+  activeUsers     UserPresence[]
 
   @@index([userId])
   @@index([parentId])
@@ -296,4 +329,174 @@ model DatabaseTemplate {
   updatedAt   DateTime @updatedAt
   
   @@index([databaseId])
+}
+
+// ============ SHARING & PERMISSIONS ============
+
+// Sayfa paylaşım kayıtları
+model PageShare {
+  id          String      @id @default(uuid())
+  pageId      String
+  page        Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  // Paylaşılan kişi (ikisinden biri dolu olmalı)
+  userId      String?     // Mevcut kullanıcı ile paylaşım
+  user        User?       @relation("SharedPages", fields: [userId], references: [id], onDelete: Cascade)
+  email       String?     // Email ile davet (henüz üye değilse)
+  
+  // İzin seviyesi
+  role        ShareRole   @default(VIEWER)
+  
+  // Misafir erişimi için
+  token       String?     @unique  // Guest link token
+  tokenExpiresAt DateTime?
+  
+  // Audit
+  invitedBy   String
+  invitedByUser User      @relation("SentInvites", fields: [invitedBy], references: [id])
+  createdAt   DateTime    @default(now())
+  acceptedAt  DateTime?   // Email davetleri için
+  
+  @@unique([pageId, userId])
+  @@unique([pageId, email])
+  @@index([pageId])
+  @@index([userId])
+  @@index([token])
+}
+
+enum ShareRole {
+  VIEWER      // Sadece görüntüleme
+  COMMENTER   // Görüntüleme + yorum
+  EDITOR      // Görüntüleme + yorum + düzenleme
+  ADMIN       // Tam erişim (paylaşım dahil)
+}
+
+// ============ COMMENTS ============
+
+model Comment {
+  id          String    @id @default(uuid())
+  content     String    @db.Text
+  
+  // Sayfa ilişkisi
+  pageId      String
+  page        Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  // Yazar
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Thread (yanıtlar)
+  parentId    String?
+  parent      Comment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentThread")
+  
+  // Blok seviyesi yorum (opsiyonel)
+  blockId     String?   // BlockNote block ID
+  
+  // Durum
+  resolved    Boolean   @default(false)
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  
+  // Mentions
+  mentions    UserMention[]
+  
+  // Audit
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  editedAt    DateTime? // Düzenlendiğinde
+  
+  @@index([pageId])
+  @@index([parentId])
+  @@index([blockId])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ============ USER MENTIONS ============
+
+model UserMention {
+  id          String    @id @default(uuid())
+  
+  // Mention konumu
+  commentId   String?
+  comment     Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  pageId      String?   // Sayfa içeriğinde mention
+  page        Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  // Etiketlenen kullanıcı
+  userId      String
+  user        User      @relation("Mentions", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Etiketleyen kullanıcı
+  mentionedBy String
+  mentionedByUser User  @relation("MentionedBy", fields: [mentionedBy], references: [id])
+  
+  // Okundu durumu
+  read        Boolean   @default(false)
+  readAt      DateTime?
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId, read])
+  @@index([commentId])
+  @@index([pageId])
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type        NotificationType
+  title       String
+  message     String?
+  
+  // İlgili kayıtlar
+  pageId      String?
+  page        Page?            @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  commentId   String?
+  actorId     String?          // Aksiyonu yapan kullanıcı
+  actor       User?            @relation("NotificationActor", fields: [actorId], references: [id])
+  
+  // Durum
+  read        Boolean          @default(false)
+  readAt      DateTime?
+  
+  createdAt   DateTime         @default(now())
+  
+  @@index([userId, read, createdAt(sort: Desc)])
+}
+
+enum NotificationType {
+  COMMENT_ADDED      // Yeni yorum
+  COMMENT_REPLY      // Yoruma yanıt
+  MENTION            // @mention
+  PAGE_SHARED        // Sayfa paylaşıldı
+  SHARE_ACCEPTED     // Davet kabul edildi
+  PAGE_EDITED        // Sayfa düzenlendi (izlenenler için)
+}
+
+// ============ PRESENCE (Opsiyonel - Cache'de tutulabilir) ============
+
+model UserPresence {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageId      String?
+  page        Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  status      PresenceStatus @default(ONLINE)
+  lastSeen    DateTime  @default(now())
+  cursorPosition Json?  // { blockId, offset }
+  
+  @@unique([userId, pageId])
+  @@index([pageId])
+}
+
+enum PresenceStatus {
+  ONLINE
+  AWAY
+  OFFLINE
 }

@@ -1,13 +1,13 @@
 "use client"
 
-import { DatabaseRow, Cell, Property } from "@prisma/client"
+import { DatabaseRow, Cell, Property, Page } from "@prisma/client"
 import { cn } from "@/lib/utils"
 import { PropertyValue } from "./shared/property-value"
 import { PropertyTypeIcon } from "./property-type-icon"
 import { FileIcon } from "lucide-react"
 
 interface ListItemProps {
-    row: DatabaseRow & { cells: Cell[] }
+    row: DatabaseRow & { cells: Cell[]; page: Page | null }
     properties: Property[] // Full properties to render fields
     onClick?: () => void
 }
@@ -29,8 +29,8 @@ export function ListItem({ row, properties, onClick }: ListItemProps) {
         >
             {/* Icon */}
             <div className="w-6 flex justify-center shrink-0">
-                {row.icon ? (
-                    <span>{row.icon}</span>
+                {row.page?.icon ? (
+                    <span>{row.page.icon}</span>
                 ) : (
                     <FileIcon className="h-4 w-4 text-muted-foreground" />
                 )}

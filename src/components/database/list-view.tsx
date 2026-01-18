@@ -1,6 +1,6 @@
 "use client"
 
-import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
 import { ListItem } from "./list-item"
 import { Plus } from "lucide-react"
@@ -11,12 +11,12 @@ import { addRow } from "@/app/(main)/_actions/database"
 interface ListViewProps {
     database: Database & {
         properties: Property[]
-        rows: (DatabaseRow & { cells: Cell[] })[]
+        rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     }
 }
 
 export function ListView({ database }: ListViewProps) {
-    const { setSelectedRowId, addOptimisticRow } = useDatabase()
+    const { setSelectedRowId } = useDatabase()
     const filteredRows = useFilteredSortedData(database)
 
     const handleAddRow = async () => {
@@ -30,7 +30,7 @@ export function ListView({ database }: ListViewProps) {
             updatedAt: new Date(),
             cells: []
         }
-        addOptimisticRow(newRow)
+        // addOptimisticRow(newRow)
 
         await addRow(database.id)
     }

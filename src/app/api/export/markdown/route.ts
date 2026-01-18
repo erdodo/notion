@@ -43,9 +43,9 @@ export async function GET(req: NextRequest) {
         markdown += blocksToMarkdown(blocks)
 
         // Child sayfaları da ekle
-        if (includeChildren && page.children?.length > 0) {
+        if (includeChildren && (page as any).children?.length > 0) {
             markdown += "\n\n---\n\n## Sub-pages\n\n"
-            for (const child of page.children) {
+            for (const child of (page as any).children) {
                 markdown += `- [${child.title}](#${child.id})\n`
             }
         }

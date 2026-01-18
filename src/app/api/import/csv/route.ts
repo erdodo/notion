@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
                 if (propId) {
                     await db.cell.create({
                         data: {
-                            databaseRowId: row.id,
+                            rowId: row.id,
                             propertyId: propId,
                             value: value // Simple text value
                         }

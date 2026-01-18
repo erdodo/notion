@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Database, Property, DatabaseRow, Cell } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
 import { TableView } from "./table-view"
 import { BoardView } from "./board-view"
 import { CalendarView } from "./calendar-view"
@@ -15,7 +15,7 @@ import { useEffect } from "react"
 interface DatabaseViewProps {
     database: Database & {
         properties: Property[]
-        rows: (DatabaseRow & { cells: Cell[] })[]
+        rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
     }
     viewConfig?: any
     isLinked?: boolean
