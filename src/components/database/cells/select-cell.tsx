@@ -9,16 +9,11 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Check, MoreHorizontal, Trash } from "lucide-react"
+import { NOTION_COLORS, getOptionColors } from "@/lib/notion-colors"
 import { cn } from "@/lib/utils"
 import { updateProperty } from "@/app/(main)/_actions/database"
 
-interface Option {
-    id: string
-    name: string
-    color: string
-}
-
-export function SelectCell({ getValue, updateValue, column }: CellProps) {
+export function SelectCell({ getValue, updateValue, column, onPropertyUpdate }: CellProps) {
     const initialValue = getValue()
     const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
 
@@ -28,6 +23,7 @@ export function SelectCell({ getValue, updateValue, column }: CellProps) {
     const options: Option[] = (property?.options as any) || []
 
     const selectedOption = options.find(o => o.id === val)
+    const selectedColors = selectedOption ? getOptionColors(selectedOption.color) : null
 
     const onSelect = (option: Option) => {
         updateValue({ value: option.id })
@@ -50,6 +46,9 @@ export function SelectCell({ getValue, updateValue, column }: CellProps) {
         // but strictly we should call server.
 
         const newOptions = [...options, newOption]
+
+        onPropertyUpdate?.(property.id, { options: newOptions })
+
         await updateProperty(property.id, {
             ...property,
             options: newOptions
@@ -65,7 +64,7 @@ export function SelectCell({ getValue, updateValue, column }: CellProps) {
                 <PopoverTrigger asChild>
                     <div className="h-full w-full cursor-pointer min-h-[24px]">
                         {selectedOption ? (
-                            <Badge variant="secondary" className={`bg-${selectedOption.color}-100 text-${selectedOption.color}-800`}>
+                            <Badge variant="secondary" className={cn(selectedColors?.bg, selectedColors?.text)}>
                                 {selectedOption.name}
                             </Badge>
                         ) : (
@@ -87,56 +86,60 @@ export function SelectCell({ getValue, updateValue, column }: CellProps) {
                             }}
                         />
                         <div className="max-h-[200px] overflow-auto">
-                            {options.filter(o => o.name.toLowerCase().includes(search.toLowerCase())).map(option => (
-                                <div
-                                    key={option.id}
-                                    className="group flex items-center justify-between p-1 hover:bg-muted cursor-pointer rounded text-sm"
-                                    onClick={() => onSelect(option)}
-                                >
-                                    <div className="flex items-center">
-                                        <Badge variant="secondary" className={`mr-2 bg-${option.color}-100 text-${option.color}-800`}>
-                                            {option.name}
-                                        </Badge>
-                                        {option.id === val && <Check className="h-3 w-3" />}
+                            {options.filter(o => o.name.toLowerCase().includes(search.toLowerCase())).map(option => {
+                                const colors = getOptionColors(option.color)
+                                return (
+                                    <div
+                                        key={option.id}
+                                        className="group flex items-center justify-between p-1 hover:bg-muted cursor-pointer rounded text-sm"
+                                        onClick={() => onSelect(option)}
+                                    >
+                                        <div className="flex items-center">
+                                            <Badge variant="secondary" className={cn("mr-2", colors.bg, colors.text)}>
+                                                {option.name}
+                                            </Badge>
+                                            {option.id === val && <Check className="h-3 w-3" />}
+                                        </div>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-4 w-4 opacity-0 group-hover:opacity-100 p-0" onClick={(e) => e.stopPropagation()}>
+                                                    <MoreHorizontal className="h-3 w-3" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-48 p-2" side="right" onClick={(e) => e.stopPropagation()}>
+                                                <div className="text-xs font-medium text-muted-foreground mb-2">Edit Option</div>
+                                                <div className="grid grid-cols-5 gap-1 mb-2">
+                                                    {NOTION_COLORS.filter((v, i, a) => a.findIndex(t => (t.value === v.value)) === i).map(color => (
+                                                        <div
+                                                            key={color.name}
+                                                            className={cn("w-6 h-6 rounded cursor-pointer border hover:opacity-80", color.bg)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                const newOptions = options.map(o => o.id === option.id ? { ...o, color: color.value } : o)
+                                                                onPropertyUpdate?.(property.id, { options: newOptions })
+                                                                updateProperty(property.id, { ...property, options: newOptions })
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="w-full text-xs text-destructive justify-start h-8 px-1"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        const newOptions = options.filter(o => o.id !== option.id)
+                                                        onPropertyUpdate?.(property.id, { options: newOptions })
+                                                        updateProperty(property.id, { ...property, options: newOptions })
+                                                    }}
+                                                >
+                                                    <Trash className="h-3 w-3 mr-2" /> Delete
+                                                </Button>
+                                            </PopoverContent>
+                                        </Popover>
                                     </div>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-4 w-4 opacity-0 group-hover:opacity-100 p-0" onClick={(e) => e.stopPropagation()}>
-                                                <MoreHorizontal className="h-3 w-3" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-48 p-2" side="right" onClick={(e) => e.stopPropagation()}>
-                                            <div className="text-xs font-medium text-muted-foreground mb-2">Edit Option</div>
-                                            <div className="grid grid-cols-5 gap-1 mb-2">
-                                                {['gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red'].map(color => (
-                                                    <div
-                                                        key={color}
-                                                        className={`w-6 h-6 rounded cursor-pointer border hover:opacity-80 bg-${color}-100`}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            // Update option color logic here
-                                                            const newOptions = options.map(o => o.id === option.id ? { ...o, color } : o)
-                                                            updateProperty(property.id, { ...property, options: newOptions })
-                                                        }}
-                                                    />
-                                                ))}
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="w-full text-xs text-destructive justify-start h-8 px-1"
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    const newOptions = options.filter(o => o.id !== option.id)
-                                                    updateProperty(property.id, { ...property, options: newOptions })
-                                                }}
-                                            >
-                                                <Trash className="h-3 w-3 mr-2" /> Delete
-                                            </Button>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-                            ))}
+                                )
+                            })}
                             {search && !options.find(o => o.name === search) && (
                                 <div
                                     className="text-sm p-1 hover:bg-muted cursor-pointer rounded text-muted-foreground"

@@ -12,6 +12,7 @@ interface RollupConfigProps {
     config: IRollupConfig | null
     properties: Property[]  // Mevcut database'in property'leri
     onChange: (config: IRollupConfig) => void
+    onCancel?: () => void
 }
 
 export function RollupConfig({ config, properties, onChange }: RollupConfigProps) {
@@ -109,13 +110,16 @@ export function RollupConfig({ config, properties, onChange }: RollupConfigProps
                 </div>
             )}
 
-            <Button
-                onClick={handleSave}
-                className="w-full"
-                disabled={!relationPropertyId || !targetPropertyId}
-            >
-                Done
-            </Button>
+            <div className="flex gap-2">
+                {onCancel && (
+                    <Button variant="outline" onClick={onCancel} className="flex-1">
+                        Cancel
+                    </Button>
+                )}
+                <Button onClick={handleSave} className="flex-1" disabled={!targetPropertyId}>
+                    Done
+                </Button>
+            </div>
         </div>
     )
 }

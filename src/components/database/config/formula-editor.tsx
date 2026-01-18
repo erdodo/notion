@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Check, AlertCircle, HelpCircle } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import { validateFormula, availableFunctions } from "@/lib/formula-engine"
 import { Property } from "@prisma/client"
 
@@ -15,16 +17,19 @@ interface FormulaEditorProps {
     properties: Property[]
     onChange: (expression: string) => void
     onResultTypeChange: (type: string) => void
+    onCancel?: () => void
 }
 
 export function FormulaEditor({
     expression,
     properties,
     onChange,
-    onResultTypeChange
+    onResultTypeChange,
+    onCancel
 }: FormulaEditorProps) {
     const [localExpression, setLocalExpression] = useState(expression)
     const [validation, setValidation] = useState<{ valid: boolean, error?: string }>({ valid: true })
+    const [resultType, setResultType] = useState('string')
     const [showAutocomplete, setShowAutocomplete] = useState(false)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -58,6 +63,11 @@ export function FormulaEditor({
         if (validation.valid) {
             onChange(localExpression)
         }
+    }
+
+    const handleResultTypeChange = (type: string) => {
+        setResultType(type)
+        onResultTypeChange(type)
     }
 
     return (
@@ -140,25 +150,30 @@ export function FormulaEditor({
 
             {/* Result Type */}
             <div className="space-y-2">
-                <label className="text-sm font-medium">Result type</label>
-                <div className="flex gap-2">
-                    {['string', 'number', 'boolean', 'date'].map(type => (
-                        <Button
-                            key={type}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onResultTypeChange(type)}
-                        >
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </Button>
-                    ))}
-                </div>
+                <Label>Result Type</Label>
+                <Select
+                    value={resultType}
+                    onValueChange={handleResultTypeChange}
+                >
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="string">Text</SelectItem>
+                        <SelectItem value="number">Number</SelectItem>
+                        <SelectItem value="boolean">Checkbox</SelectItem>
+                        <SelectItem value="date">Date</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             {/* Save */}
-            <Button onClick={handleSave} disabled={!validation.valid} className="w-full">
-                Save Formula
-            </Button>
+            <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={onCancel}>Cancel</Button>
+                <Button onClick={handleSave} disabled={!validation.valid}>
+                    Save Formula
+                </Button>
+            </div>
         </div>
     )
 }

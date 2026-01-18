@@ -27,6 +27,7 @@ import { updateCellByPosition, addRow, addProperty, updateProperty } from "@/app
 import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
 import { useFilteredSortedData } from "@/hooks/use-filtered-sorted-data"
 import { cn } from "@/lib/utils"
+import { PropertyConfigDialog } from "./property-config-dialog"
 
 interface TableViewProps {
     database: Database & {
@@ -36,9 +37,11 @@ interface TableViewProps {
 }
 
 export function TableView({ database: initialDatabase }: TableViewProps) {
-    const { database, updateCell, addRow: addOptimisticRow, addProperty: addOptimisticProperty } = useOptimisticDatabase(initialDatabase as any)
+    const { database, updateCell, addRow: addOptimisticRow, addProperty: addOptimisticProperty, updateProperty: optimisticUpdateProperty } = useOptimisticDatabase(initialDatabase as any)
 
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const [configDialog, setConfigDialog] = useState<{ propertyId: string, type: 'relation' | 'rollup' | 'formula' | 'select' } | null>(null)
 
     const filteredRows = useFilteredSortedData(database)
 
@@ -57,7 +60,14 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         return database.properties.map(property => ({
             accessorKey: property.id,
             header: ({ column }) => (
-                <PropertyHeader property={property} column={column} databaseId={database.id} />
+                <PropertyHeader
+                    property={property}
+                    column={column}
+                    databaseId={database.id}
+                    allProperties={database.properties}
+                    onPropertyUpdate={optimisticUpdateProperty}
+                    onEditProperty={(id, type) => setConfigDialog({ propertyId: id, type })}
+                />
             ),
             cell: ({ getValue, row, column, table }) => {
                 // Stable update callback
@@ -77,6 +87,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                         column={column}
                         updateValue={updateValue}
                         row={row}
+                        onPropertyUpdate={optimisticUpdateProperty}
                     />
                 )
             },
@@ -220,11 +231,21 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                     <AddRowButton databaseId={database.id} onAdd={handleAddRow} />
                 </div>
             </div>
+
+            <PropertyConfigDialog
+                databaseId={database.id}
+                isOpen={!!configDialog}
+                onOpenChange={(open) => !open && setConfigDialog(null)}
+                configType={configDialog?.type || null}
+                property={configDialog ? database.properties.find(p => p.id === configDialog.propertyId) : undefined}
+                allProperties={database.properties}
+                onPropertyUpdate={optimisticUpdateProperty}
+            />
         </div>
     )
 }
 
-function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row }: any) {
+function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row, onPropertyUpdate }: any) {
     const [isEditing, setIsEditing] = useState(false)
     return (
         <CellRenderer
@@ -239,6 +260,7 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
             stopEditing={() => setIsEditing(false)}
             updateValue={updateValue}
             row={row}
+            onPropertyUpdate={onPropertyUpdate}
         />
     )
 }

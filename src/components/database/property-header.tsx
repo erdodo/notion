@@ -22,20 +22,29 @@ import {
 // ... imports
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { RelationConfig } from "@/components/database/config/relation-config"
+import { FormulaEditor } from "@/components/database/config/formula-editor"
+import { RollupConfig } from "@/components/database/config/rollup-config"
+import { Property } from "@prisma/client"
+import { SelectConfig } from "@/components/database/config/select-config"
 
 interface PropertyHeaderProps {
     property: {
         id: string
         name: string
         type: PropertyType
-        relationConfig?: any // Add this
+        relationConfig?: any
+        rollupConfig?: any
+        formulaConfig?: any
     }
     column: any // TanStack column
     title?: string // Override title if needed
     databaseId: string
+    allProperties: Property[]
+    onPropertyUpdate?: (propertyId: string, data: any) => void
+    onEditProperty?: (propertyId: string, type: 'relation' | 'rollup' | 'formula' | 'select') => void
 }
 
-export function PropertyHeader({ property, column, title, databaseId }: PropertyHeaderProps) {
+export function PropertyHeader({ property, column, title, databaseId, allProperties, onPropertyUpdate, onEditProperty }: PropertyHeaderProps) {
     const icon = <PropertyTypeIcon type={property.type} className="h-3 w-3 mr-2 text-muted-foreground" />
     const name = title || property.name
 
@@ -45,23 +54,13 @@ export function PropertyHeader({ property, column, title, databaseId }: Property
 
     const [isEditing, setIsEditing] = useState(false)
     const [tempName, setTempName] = useState(name)
-    const [isConfigOpen, setIsConfigOpen] = useState(false)
 
     const onRename = async () => {
         if (tempName !== property.name) {
+            onPropertyUpdate?.(property.id, { name: tempName })
             await updateProperty(property.id, { name: tempName })
         }
         setIsEditing(false)
-    }
-
-    const handleUpdateConfig = async (config: any) => {
-        if (property.type === 'RELATION') {
-            await updateProperty(property.id, {
-                // @ts-ignore - Prisma handles JSON input but types might be strict
-                relationConfig: config
-            })
-            setIsConfigOpen(false)
-        }
     }
 
     return (
@@ -85,9 +84,27 @@ export function PropertyHeader({ property, column, title, databaseId }: Property
                     </div>
                     <DropdownMenuSeparator />
 
+                    {(property.type === 'SELECT' || property.type === 'MULTI_SELECT') && (
+                        <DropdownMenuItem onClick={() => onEditProperty?.(property.id, 'select')}>
+                            <Edit2 className="mr-2 h-3 w-3" /> Edit Options
+                        </DropdownMenuItem>
+                    )}
+
                     {property.type === 'RELATION' && (
-                        <DropdownMenuItem onClick={() => setIsConfigOpen(true)}>
-                            <Edit2 className="mr-2 h-3 w-3" /> Edit Property
+                        <DropdownMenuItem onClick={() => onEditProperty?.(property.id, 'relation')}>
+                            <Edit2 className="mr-2 h-3 w-3" /> Edit Relation
+                        </DropdownMenuItem>
+                    )}
+
+                    {property.type === 'FORMULA' && (
+                        <DropdownMenuItem onClick={() => onEditProperty?.(property.id, 'formula')}>
+                            <Edit2 className="mr-2 h-3 w-3" /> Edit Formula
+                        </DropdownMenuItem>
+                    )}
+
+                    {property.type === 'ROLLUP' && (
+                        <DropdownMenuItem onClick={() => onEditProperty?.(property.id, 'rollup')}>
+                            <Edit2 className="mr-2 h-3 w-3" /> Configure Rollup
                         </DropdownMenuItem>
                     )}
 
@@ -126,20 +143,6 @@ export function PropertyHeader({ property, column, title, databaseId }: Property
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Dialog open={isConfigOpen} onOpenChange={setIsConfigOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Edit Property</DialogTitle>
-                    </DialogHeader>
-                    {property.type === 'RELATION' && (
-                        <RelationConfig
-                            config={property.relationConfig}
-                            currentDatabaseId={databaseId}
-                            onChange={handleUpdateConfig}
-                        />
-                    )}
-                </DialogContent>
-            </Dialog>
         </>
     )
 }
