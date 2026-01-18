@@ -104,7 +104,7 @@ export function PageProperties({ row }: PagePropertiesProps) {
                                 property={property}
                                 onUpdate={handleUpdateProperty}
                                 onDelete={() => handleDeleteProperty(property.id)}
-                                onEditConfig={(type) => setConfigDialog({ propertyId: property.id, type })}
+                                onEditConfig={(type: 'relation' | 'rollup' | 'formula' | 'select') => setConfigDialog({ propertyId: property.id, type })}
                                 onMoveUp={() => moveProperty(index, 'up')}
                                 onMoveDown={() => moveProperty(index, 'down')}
                             />

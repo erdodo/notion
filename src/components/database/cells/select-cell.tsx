@@ -13,6 +13,12 @@ import { NOTION_COLORS, getOptionColors } from "@/lib/notion-colors"
 import { cn } from "@/lib/utils"
 import { updateProperty } from "@/app/(main)/_actions/database"
 
+interface SelectOption {
+    id: string
+    name: string
+    color: string
+}
+
 export function SelectCell({ getValue, updateValue, column, onPropertyUpdate }: CellProps) {
     const initialValue = getValue()
     const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
@@ -20,12 +26,12 @@ export function SelectCell({ getValue, updateValue, column, onPropertyUpdate }: 
     // Property options
     // We assume column.columnDef.meta.property contains the property object
     const property = (column.columnDef.meta as any)?.property
-    const options: Option[] = (property?.options as any) || []
+    const options: SelectOption[] = (property?.options as any) || []
 
     const selectedOption = options.find(o => o.id === val)
     const selectedColors = selectedOption ? getOptionColors(selectedOption.color) : null
 
-    const onSelect = (option: Option) => {
+    const onSelect = (option: SelectOption) => {
         updateValue({ value: option.id })
     }
 

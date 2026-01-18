@@ -11,4 +11,6 @@ export interface CellProps {
     stopEditing: () => void
     updateValue: (value: any) => void
     row?: any // Optional row object for direct access
+    onPropertyUpdate?: (propertyId: string, data: any) => void // For updating property config
 }
+

@@ -1,4 +1,5 @@
 import { Navigation } from "./_components/navigation"
+import { SearchCommand } from "@/components/search-command"
 
 export default function MainLayout({
   children,
@@ -11,6 +12,8 @@ export default function MainLayout({
       <main className="flex-1 h-full overflow-y-auto">
         {children}
       </main>
+      <SearchCommand />
     </div>
   )
 }
+

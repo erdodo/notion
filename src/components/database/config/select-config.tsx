@@ -14,13 +14,24 @@ import { Reorder } from "framer-motion"
 import { NOTION_COLORS } from "@/lib/notion-colors"
 import { cn } from "@/lib/utils"
 
+interface SelectOption {
+    id: string
+    name: string
+    color: string
+}
+
+interface SelectConfigProps {
+    options: SelectOption[]
+    onChange: (options: SelectOption[]) => void
+}
+
 export function SelectConfig({ options, onChange }: SelectConfigProps) {
     const [newOptionName, setNewOptionName] = useState("")
 
     const handleAddOption = () => {
         if (!newOptionName.trim()) return
 
-        const newOption: Option = {
+        const newOption: SelectOption = {
             id: crypto.randomUUID(),
             name: newOptionName,
             color: 'gray'
@@ -30,7 +41,7 @@ export function SelectConfig({ options, onChange }: SelectConfigProps) {
         setNewOptionName("")
     }
 
-    const handleUpdateOption = (id: string, updates: Partial<Option>) => {
+    const handleUpdateOption = (id: string, updates: Partial<SelectOption>) => {
         const newOptions = options.map(opt =>
             opt.id === id ? { ...opt, ...updates } : opt
         )

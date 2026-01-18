@@ -13,6 +13,7 @@ interface SlashMenuProps {
 
 export const SlashMenu = ({ items, selectedIndex, onItemClick, onClose, position }: SlashMenuProps) => {
     const menuRef = useRef<HTMLDivElement>(null)
+    const itemRefs = useRef<(HTMLDivElement | null)[]>([])
     const [placement, setPlacement] = useState<"top" | "bottom">("bottom")
     const [adjustedStyle, setAdjustedStyle] = useState<React.CSSProperties>({
         opacity: 0,
@@ -74,10 +75,23 @@ export const SlashMenu = ({ items, selectedIndex, onItemClick, onClose, position
         calculatePosition()
     }, [position])
 
+    // Scroll to selected item
+    useEffect(() => {
+        const selectedItem = itemRefs.current[selectedIndex]
+        if (selectedItem) {
+            selectedItem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            })
+        }
+    }, [selectedIndex])
+
     return (
         <div
             ref={menuRef}
             style={adjustedStyle}
+            // Prevent focus loss when clicking menu area
+            onMouseDown={(e) => e.preventDefault()}
             className="z-50 w-64 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
         >
             <div className="flex flex-col overflow-y-auto max-h-[300px]">
@@ -87,11 +101,16 @@ export const SlashMenu = ({ items, selectedIndex, onItemClick, onClose, position
                     items.map((item, index) => (
                         <div
                             key={index}
+                            ref={(el) => { itemRefs.current[index] = el }}
                             className={cn(
                                 "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 gap-2",
                                 index === selectedIndex ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
                             )}
-                            onClick={() => onItemClick(item)}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                onItemClick(item)
+                            }}
                             onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
                         >
                             {item.icon && <span className="w-5 h-5 flex items-center justify-center text-muted-foreground text-xs">{item.icon}</span>}

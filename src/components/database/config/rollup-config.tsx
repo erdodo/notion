@@ -15,7 +15,7 @@ interface RollupConfigProps {
     onCancel?: () => void
 }
 
-export function RollupConfig({ config, properties, onChange }: RollupConfigProps) {
+export function RollupConfig({ config, properties, onChange, onCancel }: RollupConfigProps) {
     const [relationPropertyId, setRelationPropertyId] = useState(config?.relationPropertyId || '')
     const [targetPropertyId, setTargetPropertyId] = useState(config?.targetPropertyId || '')
     const [aggregation, setAggregation] = useState<AggregationType>(config?.aggregation || 'count')

@@ -1,6 +1,7 @@
 "use client"
 
 import { createReactBlockSpec } from "@blocknote/react"
+import type { BlockColor } from "@/lib/block-utils"
 
 export const CalloutBlock = createReactBlockSpec(
     {
@@ -13,6 +14,10 @@ export const CalloutBlock = createReactBlockSpec(
             color: {
                 default: "gray",
                 values: ["gray", "blue", "green", "yellow", "red", "purple"],
+            },
+            backgroundColor: {
+                default: "default" as BlockColor,
+                values: ["default", "gray", "brown", "orange", "yellow", "green", "blue", "purple", "pink", "red"] as const,
             },
         },
     },

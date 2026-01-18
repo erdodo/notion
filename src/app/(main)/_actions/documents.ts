@@ -411,27 +411,90 @@ export async function getPublicDocument(documentId: string) {
   return document
 }
 
-export async function searchPages(query: string) {
+export async function searchPages(query: string, filters?: {
+  includeArchived?: boolean
+  includeDatabases?: boolean
+  limit?: number
+}) {
   const user = await getCurrentUser()
 
   if (!user) {
     return []
   }
 
+  const limit = filters?.limit || 20
+  const includeArchived = filters?.includeArchived || false
+  const includeDatabases = filters?.includeDatabases !== false
+
+  // Search in both title and content
   const documents = await db.page.findMany({
     where: {
-      userId: user.id,
-      isArchived: false,
-      title: {
-        contains: query,
-        mode: "insensitive",
+      AND: [
+        // User access check
+        {
+          OR: [
+            { userId: user.id },
+            {
+              shares: {
+                some: {
+                  OR: [
+                    { userId: user.id },
+                    { email: user.email }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        // Archive filter
+        {
+          isArchived: includeArchived ? undefined : false,
+        },
+        // Search query
+        {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              }
+            },
+            {
+              content: {
+                contains: query,
+                mode: "insensitive",
+              }
+            }
+          ]
+        }
+      ]
+    },
+    include: {
+      database: includeDatabases ? {
+        select: {
+          id: true,
+          defaultView: true,
+        }
+      } : false,
+      parent: {
+        select: {
+          id: true,
+          title: true,
+          icon: true,
+        }
+      },
+      _count: {
+        select: { children: true }
       }
     },
-    take: 10,
-    orderBy: {
-      updatedAt: 'desc'
-    }
+    take: limit,
+    orderBy: [
+      // Prioritize title matches over content matches
+      { updatedAt: 'desc' }
+    ]
   })
 
   return documents
 }
+
+

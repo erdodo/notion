@@ -103,6 +103,7 @@ export function PageMentionPicker({
                                         key={page.id}
                                         onSelect={() => handleSelect(page.id)}
                                         className="flex items-center gap-2"
+                                        onMouseDown={(e) => e.preventDefault()}
                                     >
                                         <span>{page.icon || <FileText className="h-4 w-4" />}</span>
                                         <span className="truncate">{page.title || 'Untitled'}</span>
@@ -116,6 +117,7 @@ export function PageMentionPicker({
                                 key={page.id}
                                 onSelect={() => handleSelect(page.id)}
                                 className="flex items-center gap-2"
+                                onMouseDown={(e) => e.preventDefault()}
                             >
                                 <span>{page.icon || <FileText className="h-4 w-4" />}</span>
                                 <div className="flex-1 min-w-0">

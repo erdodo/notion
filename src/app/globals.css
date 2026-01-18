@@ -278,3 +278,148 @@ a,
   background: #4e2e2e;
   color: #e16b64;
 }
+
+/* BlockNote Inline Code */
+.bn-inline-code {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.85em;
+  background: rgba(135, 131, 120, 0.15);
+  color: #eb5757;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  line-height: 1.4;
+}
+
+.dark .bn-inline-code {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ff7b72;
+}
+
+/* Text Colors */
+[data-text-color="gray"] {
+  color: rgb(120, 119, 116);
+}
+
+[data-text-color="brown"] {
+  color: rgb(159, 107, 83);
+}
+
+[data-text-color="orange"] {
+  color: rgb(217, 115, 13);
+}
+
+[data-text-color="yellow"] {
+  color: rgb(203, 145, 47);
+}
+
+[data-text-color="green"] {
+  color: rgb(68, 131, 97);
+}
+
+[data-text-color="blue"] {
+  color: rgb(51, 126, 169);
+}
+
+[data-text-color="purple"] {
+  color: rgb(144, 101, 176);
+}
+
+[data-text-color="pink"] {
+  color: rgb(193, 76, 138);
+}
+
+[data-text-color="red"] {
+  color: rgb(212, 76, 71);
+}
+
+/* Background/Highlight Colors - Light Mode */
+[data-background-color="gray"] {
+  background-color: rgb(241, 241, 239);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="brown"] {
+  background-color: rgb(244, 238, 234);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="orange"] {
+  background-color: rgb(251, 236, 221);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="yellow"] {
+  background-color: rgb(251, 243, 219);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="green"] {
+  background-color: rgb(237, 243, 236);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="blue"] {
+  background-color: rgb(231, 243, 248);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="purple"] {
+  background-color: rgb(244, 240, 247);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="pink"] {
+  background-color: rgb(249, 238, 243);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+[data-background-color="red"] {
+  background-color: rgb(253, 235, 236);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+/* Background/Highlight Colors - Dark Mode */
+.dark [data-background-color="gray"] {
+  background-color: rgb(71, 76, 80);
+}
+
+.dark [data-background-color="brown"] {
+  background-color: rgb(67, 64, 64);
+}
+
+.dark [data-background-color="orange"] {
+  background-color: rgb(89, 74, 58);
+}
+
+.dark [data-background-color="yellow"] {
+  background-color: rgb(89, 86, 59);
+}
+
+.dark [data-background-color="green"] {
+  background-color: rgb(53, 76, 75);
+}
+
+.dark [data-background-color="blue"] {
+  background-color: rgb(45, 66, 86);
+}
+
+.dark [data-background-color="purple"] {
+  background-color: rgb(73, 47, 100);
+}
+
+.dark [data-background-color="pink"] {
+  background-color: rgb(83, 59, 76);
+}
+
+.dark [data-background-color="red"] {
+  background-color: rgb(89, 65, 65);
+}
