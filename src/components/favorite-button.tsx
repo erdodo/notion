@@ -46,9 +46,9 @@ export function FavoriteButton({ pageId, className }: FavoriteButtonProps) {
     return (
         <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={handleToggle}
-            className={cn("h-8 w-8 hover:bg-transparent", className)}
+            className={cn("h-8 w-8 px-0", className)}
             aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
         >
             <Star

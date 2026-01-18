@@ -9,6 +9,7 @@ import { useSettings } from "@/hooks/use-settings"
 import { useSession } from "next-auth/react"
 import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
 import { createDatabase as createDatabaseAction } from "../_actions/database"
+import { useSidebar } from "@/hooks/use-sidebar"
 import { DocumentList } from "./document-list"
 import { SortableDocumentList } from "./sortable-document-list"
 import { FavoritesSection } from "@/components/navigation/favorites-section"
@@ -42,12 +43,12 @@ export const Navigation = () => {
   const { data: session } = useSession()
   const search = useSearch()
   const settings = useSettings()
+  const { isCollapsed, toggle, collapse, expand } = useSidebar()
   const isMobile = useMediaQuery("(max-width: 768px)")
 
   const isResizingRef = useRef(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const [isResetting, setIsResetting] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(isMobile)
   const [documents, setDocuments] = useState<Document[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
@@ -56,7 +57,7 @@ export const Navigation = () => {
 
   const resetWidth = useCallback(() => {
     if (sidebarRef.current) {
-      setIsCollapsed(false)
+      expand()
       setIsResetting(true)
 
       sidebarRef.current.style.width = isMobile ? "100%" : "240px"
@@ -65,11 +66,11 @@ export const Navigation = () => {
         setIsResetting(false)
       }, 300)
     }
-  }, [isMobile])
+  }, [isMobile, expand])
 
-  const collapse = useCallback(() => {
+  const handleCollapse = useCallback(() => {
     if (sidebarRef.current) {
-      setIsCollapsed(true)
+      collapse()
       setIsResetting(true)
 
       sidebarRef.current.style.width = "0"
@@ -78,21 +79,30 @@ export const Navigation = () => {
         setIsResetting(false)
       }, 300)
     }
-  }, [])
+  }, [collapse])
 
   useEffect(() => {
     if (isMobile) {
-      collapse()
+      handleCollapse()
     } else {
       resetWidth()
     }
-  }, [isMobile, collapse, resetWidth])
+  }, [isMobile, handleCollapse, resetWidth])
 
   useEffect(() => {
     if (isMobile) {
-      collapse()
+      handleCollapse()
     }
-  }, [pathname, isMobile, collapse])
+  }, [pathname, isMobile, handleCollapse])
+
+  // Sync width with store state changes if externally toggled
+  useEffect(() => {
+    if (isCollapsed && sidebarRef.current && sidebarRef.current.style.width !== "0px") {
+      handleCollapse()
+    } else if (!isCollapsed && sidebarRef.current && sidebarRef.current.style.width === "0px") {
+      resetWidth()
+    }
+  }, [isCollapsed, handleCollapse, resetWidth])
 
   useEffect(() => {
     loadDocuments()
@@ -210,7 +220,7 @@ export const Navigation = () => {
         )}
       >
         <button
-          onClick={collapse}
+          onClick={handleCollapse}
           type="button"
           className={cn(
             "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
@@ -343,7 +353,7 @@ export const Navigation = () => {
 
       {isMobile && !isCollapsed && (
         <div
-          onClick={collapse}
+          onClick={handleCollapse}
           className="fixed inset-0 z-40 bg-black/50"
         />
       )}

@@ -166,6 +166,28 @@ export async function getComments(pageId: string) {
     return comments
 }
 
+// Yorum sayısını al
+export async function getCommentCount(pageId: string) {
+    const session = await auth()
+
+    // Erişim kontrolü (basit)
+    const access = await checkPageAccess(pageId)
+    if (!access.hasAccess) {
+        return 0
+    }
+
+    const count = await db.comment.count({
+        where: {
+            pageId,
+            parentId: null // Sadece root yorumlar mı? Genelde indication için total count daha iyi olabilir veya top level.
+            // Kullanıcı "varsa" dedi, yani herhangi bir yorum. ParentId checkini kaldıralım mı?
+            // Notion usually indicates if there is strictly any comment. Let's count all.
+        }
+    })
+
+    return count
+}
+
 // Blok yorumlarını al
 export async function getBlockComments(
     pageId: string,

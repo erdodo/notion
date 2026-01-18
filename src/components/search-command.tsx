@@ -74,17 +74,7 @@ export const SearchCommand = () => {
     performSearch()
   }, [debouncedQuery, session])
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        toggle()
-      }
-    }
 
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [toggle])
 
   const clearSearchState = () => {
     setSearchQuery("")

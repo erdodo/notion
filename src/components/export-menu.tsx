@@ -97,7 +97,7 @@ export function ExportMenu({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="sm" className="h-8 w-8 px-0">
                     {exporting ? (
                         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                     ) : (
