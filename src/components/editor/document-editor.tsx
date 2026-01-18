@@ -66,7 +66,7 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
   }, [debouncedSave, editable])
 
   return (
-    <div className="px-12 pb-40 md:max-w-3xl lg:max-w-4xl min-w-[300px]">
+    <div className="px-12 pb-40 md:max-w-3xl md:mx-auto lg:max-w-4xl min-w-[300px]">
       <div className="relative">
         {/* Save indicator */}
         {editable && (

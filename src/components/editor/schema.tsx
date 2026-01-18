@@ -11,6 +11,7 @@ import { AudioBlock } from "./blocks/audio-block"
 import { FileBlock } from "./blocks/file-block"
 import { EmbedBlock } from "./blocks/embed-block"
 import { PageMentionBlock } from "./blocks/page-mention-block"
+import { InlineDatabaseBlock } from "./blocks/inline-database-block"
 
 export const schema = BlockNoteSchema.create({
     blockSpecs: {
@@ -32,5 +33,6 @@ export const schema = BlockNoteSchema.create({
 
         // New block
         pageMention: PageMentionBlock(),
+        inlineDatabase: InlineDatabaseBlock(),
     },
 })

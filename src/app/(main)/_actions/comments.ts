@@ -22,9 +22,9 @@ export async function addComment(
     const session = await auth()
     if (!session?.user?.id) throw new Error("Unauthorized")
 
-    // Erişim kontrolü (en az COMMENTER olmalı)
+    // Erişim kontrolü
     const access = await checkPageAccess(pageId)
-    if (!access.hasAccess || access.role === "VIEWER") {
+    if (!access.hasAccess) {
         throw new Error("You don't have permission to comment")
     }
 

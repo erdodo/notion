@@ -190,6 +190,9 @@ export async function getDocument(documentId: string) {
           }
         }
       ]
+    },
+    include: {
+      databaseRow: true
     }
   })
 

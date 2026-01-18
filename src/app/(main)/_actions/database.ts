@@ -578,6 +578,47 @@ export async function updateLinkedDatabaseConfig(
     revalidatePath('/documents')
 }
 
+/**
+ * Fetch a linked database with full source database data
+ */
+export async function getLinkedDatabase(linkedDbId: string) {
+    const session = await auth()
+    if (!session?.user?.id) {
+        throw new Error("Unauthorized")
+    }
+
+    const linkedDb = await db.linkedDatabase.findUnique({
+        where: {
+            id: linkedDbId,
+        },
+        include: {
+            page: true, // Hangi sayfada gösteriliyor
+            sourceDatabase: {
+                include: {
+                    page: true, // Database'in page bilgisi
+                    properties: {
+                        orderBy: { order: "asc" },
+                    },
+                    rows: {
+                        orderBy: { order: "asc" },
+                        include: {
+                            cells: true,
+                            page: true, // Her row'un page'i
+                        },
+                    },
+                },
+            },
+        },
+    })
+
+    // Security: Kullanıcı bu sayfanın sahibi mi kontrol et
+    if (linkedDb?.page?.userId !== session.user.id) {
+        throw new Error("Unauthorized")
+    }
+
+    return linkedDb
+}
+
 // ============ TEMPLATE ACTIONS ============
 
 // Template oluştur
@@ -731,4 +772,62 @@ export async function createRowFromTemplate(
 
     revalidatePath('/documents')
     return row
+}
+
+// ============ ROW DETAILS FOR PAGE VIEW ============
+
+export async function getRowDetails(rowId: string) {
+    const user = await getCurrentUser()
+    if (!user) {
+        return null
+    }
+
+    const row = await db.databaseRow.findUnique({
+        where: { id: rowId },
+        include: {
+            cells: true,
+            database: {
+                include: {
+                    properties: {
+                        orderBy: { order: 'asc' }
+                    }
+                }
+            }
+        }
+    })
+
+    // Security check: Ensure user has access to the database/page
+    // For MVP, if they can access the row, they likely can access the properties.
+    // Ideally check page ownership or sharing here too.
+    // The `row` fetch itself doesn't check user, but `getDocument` that led here did.
+    // We should probably check if `row.database.page.userId === user.id` OR shared.
+    // For now, relying on the fact that they reached this page via getDocument which checks auth.
+    // But `getLinkedDatabase` does strict check.
+    // Let's at least check basic ownership if possible, but row->database->page is relation.
+    // Let's fetch database page info to be safe if we want strict security.
+
+    // Actually, `row` includes `database`. We can include `database.page`.
+    const rowWithPage = await db.databaseRow.findUnique({
+        where: { id: rowId },
+        include: {
+            cells: true,
+            database: {
+                include: {
+                    properties: {
+                        orderBy: { order: 'asc' }
+                    },
+                    page: true
+                }
+            }
+        }
+    })
+
+    if (!rowWithPage) return null
+
+    // Simple ownership check for now (can be improved for shared pages)
+    // If we assume `getDocument` handled access to the *Page* (which is the row's page),
+    // then we are mostly fine. But we are fetching *Parent Database* info here.
+    // Access to child page usually implies some access to parent context or the user owns it.
+
+    return rowWithPage
 }

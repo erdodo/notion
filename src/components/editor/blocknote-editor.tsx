@@ -313,6 +313,54 @@ export const BlockNoteEditorComponent = ({
         icon: <div className="text-xl">🗄️</div>,
         subtext: "Create a full page database",
       },
+      {
+        title: "Database - Inline",
+        onItemClick: async () => {
+          const { createDatabase, createLinkedDatabase } = await import(
+            "@/app/(main)/_actions/database"
+          )
+
+          // 1. Yeni kaynak database oluştur (sub-page olarak)
+          const { page, database } = await createDatabase(documentId)
+
+          // 2. Şu anki sayfada LinkedDatabase kaydı oluştur
+          const linkedDb = await createLinkedDatabase(
+            documentId!,              // Mevcut sayfa
+            database.id,             // Kaynak database
+            "Untitled Database"      // Başlık
+          )
+
+          // 3. Editor'a inline database block ekle
+          editor.insertBlocks(
+            [
+              {
+                type: "inlineDatabase",
+                props: {
+                  linkedDatabaseId: linkedDb.id,
+                },
+              },
+            ],
+            editor.getTextCursorPosition().block,
+            "after"
+          )
+
+          // 4. Yeni block'a focus
+          editor.setTextCursorPosition(
+            editor.getTextCursorPosition().nextBlock ||
+            editor.getTextCursorPosition().block
+          )
+        },
+        aliases: [
+          "inline database",
+          "embed database",
+          "table inline",
+          "database inline",
+          "db inline",
+        ],
+        group: "Advanced",
+        icon: <div className="text-xl">📊</div>,
+        subtext: "Embed a database in this page",
+      },
     ]
 
     const customTitles = new Set(customItems.map(i => i.title))

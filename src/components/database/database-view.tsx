@@ -22,10 +22,15 @@ interface DatabaseViewProps {
 }
 
 export function DatabaseView({ database }: DatabaseViewProps) {
+    if (!database) {
+        return <div className="p-4 text-muted-foreground">Database not found</div>
+    }
+
     const { currentView, selectedRowId, setSelectedRowId } = useDatabase()
 
-    // Find selected row for modal
-    const selectedRow = selectedRowId ? database.rows.find(r => r.id === selectedRowId) : null
+    // Find selected row for modal (safely)
+    const rows = database.rows || []
+    const selectedRow = selectedRowId ? rows.find(r => r.id === selectedRowId) : null
 
     // Initialize view from database default if needed or just rely on default 'table'
     // Ideally we sync this with server state later

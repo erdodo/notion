@@ -65,25 +65,45 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
         </div>
       </nav >
 
-      <div className="flex-1 overflow-y-auto">
-        {page.isArchived && (
-          <Banner documentId={documentId} />
-        )}
-        <DocumentHeader page={page} />
-        {page.isDatabase && database ? (
-          <DatabaseView database={database as any} />
-        ) : (
-          <DocumentEditor
-            documentId={page.id}
-            initialContent={page.content}
-            editable={true}
-          />
-        )}
+      {page.isArchived && (
+        <Banner documentId={documentId} />
+      )}
+      <DocumentHeader page={page} />
 
-        <div className="pb-40">
-          <BacklinksPanel pageId={page.id} />
-        </div>
+      {/* Database Properties Section */}
+      {page.databaseRow && (
+        <RowPropertiesLoader rowId={page.databaseRow.id} />
+      )}
+
+      {page.isDatabase && database ? (
+        <DatabaseView database={database as any} />
+      ) : (
+        <DocumentEditor
+          documentId={page.id}
+          initialContent={page.content}
+          editable={true}
+        />
+      )}
+
+      <div className="pb-40">
+        <BacklinksPanel pageId={page.id} />
       </div>
-    </div >
+    </div>
+  )
+}
+
+// Server component to fetch row details
+async function RowPropertiesLoader({ rowId }: { rowId: string }) {
+  const { getRowDetails } = await import("@/app/(main)/_actions/database")
+  const row = await getRowDetails(rowId)
+
+  if (!row) return null
+
+  const { PageProperties } = await import("@/components/database/page-properties")
+
+  return (
+    <div className="px-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
+      <PageProperties row={row as any} />
+    </div>
   )
 }

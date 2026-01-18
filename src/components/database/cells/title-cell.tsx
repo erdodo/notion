@@ -13,7 +13,8 @@ export function TitleCell({
     updateValue,
     isEditing,
     startEditing,
-    stopEditing
+    stopEditing,
+    row
 }: CellProps) {
     const initialValue = getValue()
     // Title value is expected to be a string or object.
@@ -34,17 +35,10 @@ export function TitleCell({
         }
     }
 
-    // Create link to page. rowId is currently the databaseRow ID.
-    // The row has a pageId. We usually access it via row.original.pageId or similar.
-    // We need to access the row object.
-    const pageId = (column.columnDef.meta as any)?.getPageId?.(rowId)
-        || rowId // If rowId is pageId? No rowId is databaseRow id.
-    // We need access to the full row data.
-    // Using `cell.row.original`. But `cell` prop is available.
-
-    // But wait, the prompt says "Row = Page". 
-    // DatabaseRow has pageId.
-    // We usually construct the cell renderer to have access to `row`.
+    // Get pageId from the row data
+    // row.original is the data object constructed in TableView (id, originalRow, properties...)
+    // originalRow is the Prisma DatabaseRow object which contains pageId
+    const pageId = row?.original?.originalRow?.pageId || rowId
 
     return (
         <div className="flex items-center group relative h-full w-full min-h-[32px]">
