@@ -263,10 +263,11 @@ enum PropertyType {
   CREATED_TIME
   UPDATED_TIME
   
-  // YENİ: İleri tipler
   RELATION      // Database ilişkisi
   ROLLUP        // Relation üzerinden hesaplama
   FORMULA       // Formül ile hesaplama
+  CREATED_BY
+  LAST_EDITED_BY
 }
 
 // Database Row - Satırlar (aynı zamanda alt sayfa)
