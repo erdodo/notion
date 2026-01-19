@@ -34,6 +34,10 @@ export const useCollaboration = () => {
     return context
 }
 
+export const useOptionalCollaboration = () => {
+    return useContext(CollaborationContext)
+}
+
 interface CollaborationProviderProps {
     documentId: string
     children: ReactNode

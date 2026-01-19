@@ -17,7 +17,7 @@ import {
 } from "@/app/(main)/_actions/documents"
 import { useContextMenuStore } from "@/store/use-context-menu-store"
 import { useRouter } from "next/navigation"
-import { useConfirmModal } from "@/hooks/use-confirm-modal" // Need to create this if I want safe delete
+
 
 interface TrashItemMenuProps {
     data: {

@@ -7,6 +7,7 @@ import { BoardView } from "./board-view"
 import { CalendarView } from "./calendar-view"
 import { GalleryView } from "./gallery-view"
 import { ListView } from "./list-view"
+import { TimelineView } from "./timeline-view"
 import { RowDetailModal } from "./row-detail-modal"
 import { useDatabase } from "@/hooks/use-database"
 import { DatabaseToolbar } from "./toolbar/database-toolbar"
@@ -48,6 +49,7 @@ export function DatabaseView({ database }: DatabaseViewProps) {
                     {currentView === 'calendar' && <CalendarView database={database} />}
                     {currentView === 'gallery' && <GalleryView database={database} />}
                     {currentView === 'list' && <ListView database={database} />}
+                    {currentView === 'timeline' && <TimelineView database={database} />}
                 </div>
             </div>
 

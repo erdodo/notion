@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs"
 import { BacklinksPanel } from "@/components/backlinks-panel"
 import { FavoriteButton } from "@/components/favorite-button"
 import { DocumentNavbarActions } from "@/components/document-navbar-actions"
+import { PageMenu } from "@/components/page-menu"
 import { ExportMenu } from "@/components/export-menu"
 import { recordPageView } from "@/app/(main)/_actions/navigation"
 import { PageRenderer } from "@/components/page/page-renderer"
@@ -57,6 +58,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
               pageTitle={page.title}
               isPublished={page.isPublished}
             />
+
             <ExportMenu
               pageId={page.id}
               pageTitle={page.title}
@@ -66,6 +68,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
             {!page.isArchived && (
               <FavoriteButton pageId={page.id} />
             )}
+            <PageMenu documentId={page.id} isArchived={page.isArchived} />
           </div>
         </nav >
 

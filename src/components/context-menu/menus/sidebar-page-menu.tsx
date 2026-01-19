@@ -16,9 +16,7 @@ import {
     Trash2,
     MoreHorizontal
 } from "lucide-react"
-import { useUser } from "@clerk/nextjs" // Wait, user is using NextAuth not Clerk? 
-// Checking package.json: next-auth. Not Clerk.
-// So I don't need auth hook for this likely, actions handle it.
+
 import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import {
@@ -157,7 +155,7 @@ export const SidebarPageMenu = ({ data }: SidebarPageMenuProps) => {
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={() => {
-                movePage.onOpen(data.id)
+                movePage.onOpen(data.id, data.parentId ?? null)
                 closeContextMenu()
             }}>
                 <FolderInput className="h-4 w-4 mr-2" />

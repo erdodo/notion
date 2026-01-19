@@ -64,8 +64,8 @@ interface DatabaseState {
     setFocusedCell: (cell: { propertyId: string, rowId: string } | null) => void
 
     // View State
-    currentView: 'table' | 'list' | 'board' | 'calendar' | 'gallery'
-    setCurrentView: (view: 'table' | 'list' | 'board' | 'calendar' | 'gallery') => void
+    currentView: 'table' | 'list' | 'board' | 'calendar' | 'gallery' | 'timeline'
+    setCurrentView: (view: 'table' | 'list' | 'board' | 'calendar' | 'gallery' | 'timeline') => void
 
     // Board View Configuration
     boardGroupByProperty: string | null
@@ -99,6 +99,14 @@ interface DatabaseState {
 
     openMode: 'side' | 'center'
     setOpenMode: (mode: 'side' | 'center') => void
+
+    // Timeline View Configuration
+    timelineDateProperty: string | null
+    setTimelineDateProperty: (propertyId: string | null) => void
+    timelineGroupByProperty: string | null
+    setTimelineGroupByProperty: (propertyId: string | null) => void
+    timelineScale: 'day' | 'week' | 'month' | 'year'
+    setTimelineScale: (scale: 'day' | 'week' | 'month' | 'year') => void
 }
 
 
@@ -203,6 +211,14 @@ export const useDatabase = create<DatabaseState>()(
 
             openMode: 'center',
             setOpenMode: (mode) => set({ openMode: mode }),
+
+            // Timeline View Configuration
+            timelineDateProperty: null,
+            setTimelineDateProperty: (propertyId) => set({ timelineDateProperty: propertyId }),
+            timelineGroupByProperty: null,
+            setTimelineGroupByProperty: (propertyId) => set({ timelineGroupByProperty: propertyId }),
+            timelineScale: 'month',
+            setTimelineScale: (scale) => set({ timelineScale: scale }),
         }),
         {
             name: 'database-storage',
@@ -219,6 +235,9 @@ export const useDatabase = create<DatabaseState>()(
                 galleryCardSize: state.galleryCardSize,
                 galleryCoverProperty: state.galleryCoverProperty,
                 galleryFitImage: state.galleryFitImage,
+                timelineDateProperty: state.timelineDateProperty,
+                timelineGroupByProperty: state.timelineGroupByProperty,
+                timelineScale: state.timelineScale,
                 openMode: state.openMode
             }),
         }

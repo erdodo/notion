@@ -8,6 +8,8 @@ export type ContextMenuType =
     | "icon"
     | "trash-item"
     | "generic"
+    | "interface-element"
+    | "database-cell"
 
 interface ContextMenuStore {
     isOpen: boolean

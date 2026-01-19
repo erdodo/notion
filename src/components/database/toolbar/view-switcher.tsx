@@ -6,6 +6,7 @@ import {
     List,
     Check,
     ChevronsUpDown,
+    GanttChartSquare,
 } from "lucide-react"
 import { useDatabase } from "@/hooks/use-database"
 import { cn } from "@/lib/utils"
@@ -49,6 +50,11 @@ const views = [
         value: "list",
         label: "List",
         icon: List,
+    },
+    {
+        value: "timeline",
+        label: "Timeline",
+        icon: GanttChartSquare,
     },
 ] as const
 

@@ -13,7 +13,7 @@ import { SlashMenu } from "./slash-menu"
 import { PageMentionPicker } from "./page-mention-picker"
 import { FormattingToolbar } from "./formatting-toolbar"
 import { getBlockColorStyle, BlockColor } from "@/lib/block-utils"
-import { useCollaboration } from "@/components/providers/collaboration-provider"
+import { useCollaboration, useOptionalCollaboration } from "@/components/providers/collaboration-provider"
 import { useContextMenuStore } from "@/store/use-context-menu-store"
 
 
@@ -22,6 +22,7 @@ interface BlockNoteEditorProps {
   onChange: (content: string) => void
   editable?: boolean
   documentId?: string
+  disableCollaboration?: boolean
 }
 
 // Simple filter implementation
@@ -42,7 +43,8 @@ export const BlockNoteEditorComponent = ({
   initialContent,
   onChange,
   editable = true,
-  documentId
+  documentId,
+  disableCollaboration = false
 }: BlockNoteEditorProps) => {
   const { resolvedTheme } = useTheme()
   const { edgestore } = useEdgeStore()
@@ -72,7 +74,7 @@ export const BlockNoteEditorComponent = ({
   }, [initialContent])
 
   // Collaboration Context
-  const collaboration = useCollaboration()
+  const collaboration = useOptionalCollaboration()
 
   // Create editor instance
   const editor = useCreateBlockNote({
@@ -82,14 +84,14 @@ export const BlockNoteEditorComponent = ({
       const res = await edgestore.editorMedia.upload({ file });
       return res.url;
     },
-    collaboration: {
+    collaboration: (!disableCollaboration && collaboration) ? {
       provider: collaboration.provider,
       fragment: collaboration.yDoc.getXmlFragment("document-store"),
       user: {
         name: collaboration.user?.name || "Anonymous",
         color: collaboration.user?.color || "#505050",
       }
-    }
+    } : undefined
   })
 
   // Hydration / Synchronization Effect

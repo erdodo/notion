@@ -2,6 +2,7 @@ import { Database, Property } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { CalendarOptions } from "./calendar-options"
 import { GalleryOptions } from "./gallery-options"
+import { TimelineOptions } from "./timeline-options"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -68,6 +69,7 @@ export function ViewOptions({ database }: ViewOptionsProps) {
 
             {currentView === 'calendar' && <CalendarOptions database={database} />}
             {currentView === 'gallery' && <GalleryOptions database={database} />}
+            {currentView === 'timeline' && <TimelineOptions database={database} />}
         </div>
     )
 }

@@ -81,7 +81,7 @@ export const Item = ({
 
   const { onContextMenu } = useContextMenu({
     type: "sidebar-page",
-    data: { id, title, icon }
+    data: { id, title, icon, parentId }
   })
 
   return (

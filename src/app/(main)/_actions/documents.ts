@@ -141,6 +141,43 @@ export async function updateDocument(
   }
 
   try {
+    // --- SNAPSHOT LOGIC ---
+    try {
+      if (data.content) {
+        const existingDoc = await db.page.findUnique({
+          where: { id: documentId },
+          select: { content: true }
+        })
+
+        if (existingDoc && existingDoc.content && existingDoc.content !== data.content) {
+          // Check last snapshot
+          const lastSnapshot = await db.pageHistory.findFirst({
+            where: { pageId: documentId },
+            orderBy: { savedAt: 'desc' }
+          })
+
+          const shouldSnapshot = !lastSnapshot ||
+            (new Date().getTime() - lastSnapshot.savedAt.getTime() > 10 * 60 * 1000) // 10 mins
+
+          if (shouldSnapshot) {
+            console.log("Creating snapshot for page:", documentId)
+            await db.pageHistory.create({
+              data: {
+                pageId: documentId,
+                content: existingDoc.content, // Save PREVIOUS content
+                userId: user.id
+              }
+            })
+            console.log("Snapshot created")
+          }
+        }
+      }
+    } catch (snapshotError) {
+      // Log but don't fail the update
+      console.error("Failed to create snapshot:", snapshotError)
+    }
+    // ----------------------
+
     const document = await db.page.updateMany({
       where: {
         id: documentId,
@@ -163,6 +200,10 @@ export async function updateDocument(
     return document
   } catch (error) {
     console.error("Error updating document:", error)
+    if (error instanceof Error) {
+      console.error("Stack:", error.stack)
+      console.error("Message:", error.message)
+    }
     throw new Error("Failed to update document")
   }
 }
@@ -687,4 +728,85 @@ export async function duplicateDocument(documentId: string) {
   await recursiveCopy(documentId, document.parentId, user.id, true)
 
   revalidatePath("/documents")
+}
+
+export async function getPageHistory(documentId: string) {
+  const user = await getCurrentUser()
+  if (!user) return []
+
+  // Check access first
+  const doc = await db.page.findFirst({
+    where: {
+      id: documentId,
+      OR: [
+        { userId: user.id },
+        { shares: { some: { OR: [{ userId: user.id }, { email: user.email }] } } }
+      ]
+    }
+  })
+  if (!doc) throw new Error("Unauthorized")
+
+  return await db.pageHistory.findMany({
+    where: { pageId: documentId },
+    orderBy: { savedAt: 'desc' },
+    include: {
+      user: {
+        select: { name: true, image: true, email: true }
+      }
+    }
+  })
+}
+
+export async function restorePage(documentId: string, historyId: string) {
+  const user = await getCurrentUser()
+  if (!user) throw new Error("Unauthorized")
+
+  // Check access & ownership (allow restoration if editor/owner)
+  // Simplified: check access same as get
+  const doc = await db.page.findFirst({
+    where: {
+      id: documentId,
+      OR: [
+        { userId: user.id },
+        { shares: { some: { OR: [{ userId: user.id }, { email: user.email }] } } }
+      ]
+    }
+  })
+  if (!doc) throw new Error("Unauthorized")
+
+  const history = await db.pageHistory.findUnique({
+    where: { id: historyId }
+  })
+  if (!history || !history.content) throw new Error("History not found")
+
+  // Create a backup of CURRENT state before restoring
+  if (doc.content) {
+    await db.pageHistory.create({
+      data: {
+        pageId: documentId,
+        content: doc.content,
+        userId: user.id,
+        savedAt: new Date() // Now
+      }
+    })
+  }
+
+  // Restore
+  await db.page.update({
+    where: { id: documentId },
+    data: {
+      content: history.content,
+      updatedAt: new Date()
+    }
+  })
+
+  // Trigger update
+  await pusherServer.trigger(
+    `document-${documentId}`,
+    "document-update",
+    { content: history.content }
+  )
+
+  revalidatePath(`/documents/${documentId}`)
+  return { success: true }
 }

@@ -31,15 +31,21 @@ export const GlobalContextMenu = () => {
     const renderMenuContent = () => {
         switch (type) {
             case "sidebar-page":
-                return <SidebarPageMenu data={data} />
+                return <SidebarPageMenu data={data as any} />
             case "trash-item":
-                return <TrashItemMenu data={data} />
+                return <TrashItemMenu data={data as any} />
             case "editor-block":
-                return <EditorBlockMenu data={data} />
+                return <EditorBlockMenu data={data as any} />
             case "icon":
-                return <IconMenu data={data} />
+                return <IconMenu data={data as any} />
             case "cover-image":
-                return <CoverImageMenu data={data} />
+                return <CoverImageMenu data={data as any} />
+            case "interface-element":
+                return <InterfaceElementMenu data={data as any} />
+            case "database-cell":
+                return <DatabaseCellMenu data={data as any} />
+            case "database-row":
+                return <DatabaseRowMenu data={data as any} />
             default:
                 return null
         }

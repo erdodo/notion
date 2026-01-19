@@ -63,6 +63,7 @@ model User {
   pages     Page[]
   favorites Favorite[]
   pageViews PageView[]
+  history   PageHistory[]
   
   // Paylaşım ilişkileri
   sharedPages     PageShare[]   @relation("SharedPages")
@@ -138,6 +139,9 @@ model Page {
   
   // Presence
   activeUsers     UserPresence[]
+  
+  // History
+  history         PageHistory[]
 
   @@index([userId])
   @@index([parentId])
@@ -500,4 +504,19 @@ enum PresenceStatus {
   ONLINE
   AWAY
   OFFLINE
+}
+
+// ============ PAGE HISTORY ============
+
+model PageHistory {
+  id        String   @id @default(uuid())
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  content   String?  @db.Text
+  savedAt   DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@index([savedAt(sort: Desc)])
 }
