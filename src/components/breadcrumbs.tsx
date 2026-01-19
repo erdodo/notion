@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronRight, Home } from "lucide-react"
 import { getPageBreadcrumbs } from "@/app/(main)/_actions/navigation"
 import { cn } from "@/lib/utils"
+import { useContextMenu } from "@/hooks/use-context-menu"
 
 interface BreadcrumbsProps {
     pageId: string
@@ -53,25 +54,46 @@ export function Breadcrumbs({ pageId, className }: BreadcrumbsProps) {
             {breadcrumbs.map((item, index) => (
                 <div key={item.id} className="flex items-center gap-1">
                     <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
-
-                    {index === breadcrumbs.length - 1 ? (
-                        // Current page (not clickable)
-                        <span className="flex items-center gap-1 text-foreground font-medium truncate max-w-[150px]">
-                            {item.icon && <span>{item.icon}</span>}
-                            <span className="truncate">{item.title || "Untitled"}</span>
-                        </span>
-                    ) : (
-                        // Parent pages (clickable)
-                        <Link
-                            href={`/documents/${item.id}`}
-                            className="flex items-center gap-1 hover:text-foreground transition-colors truncate max-w-[150px]"
-                        >
-                            {item.icon && <span>{item.icon}</span>}
-                            <span className="truncate">{item.title || "Untitled"}</span>
-                        </Link>
-                    )}
+                    <BreadcrumbItemRenderer item={item} isLast={index === breadcrumbs.length - 1} />
                 </div>
             ))}
         </nav>
+    )
+}
+
+function BreadcrumbItemRenderer({ item, isLast }: { item: BreadcrumbItem, isLast: boolean }) {
+    const { onContextMenu, onTouchStart, onTouchEnd, onTouchMove } = useContextMenu({
+        type: "interface-element",
+        data: { type: "breadcrumb", id: item.id, url: `${window.location.origin}/documents/${item.id}` }
+    })
+
+    const commonProps = {
+        onContextMenu,
+        onTouchStart,
+        onTouchEnd,
+        onTouchMove
+    }
+
+    if (isLast) {
+        return (
+            <span
+                className="flex items-center gap-1 text-foreground font-medium truncate max-w-[150px]"
+                {...commonProps}
+            >
+                {item.icon && <span>{item.icon}</span>}
+                <span className="truncate">{item.title || "Untitled"}</span>
+            </span>
+        )
+    }
+
+    return (
+        <Link
+            href={`/documents/${item.id}`}
+            className="flex items-center gap-1 hover:text-foreground transition-colors truncate max-w-[150px]"
+            {...commonProps}
+        >
+            {item.icon && <span>{item.icon}</span>}
+            <span className="truncate">{item.title || "Untitled"}</span>
+        </Link>
     )
 }

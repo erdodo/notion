@@ -14,6 +14,7 @@ import { PageMentionPicker } from "./page-mention-picker"
 import { FormattingToolbar } from "./formatting-toolbar"
 import { getBlockColorStyle, BlockColor } from "@/lib/block-utils"
 import { useCollaboration } from "@/components/providers/collaboration-provider"
+import { useContextMenuStore } from "@/store/use-context-menu-store"
 
 
 interface BlockNoteEditorProps {
@@ -609,6 +610,41 @@ export const BlockNoteEditorComponent = ({
     return () => document.removeEventListener("keydown", handleKeyDown, { capture: true })
   }, [slashMenuOpen, slashMenuIndex, filteredItems, editor])
 
+  // Context Menu Handler (Capture Phase to bypass BlockNote's internal handling)
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      if (!editorWrapperRef.current || !editorWrapperRef.current.contains(e.target as Node)) {
+        return
+      }
+
+      const target = e.target as HTMLElement
+      // Try to find the block element using data-id which is reliable in BlockNote
+      const blockElement = target.closest('[data-id]') as HTMLElement
+
+      if (blockElement) {
+        const id = blockElement.getAttribute('data-id')
+        if (id) {
+          const block = editor.getBlock(id)
+          if (block) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            const { openContextMenu } = useContextMenuStore.getState()
+            openContextMenu(
+              { x: e.clientX, y: e.clientY },
+              "editor-block",
+              { editor, block }
+            )
+          }
+        }
+      }
+    }
+
+    // Attach with capture: true to intercept before BlockNote/Mantine
+    document.addEventListener("contextmenu", handleContextMenu, { capture: true })
+    return () => document.removeEventListener("contextmenu", handleContextMenu, { capture: true })
+  }, [editor])
+
   // Handle changes
   const handleEditorChange = () => {
     const blocks = editor.document
@@ -686,10 +722,7 @@ export const BlockNoteEditorComponent = ({
       ref={editorWrapperRef}
       className={`blocknote-editor relative rounded-md transition-colors ${isDragging ? "bg-primary/5 ring-2 ring-primary ring-inset" : ""}`}
       onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
       onDrop={handleDrop}
-      onKeyDown={handleKeyDown}
     >
       <BlockNoteView
         editor={editor}

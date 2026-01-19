@@ -4,6 +4,7 @@ import { useState, useRef } from "react"
 import { ImageIcon, Smile, X } from "lucide-react"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
+import { useContextMenu } from "@/hooks/use-context-menu"
 
 interface Page {
   id: string
@@ -21,6 +22,11 @@ interface ToolbarProps {
 export const Toolbar = ({ page, preview }: ToolbarProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+
+  const { onContextMenu } = useContextMenu({
+    type: "icon",
+    data: { id: page.id, icon: page.icon }
+  })
 
   const handleIconSelect = async (icon: string) => {
     // Optimistic update
@@ -61,7 +67,10 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   return (
     <div className="group relative">
       {!!page.icon && !preview && (
-        <div className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? "absolute -top-[1rem] left-0 z-10" : ""}`}>
+        <div
+          onContextMenu={onContextMenu}
+          className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? "absolute -top-[1rem] left-0 z-10" : ""}`}
+        >
           <IconPicker onChange={handleIconSelect}>
             <p className="text-6xl hover:opacity-75 transition">
               {page.icon}

@@ -3,6 +3,7 @@ import "./globals.css"
 import { AuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
+import { QueryProvider } from "@/components/providers/query-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
 import { Toaster } from "sonner"
 
@@ -21,17 +22,19 @@ export default function RootLayout({
       <body className="font-sans">
         <AuthProvider>
           <EdgeStoreProviderWrapper>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="notion-theme"
-            >
-              <Toaster position="bottom-center" />
-              <ModalProvider />
-              {children}
-            </ThemeProvider>
+            <QueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="notion-theme"
+              >
+                <Toaster position="bottom-center" />
+                <ModalProvider />
+                {children}
+              </ThemeProvider>
+            </QueryProvider>
           </EdgeStoreProviderWrapper>
         </AuthProvider>
       </body>

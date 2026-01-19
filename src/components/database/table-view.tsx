@@ -34,6 +34,7 @@ import { DndContext, closestCenter, DragOverlay, DragStartEvent, DragEndEvent, u
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
 import { ChevronRight, ChevronDown } from "lucide-react"
 import { GroupSection } from "./shared/group-section"
+import { useContextMenu } from "@/hooks/use-context-menu"
 
 interface TableViewProps {
     database: Database & {
@@ -540,6 +541,15 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
         setFocusedCell({ rowId, propertyId })
     }, [rowId, propertyId, setEditingCell, setFocusedCell])
 
+    const { onContextMenu, onTouchStart, onTouchEnd, onTouchMove } = useContextMenu({
+        type: "database-cell",
+        data: {
+            rowId,
+            propertyId,
+            value: getValue()
+        }
+    })
+
     return (
         <div
             className={cn(
@@ -554,6 +564,10 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
             onDoubleClick={() => {
                 startEditing()
             }}
+            onContextMenu={onContextMenu}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onTouchMove={onTouchMove}
         >
             {/* The ring element must be separate if we want it to not affect layout or check pointer events. 
                  Actually ring css works fine on wrapper usually. But pointer-events-none on ring is trickier via just class.

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { PropertyValue } from "./shared/property-value"
 import { PropertyTypeIcon } from "./property-type-icon"
 import { FileIcon } from "lucide-react"
+import { useContextMenu } from "@/hooks/use-context-menu"
 
 interface ListItemProps {
     row: DatabaseRow & { cells: Cell[]; page: Page | null }
@@ -22,10 +23,19 @@ export function ListItem({ row, properties, onClick }: ListItemProps) {
 
     const otherProps = properties.filter(p => p.type !== 'TITLE')
 
+    const { onContextMenu, onTouchStart, onTouchEnd, onTouchMove } = useContextMenu({
+        type: "database-row",
+        data: { id: row.id, title } // sending title for potential use
+    })
+
     return (
         <div
             className="group flex items-center gap-3 p-2 hover:bg-muted/50 rounded-md cursor-pointer border-b border-border/40 last:border-0"
             onClick={onClick}
+            onContextMenu={onContextMenu}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onTouchMove={onTouchMove}
         >
             {/* Icon */}
             <div className="w-6 flex justify-center shrink-0">

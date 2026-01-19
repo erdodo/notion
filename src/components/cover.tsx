@@ -7,6 +7,7 @@ import { ImageIcon, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEdgeStore } from "@/lib/edgestore"
 import { CoverImageModal } from "@/components/modals/cover-image-modal"
+import { useContextMenu } from "@/hooks/use-context-menu"
 
 interface CoverProps {
   url?: string
@@ -28,17 +29,24 @@ export const Cover = ({ url, pageId, preview }: CoverProps) => {
     })
   }
 
+  const { onContextMenu } = useContextMenu({
+    type: "cover-image",
+    data: { id: pageId, url }
+  })
+
   if (!url) {
     return null
   }
 
   return (
     <>
-      <div className={cn(
-        "relative w-full h-[35vh] group",
-        !url && "h-[12vh]",
-        url && "bg-muted"
-      )}>
+      <div
+        onContextMenu={onContextMenu}
+        className={cn(
+          "relative w-full h-[35vh] group",
+          !url && "h-[12vh]",
+          url && "bg-muted"
+        )}>
         {!!url && (
           <Image
             src={url}
