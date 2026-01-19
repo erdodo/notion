@@ -133,6 +133,62 @@ export const BlockNoteEditorComponent = ({
 
   }, [editor, parsedContent])
 
+  // Paste Handler for Synced Blocks
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      // Ensure we are pasting inside THIS editor instance
+      if (editorWrapperRef.current && !editorWrapperRef.current.contains(e.target as Node)) {
+        return
+      }
+
+      const clipboardData = e.clipboardData
+      if (!clipboardData) return
+
+      const text = clipboardData.getData("text/plain")
+      if (!text) return
+
+      // Strict check for Synced Block JSON pattern
+      if (text.trim().startsWith("{") && text.includes("sourcePageId") && text.includes("sourceBlockId")) {
+        console.log("[Editor] Detected Synced Block Paste Candidate", text.substring(0, 50))
+        try {
+          const props = JSON.parse(text)
+          if (props.sourcePageId && props.sourceBlockId) {
+            e.preventDefault()
+            e.stopPropagation()
+
+            console.log("[Editor] Inserting Synced Block Mirror with props:", props)
+
+            // Insert Mirror Block
+            // Try to get cursor, fallback to end of doc
+            let currentBlock: any
+            try {
+              currentBlock = editor.getTextCursorPosition().block
+            } catch (err) {
+              // No cursor, maybe append?
+              // Or just try to get last block
+              const doc = editor.document
+              currentBlock = doc[doc.length - 1]
+            }
+
+            editor.insertBlocks(
+              [{
+                type: "syncedBlock",
+                props: props
+              } as any],
+              currentBlock,
+              "after"
+            )
+          }
+        } catch (err) {
+          console.error("Failed to paste Synced Block", err)
+        }
+      }
+    }
+
+    document.addEventListener("paste", handlePaste, { capture: true })
+    return () => document.removeEventListener("paste", handlePaste, { capture: true })
+  }, [editor])
+
   // Global Drag & Drop Handler
   const [isDragging, setIsDragging] = useState(false)
 
@@ -475,6 +531,60 @@ export const BlockNoteEditorComponent = ({
         icon: <div className="text-xl">📊</div>,
         subtext: "Embed a database in this page",
       },
+      {
+        title: "Synced Block",
+        onItemClick: async () => {
+          // Create a new Synced Block (Master)
+          editor.insertBlocks(
+            [{
+              type: "syncedBlock",
+            } as any],
+            editor.getTextCursorPosition().block,
+            "after"
+          )
+        },
+        aliases: ["synced", "sync", "mirror", "copy block"],
+        group: "Advanced",
+        icon: <div className="text-xl">🔄</div>,
+        subtext: "Sync content across pages",
+      },
+      {
+        title: "Paste Synced Block",
+        onItemClick: async () => {
+          // Ask for ID
+          const input = prompt("Enter Synced Block ID (JSON format or ID):")
+          if (!input) return
+
+          try {
+            // Try to parse JSON first
+            let props = {}
+            try {
+              props = JSON.parse(input)
+            } catch {
+              // Assume it's just an ID, but we need Page ID too?
+              // If user pastes just ID, we can't sync.
+              // Warn user.
+              alert("Please paste the full Sync JSON from the original block.")
+              return
+            }
+
+            editor.insertBlocks(
+              [{
+                type: "syncedBlock",
+                props: props
+              } as any],
+              editor.getTextCursorPosition().block,
+              "after"
+            )
+          } catch (e) {
+            console.error(e)
+          }
+        },
+        aliases: ["paste sync", "link sync"],
+        group: "Advanced",
+        icon: <div className="text-xl">🔗</div>,
+        subtext: "Paste a synced block from clipboard",
+      }
     ]
 
     const customTitles = new Set(customItems.map(i => i.title))

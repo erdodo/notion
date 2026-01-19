@@ -19,7 +19,7 @@ import { EmbedBlock } from "./blocks/embed-block"
 import { PageMentionBlock } from "./blocks/page-mention-block"
 import { InlineDatabaseBlock } from "./blocks/inline-database-block"
 
-// Custom style specs for text formatting
+// Custom style specs
 const customStyleSpecs = {
     ...defaultStyleSpecs,
     // Inline code style
@@ -72,6 +72,42 @@ const customStyleSpecs = {
     ),
 }
 
+import dynamic from "next/dynamic"
+import { createReactBlockSpec } from "@blocknote/react"
+
+// Define SyncedBlock locally to avoid circular dependencies
+const SyncedBlockView = dynamic(
+    () => import("./blocks/synced-block-view").then((mod) => mod.SyncedBlockView),
+    {
+        ssr: false,
+        loading: () => <div className="p-2 border border-red-200 rounded text-xs text-red-500">Loading Synced Block...</div>
+    }
+)
+
+const SyncedBlock = createReactBlockSpec(
+    {
+        type: "syncedBlock",
+        propSchema: {
+            sourcePageId: {
+                default: "",
+            },
+            sourceBlockId: {
+                default: "",
+            },
+            childrenJSON: {
+                default: "[]",
+            }
+        },
+        content: "none",
+    },
+    {
+        render: (props) => {
+            return <SyncedBlockView block={props.block} editor={props.editor} />
+        },
+    }
+)
+
+
 // Note: backgroundColor will be handled via CSS and block metadata
 // BlockNote doesn't support runtime prop schema modification easily
 export const schema = BlockNoteSchema.create({
@@ -95,7 +131,9 @@ export const schema = BlockNoteSchema.create({
         // New block
         pageMention: PageMentionBlock(),
         inlineDatabase: InlineDatabaseBlock(),
+        syncedBlock: SyncedBlock(),
     },
     inlineContentSpecs: defaultInlineContentSpecs,
     styleSpecs: customStyleSpecs,
 })
+
