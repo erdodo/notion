@@ -35,7 +35,14 @@ const filterSuggestionItems = (items: any[], query: string) => {
 
 const insertOrUpdateBlock = (editor: typeof schema.BlockNoteEditor, block: any) => {
   const currentBlock = editor.getTextCursorPosition().block
+
   editor.replaceBlocks([currentBlock], [block])
+
+  // Attempt to focus the new block
+  const newBlock = editor.getTextCursorPosition().block
+  if (newBlock) {
+    editor.setTextCursorPosition(newBlock, "end")
+  }
 }
 
 
@@ -448,15 +455,15 @@ export const BlockNoteEditorComponent = ({
       {
         title: "Page",
         onItemClick: async () => {
+          const currentBlock = editor.getTextCursorPosition().block
           const { createDocument } = await import("@/app/(main)/_actions/documents")
           const doc = await createDocument("Untitled", documentId)
-          editor.insertBlocks(
+          editor.replaceBlocks(
+            [currentBlock],
             [{
               type: "paragraph",
               content: [{ type: "link", href: `/documents/${doc.id}`, content: "Untitled Page" }]
-            } as any],
-            editor.getTextCursorPosition().block,
-            "after"
+            } as any]
           )
         },
         aliases: ["page", "new page"],
@@ -467,15 +474,15 @@ export const BlockNoteEditorComponent = ({
       {
         title: "Database - Full Page",
         onItemClick: async () => {
+          const currentBlock = editor.getTextCursorPosition().block
           const { createDatabase } = await import("@/app/(main)/_actions/database")
           const { page } = await createDatabase(documentId)
-          editor.insertBlocks(
+          editor.replaceBlocks(
+            [currentBlock],
             [{
               type: "paragraph",
               content: [{ type: "link", href: `/documents/${page.id}`, content: "Untitled Database" }]
-            } as any],
-            editor.getTextCursorPosition().block,
-            "after"
+            } as any]
           )
         },
         aliases: ["database", "table", "db", "full page database"],
@@ -486,6 +493,7 @@ export const BlockNoteEditorComponent = ({
       {
         title: "Database - Inline",
         onItemClick: async () => {
+          const currentBlock = editor.getTextCursorPosition().block
           const { createDatabase, createLinkedDatabase } = await import(
             "@/app/(main)/_actions/database"
           )
@@ -501,7 +509,8 @@ export const BlockNoteEditorComponent = ({
           )
 
           // 3. Editor'a inline database block ekle
-          editor.insertBlocks(
+          editor.replaceBlocks(
+            [currentBlock],
             [
               {
                 type: "inlineDatabase",
@@ -509,9 +518,7 @@ export const BlockNoteEditorComponent = ({
                   linkedDatabaseId: linkedDb.id,
                 },
               },
-            ],
-            editor.getTextCursorPosition().block,
-            "after"
+            ]
           )
 
           // 4. Yeni block'a focus
@@ -535,12 +542,12 @@ export const BlockNoteEditorComponent = ({
         title: "Synced Block",
         onItemClick: async () => {
           // Create a new Synced Block (Master)
-          editor.insertBlocks(
+          // Replace current block with Synced Block
+          editor.replaceBlocks(
+            [editor.getTextCursorPosition().block],
             [{
               type: "syncedBlock",
-            } as any],
-            editor.getTextCursorPosition().block,
-            "after"
+            } as any]
           )
         },
         aliases: ["synced", "sync", "mirror", "copy block"],
@@ -568,13 +575,12 @@ export const BlockNoteEditorComponent = ({
               return
             }
 
-            editor.insertBlocks(
+            editor.replaceBlocks(
+              [editor.getTextCursorPosition().block],
               [{
                 type: "syncedBlock",
                 props: props
-              } as any],
-              editor.getTextCursorPosition().block,
-              "after"
+              } as any]
             )
           } catch (e) {
             console.error(e)

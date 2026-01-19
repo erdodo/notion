@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
@@ -13,6 +12,6 @@ export default defineConfig({
         environment: 'jsdom',
         globals: true,
         setupFiles: ['./vitest.setup.ts'],
-        exclude: ['**/node_modules/**', '**/dist/**', '**/tests-e2e/**'],
+        exclude: ['**/node_modules/**', '**/dist/**', '**/playwright-report/**'],
     },
 })
