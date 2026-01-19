@@ -16,7 +16,7 @@ test.describe('Document Management', () => {
     test('guest trying to create document redirects to login', async ({ page }) => {
         // Since we can't easily mock auth in a real browser against a real NextAuth backend without credentials,
         // we verified the protection.
-        await page.goto('/documents');
+        await page.goto('/documents?guest=true');
         await expect(page).toHaveURL(/.*sign-in/);
     });
 

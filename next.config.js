@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -11,6 +12,9 @@ const nextConfig = {
         hostname: 'placehold.co',
       },
     ],
+  },
+  devIndicators: {
+    allowedDevOrigins: ['http://127.0.0.1:3000'],
   },
 }
 

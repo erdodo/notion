@@ -20,9 +20,17 @@ export const Cover = ({ url, pageId, preview }: CoverProps) => {
 
   const onRemove = async () => {
     if (url) {
-      await edgestore.coverImages.delete({
-        url: url
-      })
+      // Only call edgestore if it's an edgestore URL
+      if (url.includes("files.edgestore.dev")) {
+        try {
+          await edgestore.coverImages.delete({
+            url: url
+          })
+        } catch (error) {
+          console.error("Failed to delete from edgestore:", error)
+          // Continue to update document even if edgestore delete fails
+        }
+      }
     }
     await updateDocument(pageId!, {
       coverImage: ""

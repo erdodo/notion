@@ -7,6 +7,7 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 1,
     workers: 1,
     reporter: 'html',
+
     use: {
         baseURL: 'http://127.0.0.1:3000',
         trace: 'on-first-retry',
@@ -23,4 +24,5 @@ export default defineConfig({
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
     },
+    timeout: 10000,
 });

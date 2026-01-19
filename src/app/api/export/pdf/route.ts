@@ -59,7 +59,7 @@ function generatePDFHTML(blocks: any[], title: string, icon?: string | null, cov
     // The prompt suggested a simplified one, let's just reuse blocksToHTML for consistency unless we need specific styles.
     // Actually, the prompt has a `blockToHTMLForPDF` placeholder. Let's implement a wrapper that uses `blocksToHTML` from `export-utils` but injects extra styles.
 
-    const { blocksToHTML } = require("@/lib/export-utils");
+    // Use top-level import blocksToHTML
     // Note: We can't import blocksToHTML inside a function easily in TS like this if it's not a dynamic import or top level.
     // Let's rely on the top-level import.
 

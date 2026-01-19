@@ -107,40 +107,6 @@ export function parseMarkdownToBlocks(markdown: string): Block[] {
             continue
         }
 
-        // Bullet list
-        if (line.match(/^[-*]\s+/)) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: "bulletListItem",
-                props: {
-                    backgroundColor: "default",
-                    textColor: "default",
-                    textAlignment: "left"
-                },
-                content: parseInlineContent(line.replace(/^[-*]\s+/, "")),
-                children: []
-            } as any)
-            i++
-            continue
-        }
-
-        // Numbered list
-        if (line.match(/^\d+\.\s+/)) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: "numberedListItem",
-                props: {
-                    backgroundColor: "default",
-                    textColor: "default",
-                    textAlignment: "left"
-                },
-                content: parseInlineContent(line.replace(/^\d+\.\s+/, "")),
-                children: []
-            } as any)
-            i++
-            continue
-        }
-
         // Checkbox
         const checkboxMatch = line.match(/^-\s+\[([ x])\]\s+(.+)$/)
         if (checkboxMatch) {
@@ -154,6 +120,23 @@ export function parseMarkdownToBlocks(markdown: string): Block[] {
                     textAlignment: "left"
                 },
                 content: parseInlineContent(checkboxMatch[2]),
+                children: []
+            } as any)
+            i++
+            continue
+        }
+
+        // Bullet list
+        if (line.match(/^[-*]\s+/)) {
+            blocks.push({
+                id: crypto.randomUUID(),
+                type: "bulletListItem",
+                props: {
+                    backgroundColor: "default",
+                    textColor: "default",
+                    textAlignment: "left"
+                },
+                content: parseInlineContent(line.replace(/^[-*]\s+/, "")),
                 children: []
             } as any)
             i++

@@ -6,44 +6,24 @@ import { pusherServer } from "@/lib/pusher"
 import { revalidatePath } from "next/cache"
 
 async function getCurrentUser() {
-  // --- TEST MODE FOR E2E ---
-  if (process.env.TEST_MODE === "true") {
-    // Return a consistent test user
-    const testUserEmail = "test@example.com"
-    try {
-      const user = await db.user.upsert({
-        where: { email: testUserEmail },
-        update: {},
-        create: {
-          email: testUserEmail,
-          name: "Test User",
-          image: null // or a placeholder
-        }
-      })
-      return user
-    } catch (e) {
-      // Fallback if DB fails (though it shouldn't for tests)
-      return { id: "test-user-id", email: testUserEmail, name: "Test User", image: null }
-    }
-  }
-  // -------------------------
-
   const session = await auth()
 
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     return null
   }
 
   try {
-    // Try to find or create user in database
+    // Sync using ID instead of email for robustness if possible
+    // But schema uses email as unique identifier primarily for sync
     const user = await db.user.upsert({
-      where: { email: session.user.email },
+      where: { email: session.user.email! },
       update: {
         name: session.user.name,
         image: session.user.image,
       },
       create: {
-        email: session.user.email,
+        id: session.user.id,
+        email: session.user.email!,
         name: session.user.name,
         image: session.user.image,
       },
