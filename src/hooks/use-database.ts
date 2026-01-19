@@ -107,6 +107,10 @@ interface DatabaseState {
     setTimelineGroupByProperty: (propertyId: string | null) => void
     timelineScale: 'day' | 'week' | 'month' | 'year'
     setTimelineScale: (scale: 'day' | 'week' | 'month' | 'year') => void
+
+    // Dependencies
+    timelineDependencyProperty: string | null
+    setTimelineDependencyProperty: (propertyId: string | null) => void
 }
 
 
@@ -219,6 +223,9 @@ export const useDatabase = create<DatabaseState>()(
             setTimelineGroupByProperty: (propertyId) => set({ timelineGroupByProperty: propertyId }),
             timelineScale: 'month',
             setTimelineScale: (scale) => set({ timelineScale: scale }),
+
+            timelineDependencyProperty: null,
+            setTimelineDependencyProperty: (propertyId) => set({ timelineDependencyProperty: propertyId }),
         }),
         {
             name: 'database-storage',
@@ -238,6 +245,7 @@ export const useDatabase = create<DatabaseState>()(
                 timelineDateProperty: state.timelineDateProperty,
                 timelineGroupByProperty: state.timelineGroupByProperty,
                 timelineScale: state.timelineScale,
+                timelineDependencyProperty: state.timelineDependencyProperty,
                 openMode: state.openMode
             }),
         }

@@ -364,7 +364,7 @@ export async function removeDocument(documentId: string) {
   })
 
   if (!document) {
-    throw new Error("Document not found")
+    return { success: true }
   }
 
   // Delete the document (will cascade to children due to onDelete: Cascade in schema)

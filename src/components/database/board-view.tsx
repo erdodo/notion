@@ -48,8 +48,9 @@ export function BoardView({ database }: BoardViewProps) {
     // 1. Resolve Grouping Property
     const groupByProperty = useMemo(() => {
         if (!boardGroupByProperty) {
-            // Default to first SELECT or STATUS property
-            return database.properties.find(p => p.type === 'SELECT') || null
+            // Default to first STATUS or SELECT property (Prioritize STATUS)
+            return database.properties.find(p => p.type === 'STATUS') ||
+                database.properties.find(p => p.type === 'SELECT') || null
         }
         return database.properties.find(p => p.id === boardGroupByProperty) || null
     }, [database.properties, boardGroupByProperty])
@@ -63,56 +64,120 @@ export function BoardView({ database }: BoardViewProps) {
             }
         }
 
-        // Get options from property config (assuming options are stored in property somehow? 
-        // Usually prisma stores JSON or we have options table. 
-        // Given the prompt examples, options might be in SelectOption[] structure inside property if it was fully expanded, 
-        // but in basic prisma schema usually it's relation or Json. 
-        // Let's assume for now we extract unique values from rows OR we have fixed options if it were a proper select.
-        // For this implementation, let's extract unique values found in rows + 'No Status'
-
-        // Attempting to infer options from rows for dynamic grouping
-        // In a real app we should read property.options (if JSON).
-        // Let's assume grouping by simple string values for now.
-
-        const uniqueGroups = new Map<string, { id: string, title: string, color: string }>()
-
-        // Initialize with standard groups if we could read them.
-        // Since we don't have property options schema visibility here, we'll build from data.
-
         const groupsMap: Record<string, typeof filteredRows> = {}
 
-        // Initialize catch-all
+        // Handle STATUS Property Special Case (Fixed Groups)
+        if (groupByProperty.type === 'STATUS') {
+            const statusGroups = [
+                { id: 'todo', title: 'To Do', color: 'gray' },
+                { id: 'inprogress', title: 'In Progress', color: 'blue' },
+                { id: 'complete', title: 'Complete', color: 'green' }
+            ]
+
+            // Initialize buckets
+            statusGroups.forEach(g => groupsMap[g.id] = [])
+            groupsMap['uncategorized'] = [] // for errors/missing
+
+            const options = (groupByProperty.options as any[]) || []
+
+            filteredRows.forEach(row => {
+                const cell = row.cells.find(c => c.propertyId === groupByProperty.id)
+                const val = cell?.value
+
+                // Value is option ID. Find option to get its group.
+                const optionId = typeof val === 'object' ? (val as any).value : val
+                const option = options.find(o => o.id === optionId)
+
+                if (option && option.group) {
+                    // Check if valid group
+                    if (groupsMap[option.group]) {
+                        groupsMap[option.group].push(row)
+                    } else {
+                        groupsMap['uncategorized'].push(row)
+                    }
+                } else {
+                    // Start state or invalid -> usually To Do (or uncategorized if strict)
+                    // If no value, put in 'todo' per "Not Started" default usually, but let's put in 'todo' as fallback
+                    // matching Notion's behavior where empty -> usually implies default status.
+                    // But if option is missing but value exists? Uncategorized.
+                    // If value is null? 'todo' (Not Started)
+                    if (!val) {
+                        groupsMap['todo'].push(row)
+                    } else {
+                        groupsMap['uncategorized'].push(row)
+                    }
+                }
+            })
+
+            return {
+                groups: statusGroups, // Fixed columns
+                groupedRows: groupsMap
+            }
+        }
+
+        // ... Standard SELECT Logic (Existing) ...
+
+        // Attempting to infer options from rows for dynamic grouping (existing fallback logic)
+        // or usage of property options if available (recommended update)
+
+        const propertyOptions = (groupByProperty.options as any[]) || []
+
+        // Initialize from options if available
+        const uniqueGroups = new Map<string, { id: string, title: string, color: string }>()
+
+        if (propertyOptions.length > 0) {
+            propertyOptions.forEach(opt => {
+                uniqueGroups.set(opt.id, { id: opt.id, title: opt.name, color: opt.color })
+                groupsMap[opt.id] = []
+            })
+        }
+
+        // Catch-all
         groupsMap['uncategorized'] = []
 
         filteredRows.forEach(row => {
             const cell = row.cells.find(c => c.propertyId === groupByProperty.id)
-            const value = cell?.value
+            const value = cell?.value // Option ID
 
-            if (!value) {
-                groupsMap['uncategorized'].push(row)
-            } else {
-                // Value is expected to be a string (Option ID or Option Name)
-                // Ideally it is an Option ID. 
-                // If value is object (JSON), we handle it.
-                let groupId = typeof value === 'object' ? (value as any).id || (value as any).name : String(value)
-                let groupTitle = typeof value === 'object' ? (value as any).name : String(value)
+            let groupId = typeof value === 'object' ? (value as any).value : String(value)
 
-                // Fallback for empty/null if somehow passed check
-                if (!groupId) groupId = 'uncategorized'
+            // If value is null -> uncategorized (No Status)
+            if (!value) groupId = 'uncategorized'
 
-                // Ensure unique ID for the map
-                if (!groupsMap[groupId]) {
+            // If group doesn't exist (maybe ad-hoc option), create it? 
+            // Or if we used property options, strict check?
+            // Let's stick to existing "infer from data" if opt missing, or just use ID.
+
+            // Fix: Existing logic inferred from value directly.
+            // If propertyOptions existed, we match ID.
+
+            if (groupId !== 'uncategorized' && !groupsMap[groupId]) {
+                // Dynamic group from data?
+                // Try to resolve name?
+                const opt = propertyOptions.find(o => o.id === groupId)
+                if (opt) {
+                    uniqueGroups.set(groupId, { id: groupId, title: opt.name, color: opt.color })
                     groupsMap[groupId] = []
-                    uniqueGroups.set(groupId, { id: groupId, title: groupTitle || "Untitled", color: 'default' })
+                } else {
+                    // Fallback
+                    if (!uniqueGroups.has(groupId)) {
+                        uniqueGroups.set(groupId, { id: groupId, title: "Unknown", color: 'gray' })
+                    }
+                    if (!groupsMap[groupId]) groupsMap[groupId] = []
                 }
+            }
+
+            if (groupsMap[groupId]) {
                 groupsMap[groupId].push(row)
+            } else {
+                groupsMap['uncategorized'].push(row)
             }
         })
 
-        const sortedGroups = Array.from(uniqueGroups.values()).sort((a, b) => a.title.localeCompare(b.title))
-
-        // Determine final groups list: [No Status, ...Defined Groups]
-        // Or if we have explicit options in the property definition, we should use those orders.
+        const sortedGroups = Array.from(uniqueGroups.values())
+        // If options existed, they are inserted in order? map iteration order is insertion order usually.
+        // But we might want to sort by property option order if possible.
+        // For now, simple.
 
         return {
             groups: [...sortedGroups, { id: 'uncategorized', title: 'No Status', color: 'gray' }],
@@ -128,7 +193,7 @@ export function BoardView({ database }: BoardViewProps) {
         // Visual updates usually handled by sortable strategy
     }
 
-    const onDragEnd = (event: DragEndEvent) => {
+    const onDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event
         setActiveId(null)
 
@@ -137,25 +202,73 @@ export function BoardView({ database }: BoardViewProps) {
         const activeRowId = active.id as string
         const overId = over.id as string
 
-        // Check if dropped on a container (Column) or a Card
-        // 'over.data.current.type' could be 'Column' or 'Card'
+        // overId is either a Group ID (Column) or a Row ID (Card)
+        // If it's a card, we need to find which group it belongs to?
+        // Actually, BoardColumn is a droppable with id=groupId.
+        // BoardCard is a sortable with id=rowId.
 
-        // Server action needed to update grouping value
-        // group ID is overId if column, or over's parent group if card.
+        let targetGroupId = overId
 
-        // TODO: Calls to move row to group
-        console.log("Moved", activeRowId, "to", overId)
+        // If dropped on a card, find that card's group
+        // But we don't have easy access to card->group map here without searching.
+        // However, dnd-kit `over.data` might have it if we set it.
+        // Let's assume for now we only support dropping on Column (which is the main drop target for switching groups)
+        // Or if dropped on card, dnd-kit returns the collision.
+        // Note: Simple Board usually treats dropping on list as changing status. Reordering within list is Order.
+        // If `overId` matches a group ID (from `groups`), it's a column drop.
+
+        let isGroupDrop = groups.some(g => g.id === overId)
+
+        if (!isGroupDrop) {
+            // Must be a row drop. Find which group contains this row.
+            const targetRow = filteredRows.find(r => r.id === overId)
+            if (targetRow) {
+                // Determine group of targetRow
+                // Check Status logic:
+                if (groupByProperty?.type === 'STATUS') {
+                    const cell = targetRow.cells.find(c => c.propertyId === groupByProperty.id)
+                    const val = cell?.value
+                    const optionId = typeof val === 'object' ? (val as any).value : val
+                    const options = (groupByProperty.options as any[]) || []
+                    const option = options.find(o => o.id === optionId)
+                    targetGroupId = option?.group || (val ? 'uncategorized' : 'todo')
+                } else {
+                    // Select logic
+                    const cell = targetRow.cells.find(c => c.propertyId === groupByProperty?.id)
+                    const val = cell?.value
+                    // ... resolve group ...
+                    // Simplification: just scan `groupedRows` to find which key contains overId
+                    const foundGroup = Object.entries(groupedRows).find(([gid, rows]) => rows.some(r => r.id === overId))
+                    if (foundGroup) targetGroupId = foundGroup[0]
+                }
+            }
+        }
+
+        if (targetGroupId && groupByProperty) {
+            // Move Row to Group
+            let newValue: any = targetGroupId
+
+            if (groupByProperty.type === 'STATUS') {
+                // Map group ID (todo, inprogress, complete) to an Option ID
+                const options = (groupByProperty.options as any[]) || []
+                const targetOptions = options.filter(o => o.group === targetGroupId)
+                if (targetOptions.length > 0) {
+                    // Pick first option? Or Default?
+                    newValue = { value: targetOptions[0].id }
+                } else {
+                    // No option in this group? Can't move.
+                    return
+                }
+            } else if (groupByProperty.type === 'SELECT') {
+                // TargetGroupId is Option ID usually
+                if (targetGroupId === 'uncategorized') newValue = { value: null } // Clear
+                else newValue = { value: targetGroupId }
+            }
+
+            // Call Server
+            await updateCellByPosition(groupByProperty.id, activeRowId, newValue)
+        }
     }
-
-    if (!groupByProperty) {
-        return (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-                Please select a property to group by.
-            </div>
-        )
-    }
-
-    const activeRow = activeId ? filteredRows.find(r => r.id === activeId) : null
 
     const handleAddRow = async (groupId: string) => {
         // Prepare initial cell values if necessary
@@ -184,22 +297,26 @@ export function BoardView({ database }: BoardViewProps) {
         if (groupByPropId && groupId !== 'uncategorized') {
             // Find the option
             const property = database.properties.find(p => p.id === groupByPropId)
-            // Construct value based on property type (assuming SELECT)
-            let value: any = groupId // Default to string ID/Name
+            let value: any = null
 
-            if (property?.type === 'SELECT' || property?.type === 'MULTI_SELECT') {
+            if (property?.type === 'STATUS') {
+                const options = (property.options as any[]) || []
+                // groupId is 'todo', 'inprogress', 'complete'
+                const targetOption = options.find(o => o.group === groupId)
+                if (targetOption) {
+                    value = { value: targetOption.id }
+                }
+            } else if (property?.type === 'SELECT' || property?.type === 'MULTI_SELECT') {
                 const options = (property.options as any[]) || []
                 const option = options.find((o: any) => o.id === groupId || o.name === groupId)
                 if (option) {
-                    value = { id: option.id, name: option.name, color: option.color }
+                    value = { value: option.id }
                 }
             }
 
-            // Optimistic update cell (complex without current row in state, but row just added)
-            // We can just trigger server update. The UI might lag slightly or we use updateCell if we had row index.
-            // updateCell(tempId, groupByPropId, value) -> won't work easily as tempId might mismatch or race.
-            // Rely on server update for the cell value
-            await updateCellByPosition(groupByPropId, createdRow.id, value)
+            if (value) {
+                await updateCellByPosition(groupByPropId, createdRow.id, value)
+            }
         }
     }
 
@@ -226,8 +343,6 @@ export function BoardView({ database }: BoardViewProps) {
         await updateProperty(property.id, { options: newOptions })
     }
 
-
-
     useEffect(() => {
         const handleAddEvent = () => {
             // Default to first group or uncategorized
@@ -237,6 +352,16 @@ export function BoardView({ database }: BoardViewProps) {
         window.addEventListener('database-add-row', handleAddEvent)
         return () => window.removeEventListener('database-add-row', handleAddEvent)
     }, [groups])
+
+    if (!groupByProperty) {
+        return (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+                Please select a property to group by.
+            </div>
+        )
+    }
+
+    const activeRow = activeId ? filteredRows.find(r => r.id === activeId) : null
 
     return (
         <DndContext

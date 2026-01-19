@@ -9,6 +9,7 @@ import { DataSet } from "vis-data"
 import "vis-timeline/styles/vis-timeline-graph2d.css"
 import moment from "moment"
 import { updateCellByPosition } from "@/app/(main)/_actions/database"
+import { TimelineDependencies } from "./timeline-dependencies"
 
 interface TimelineViewProps {
     database: Database & {
@@ -26,7 +27,8 @@ export function TimelineView({ database }: TimelineViewProps) {
         timelineGroupByProperty,
         timelineScale,
         setSelectedRowId,
-        setTimelineDateProperty
+        setTimelineDateProperty,
+        timelineDependencyProperty
     } = useDatabase()
 
     const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
@@ -58,9 +60,6 @@ export function TimelineView({ database }: TimelineViewProps) {
         // Handle Grouping
         const groupProperty = database.properties.find(p => p.id === timelineGroupByProperty)
         if (groupProperty) {
-            // For Select/MultiSelect, we can pre-populate groups from options
-            // but for now, let's just create groups dynamically based on row values or distinct options
-            // If it's a select property, let's use its options as groups
             if (groupProperty.type === 'SELECT' || groupProperty.type === 'MULTI_SELECT') {
                 // @ts-ignore - casting options
                 const options = groupProperty.options || []
@@ -81,12 +80,6 @@ export function TimelineView({ database }: TimelineViewProps) {
             let end: Date | undefined = undefined
 
             if (dateCell && dateCell.value) {
-                // Assuming value might be ISO string or JSON with start/end
-                // Adjust based on your cell value structure for DATE type
-                // If simple string:
-                // start = new Date(dateCell.value as string)
-
-                // If complex object (common in Notion for Date ranges):
                 try {
                     const parsed = typeof dateCell.value === 'string' ? JSON.parse(dateCell.value) : dateCell.value
                     if (parsed.start) start = new Date(parsed.start)
@@ -104,8 +97,6 @@ export function TimelineView({ database }: TimelineViewProps) {
             } else if (dateProperty.type === 'UPDATED_TIME') {
                 start = new Date(row.updatedAt)
             } else {
-                // Skip if no date and not system date? Or show at today?
-                // Let's skip rendering on timeline if no date
                 return
             }
 
@@ -114,7 +105,6 @@ export function TimelineView({ database }: TimelineViewProps) {
             if (groupProperty) {
                 const groupCell = row.cells.find(c => c.propertyId === groupProperty.id)
                 if (groupCell && groupCell.value) {
-                    // Determine group ID based on cell value (e.g. select option ID)
                     try {
                         const val = typeof groupCell.value === 'string' ? JSON.parse(groupCell.value) : groupCell.value
                         if (groupProperty.type === 'SELECT') {
@@ -128,7 +118,6 @@ export function TimelineView({ database }: TimelineViewProps) {
                 }
             }
 
-            // Ensure group exists if we didn't pre-populate (e.g. text grouping)
             if (timelineGroupByProperty && !newGroups.get(groupId)) {
                 newGroups.add({ id: groupId, content: String(groupId) })
             }
@@ -149,6 +138,39 @@ export function TimelineView({ database }: TimelineViewProps) {
     }, [database, filteredRows, dateProperty, timelineGroupByProperty])
 
 
+    // Dependencies Logic
+    const [dependencies, setDependencies] = useState<{ source: string, target: string }[]>([])
+
+    useEffect(() => {
+        if (!timelineDependencyProperty) {
+            setDependencies([])
+            return
+        }
+
+        const newDeps: { source: string, target: string }[] = []
+
+        filteredRows.forEach(row => {
+            const depCell = row.cells.find(c => c.propertyId === timelineDependencyProperty)
+            if (depCell && depCell.value) {
+                let blockedByIds: string[] = []
+                try {
+                    const val = typeof depCell.value === 'string' ? JSON.parse(depCell.value) : depCell.value
+                    if (val && Array.isArray(val.linkedRowIds)) {
+                        blockedByIds = val.linkedRowIds
+                    }
+                } catch (e) {
+                    console.error("Failed to parse dependency cell", e)
+                }
+
+                blockedByIds.forEach(blockerId => {
+                    newDeps.push({ source: blockerId, target: row.id })
+                })
+            }
+        })
+        setDependencies(newDeps)
+    }, [filteredRows, timelineDependencyProperty])
+
+
     // 3. Initialize Timeline
     useEffect(() => {
         if (!containerRef.current || !items) return
@@ -160,19 +182,48 @@ export function TimelineView({ database }: TimelineViewProps) {
             start: moment().startOf('month').toDate(),
             end: moment().endOf('month').toDate(),
             editable: {
-                add: false,         // handled via specific button usually
-                remove: false,      // handled via modal
-                updateGroup: true,  // drag between groups
-                updateTime: true,   // drag to change time
+                add: false,
+                remove: false,
+                updateGroup: true,
+                updateTime: true,
                 overrideItems: false
             },
             onMove: async (item: any, callback: any) => {
+                // Dependency Constraint Logic
+                let allowed = true
+                let newStart = item.start
+                let newEnd = item.end
+
+                if (timelineDependencyProperty) {
+                    const blockers = dependencies.filter(d => d.target === item.id)
+                    for (const dep of blockers) {
+                        const blockerItem = items.get(dep.source)
+                        if (blockerItem && blockerItem.end) {
+                            if (new Date(newStart) < new Date(blockerItem.end)) {
+                                allowed = false
+                            }
+                        }
+                    }
+
+                    const blockedItems = dependencies.filter(d => d.source === item.id)
+                    for (const dep of blockedItems) {
+                        const targetItem = items.get(dep.target)
+                        if (targetItem && targetItem.start) {
+                            if (new Date(newEnd) > new Date(targetItem.start)) {
+                                allowed = false
+                            }
+                        }
+                    }
+                }
+
+                if (!allowed) {
+                    callback(null)
+                    // Optional: Insert Toast here
+                    return
+                }
+
                 // update date in DB
                 if (dateProperty && item.id) {
-                    // Construct new value
-                    // If range: { start: ..., end: ... }
-                    // If point: start...
-
                     let newVal: any = item.start
                     if (item.end) {
                         newVal = {
@@ -180,29 +231,16 @@ export function TimelineView({ database }: TimelineViewProps) {
                             end: item.end
                         }
                     }
-
-                    // Optimistic update handled by vis-timeline local state, need to sync server
                     await updateCellByPosition(dateProperty.id, item.id, newVal)
-
-                    // If group changed
-                    // Note: 'onMove' in vis-timeline usually handles time dragging. 
-                    // 'onMoving' or grouping changes might be different events depending on version.
-                    // But if Group change is supported, item.group will be updated.
-                    // We need to check if group property needs update.
                 }
-
-                // IMPORTANT: Must call callback(item) to apply change in UI or callback(null) to revert
                 callback(item)
             }
         }
-
-
 
         const timeline = new Timeline(containerRef.current, items, groups, options)
 
         timeline.on('select', (props) => {
             if (props.items && props.items.length > 0) {
-                // Open modal
                 setSelectedRowId(props.items[0])
             }
         })
@@ -215,7 +253,8 @@ export function TimelineView({ database }: TimelineViewProps) {
                 timelineRef.current = null
             }
         }
-    }, [items, groups, timelineScale, dateProperty, setSelectedRowId]) // Re-init if data sets change deeply? efficiently managed by vis usually but here simplistic re-create
+    }, [items, groups, timelineScale, dateProperty, setSelectedRowId, dependencies, timelineDependencyProperty])
+
 
     // 4. Update Scale dynamically
     useEffect(() => {
@@ -256,6 +295,15 @@ export function TimelineView({ database }: TimelineViewProps) {
     }
 
     return (
-        <div className="h-full w-full bg-background" ref={containerRef} />
+        <div className="relative h-full w-full">
+            <div className="h-full w-full bg-background" ref={containerRef} />
+            {timelineRef.current && (
+                <TimelineDependencies
+                    timeline={timelineRef.current}
+                    items={items}
+                    dependencies={dependencies}
+                />
+            )}
+        </div>
     )
 }

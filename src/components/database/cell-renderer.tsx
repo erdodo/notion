@@ -15,6 +15,7 @@ import { CellProps } from "./cells/types"
 import { RelationConfig } from "@/lib/relation-service"
 import { RollupConfig } from "@/lib/rollup-service"
 import { MultiSelectCell } from "./cells/multi-select-cell"
+import { StatusCell } from "./cells/status-cell"
 
 // Map other types to TextCell for now if implementation missing
 const PlaceholderCell = TextCell
@@ -30,6 +31,7 @@ export function CellRenderer(props: CellProps) {
         case 'NUMBER': return <NumberCell {...props} />
         case 'SELECT': return <SelectCell {...props} />
         case 'MULTI_SELECT': return <MultiSelectCell {...props} />
+        case 'STATUS': return <StatusCell {...props} />
         case 'DATE': return <DateCell {...props} />
         case 'CHECKBOX': return <CheckboxCell {...props} />
         case 'URL': return <UrlCell {...props} />

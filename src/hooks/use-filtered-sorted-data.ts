@@ -206,11 +206,17 @@ export function useFilteredSortedData(database: DetailedDatabase): any[] {
             })
         }
 
-        // 4. Grouping
+        // 5. Build Hierarchy (Tree)
+        // If grouped, we skip hierarchy visual logic for now or handle it within groups.
+        // Notion allows sub-items even in groups, but it's complex. Let's start with non-grouped hierarchy.
+
         let groupedRows: GroupedResult[] = []
         let isGrouped = false
 
         if (groupByProperty) {
+            // ... existing grouping logic ...
+            // We can just return flat rows for groups for MVP, or apply hierarchy within groups if needed.
+            // For now, let's keep existing grouping logic but maybe disable hierarchy there or handle it later.
             isGrouped = true
             const groups = new Map<string, any[]>()
             const groupValues = new Map<string, any>()
@@ -238,17 +244,83 @@ export function useFilteredSortedData(database: DetailedDatabase): any[] {
                 rows: groupRows.map(r => r.originalRow)
             }))
 
-            // Sort groups? Optional. Usually groups are sorted by usage or alphabetical.
-            // Let's sort keys alphabetically, putting empty at end/start.
+            // Sort groups
             groupedRows.sort((a, b) => {
                 if (a.groupKey === "__empty__") return 1
                 if (b.groupKey === "__empty__") return -1
                 return String(a.groupValue).localeCompare(String(b.groupValue))
             })
+
+            // If grouped, usually sub-items are flattened or hidden. Notion hides sub-items in grouped view mostly or flattens.
+            // Let's return flattened rows in groups for now (as implemented).
+        } else {
+            // Build Tree
+            const rowMap = new Map<string, any>()
+            const rootRows: any[] = []
+
+            // First pass: Map all effective rows
+            rows.forEach(row => {
+                rowMap.set(row.id, { ...row, children: [], depth: 0 })
+            })
+
+            // Second pass: Link children
+            // We need to know if a parent exists in the *filtered* set.
+            // If parent is filtered out, should child show at root? Notion usually filters child out too if parent is out, OR shows path.
+            // Simplest: If parent not in current set, show at root.
+
+            // Reset rows to build hierarchy from rowMap
+            const hierarchyRows: any[] = []
+
+            // We need to iterate the *original* sorted order to maintain sort?
+            // Actually, parent-child structure overrides sort for children. Children are sorted amongst themselves.
+            // Roots are sorted by the sort criteria.
+
+            // Let's re-sort roots and children later?
+            // Or better: Use the `rows` array which is already sorted.
+            // But we need to move children under parents.
+
+            // Make a fresh pass on `rows` (which are sorted)
+            rows.forEach(row => {
+                const rowNode = rowMap.get(row.id)
+                const parentId = row.originalRow.parentRowId
+
+                if (parentId && rowMap.has(parentId)) {
+                    const parent = rowMap.get(parentId)
+                    parent.children.push(rowNode)
+                    // Depth will be set during flattening to ensure correct value relative to root
+                } else {
+                    rootRows.push(rowNode)
+                }
+            })
+
+            // Helper to flatten
+            const flatten = (nodes: any[], depth: number): any[] => {
+                let flat: any[] = []
+                nodes.forEach(node => {
+                    node.depth = depth
+                    flat.push(node)
+                    if (node.children && node.children.length > 0) {
+                        // Recursively flatten children
+                        flat = flat.concat(flatten(node.children, depth + 1))
+                    }
+                })
+                return flat
+            }
+
+            // If we have sorts, the `rows` array was sorted.
+            // `rootRows` preserves that order because we iterated `rows`.
+            // `parent.children` also preserves that order.
+            // So sorting works naturally!
+
+            rows = flatten(rootRows, 0)
         }
 
         return {
-            sortedRows: rows.map(r => r.originalRow),
+            sortedRows: rows.map(r => ({
+                ...r.originalRow,
+                depth: r.depth || 0,
+                hasChildren: r.children && r.children.length > 0
+            })),
             groupedRows,
             isGrouped
         }

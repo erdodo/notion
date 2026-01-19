@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache"
 import { FormulaResult, evaluateFormula, FormulaContext } from "@/lib/formula-engine"
 import { RollupConfig, computeRollup } from "@/lib/rollup-service"
 import { RelationCellValue, RelationConfig } from "@/lib/relation-service"
+import { checkAndRunAutomations } from "@/lib/automation-service"
 
 async function getCurrentUser() {
     const session = await auth()
@@ -120,7 +121,11 @@ export async function addProperty(databaseId: string, data: { name: string, type
             databaseId,
             name: data.name,
             type: data.type,
-            options: data.options,
+            options: data.options ?? (data.type === 'STATUS' ? [
+                { id: '1', name: 'Not Started', color: 'gray', group: 'todo' },
+                { id: '2', name: 'In Progress', color: 'blue', group: 'inprogress' },
+                { id: '3', name: 'Done', color: 'green', group: 'complete' }
+            ] : data.options),
             order: count,
         }
     })
@@ -186,7 +191,7 @@ export async function reorderProperties(databaseId: string, orderedIds: string[]
 }
 
 // Row CRUD
-export async function addRow(databaseId: string) {
+export async function addRow(databaseId: string, parentRowId?: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
@@ -219,6 +224,7 @@ export async function addRow(databaseId: string) {
             databaseId,
             pageId: page.id,
             order: count,
+            parentRowId
         }
     })
 
@@ -304,12 +310,50 @@ export async function updateCell(cellId: string, value: any) {
         })
     }
 
+    // Automation Hook
+    try {
+        if (cellWithProp && cellWithProp.row) {
+            await checkAndRunAutomations(
+                cellWithProp.row.databaseId,
+                cellWithProp.row.id,
+                {
+                    propertyId: cellWithProp.propertyId,
+                    newValue: value,
+                    oldValue: cellWithProp.value
+                }
+            )
+        }
+    } catch (e) {
+        console.error("Automation error:", e)
+    }
+
     return cell
 }
 
 export async function updateCellByPosition(propertyId: string, rowId: string, value: any) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
+
+    // Fetch existing cell for old value
+    const existingCell = await db.cell.findUnique({
+        where: {
+            propertyId_rowId: {
+                propertyId,
+                rowId
+            }
+        }
+    })
+
+    // Verify row exists first to avoid FK constraint error on optimistic updates
+    const rowExists = await db.databaseRow.findUnique({
+        where: { id: rowId },
+        select: { id: true }
+    })
+
+    if (!rowExists) {
+        // Optimistic update race condition - row not yet created on server
+        return null
+    }
 
     const cell = await db.cell.upsert({
         where: {
@@ -338,6 +382,24 @@ export async function updateCellByPosition(propertyId: string, rowId: string, va
                 data: { title: title }
             })
         }
+    }
+
+    // Automation Hook
+    try {
+        const row = await db.databaseRow.findUnique({ where: { id: rowId } })
+        if (row) {
+            await checkAndRunAutomations(
+                row.databaseId,
+                row.id,
+                {
+                    propertyId,
+                    newValue: value,
+                    oldValue: existingCell?.value
+                }
+            )
+        }
+    } catch (e) {
+        console.error("Automation error:", e)
     }
 
     return cell

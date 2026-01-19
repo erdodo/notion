@@ -7,7 +7,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     DropdownMenuRadioGroup,
-    DropdownMenuRadioItem
+    DropdownMenuRadioItem,
+    DropdownMenuCheckboxItem
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Settings2 } from "lucide-react"
@@ -21,10 +22,13 @@ export function TimelineOptions({ database }: TimelineOptionsProps) {
         timelineDateProperty,
         setTimelineDateProperty,
         timelineScale,
-        setTimelineScale
+        setTimelineScale,
+        timelineDependencyProperty,
+        setTimelineDependencyProperty
     } = useDatabase()
 
     const dateProperties = database.properties.filter(p => p.type === 'DATE' || p.type === 'CREATED_TIME' || p.type === 'UPDATED_TIME')
+    const relationProperties = database.properties.filter(p => p.type === 'RELATION')
 
     return (
         <DropdownMenu>
@@ -54,6 +58,20 @@ export function TimelineOptions({ database }: TimelineOptionsProps) {
                     <DropdownMenuRadioItem value="week">Week</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="month">Month</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="year">Year</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Dependencies</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                    value={timelineDependencyProperty || "none"}
+                    onValueChange={(val) => setTimelineDependencyProperty(val === "none" ? null : val)}
+                >
+                    <DropdownMenuRadioItem value="none">None</DropdownMenuRadioItem>
+                    {relationProperties.map(property => (
+                        <DropdownMenuRadioItem key={property.id} value={property.id}>
+                            {property.name}
+                        </DropdownMenuRadioItem>
+                    ))}
                 </DropdownMenuRadioGroup>
             </DropdownMenuContent>
         </DropdownMenu>

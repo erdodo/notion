@@ -204,6 +204,7 @@ model Database {
   updatedAt   DateTime @updatedAt
   
   templates       DatabaseTemplate[]
+  automations     DatabaseAutomation[]
   linkedDatabases LinkedDatabase[]   @relation("LinkedDatabases")
   
   @@index([pageId])
@@ -270,6 +271,7 @@ enum PropertyType {
   RELATION      // Database ilişkisi
   ROLLUP        // Relation üzerinden hesaplama
   FORMULA       // Formül ile hesaplama
+  STATUS        // Status (To Do, In Progress, Complete)
   CREATED_BY
   LAST_EDITED_BY
 }
@@ -280,14 +282,19 @@ model DatabaseRow {
   databaseId  String
   database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
   pageId      String?  @unique // Her satır bir sayfa olabilir (açılabilir)
-  page        Page?    @relation("RowPage", fields: [pageId], references: [id])
+  page        Page?    @relation("RowPage", fields: [pageId], references: [id], onDelete: Cascade)
   cells       Cell[]
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  parentRowId String?
+  parent      DatabaseRow?  @relation("RowToRow", fields: [parentRowId], references: [id], onDelete: SetNull)
+  children    DatabaseRow[] @relation("RowToRow")
+
   @@index([databaseId])
   @@index([order])
+  @@index([parentRowId])
 }
 
 // Cell - Hücre değerleri
@@ -519,4 +526,25 @@ model PageHistory {
 
   @@index([pageId])
   @@index([savedAt(sort: Desc)])
+}
+
+// ============ AUTOMATIONS ============
+
+model DatabaseAutomation {
+  id            String   @id @default(uuid())
+  databaseId    String
+  database      Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  
+  // Trigger Configuration
+  triggerType   String   // e.g., "PROPERTY_CHANGE"
+  triggerConfig Json     // { propertyId: "...", from: "...", to: "..." }
+  
+  // Action Configuration
+  actionType    String   // e.g., "UPDATE_PROPERTY"
+  actionConfig  Json     // { propertyId: "...", value: "..." }
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([databaseId])
 }

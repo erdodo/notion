@@ -99,8 +99,66 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         })
     }, [sortedRows])
 
+    const [expanded, setExpanded] = useState<Set<string>>(new Set())
+
+    const toggleRow = (rowId: string) => {
+        setExpanded(prev => {
+            const next = new Set(prev)
+            if (next.has(rowId)) {
+                next.delete(rowId)
+            } else {
+                next.add(rowId)
+            }
+            return next
+        })
+    }
+
+    // Filter visible rows based on expansion state
+    const visibleData = useMemo(() => {
+        if (isGrouped) return data // Grouping might handle differently, return all for now
+
+        const visible: any[] = []
+        // We assume 'data' is already sorted in tree order (pre-order) thanks to useFilteredSortedData
+        // We can just iterate and track 'shouldSkip' logic, or cleaner: check parent's visibility.
+        // Since it's a flat list parent-first, checking parent's status in a Set is O(1).
+
+        // But we need to know if parent is expanded.
+        // If Root (depth 0), always visible.
+        // If Child, visible ONLY IF parent is in 'expanded' set AND parent is visible.
+        // Wait, if grandparent is collapsed, parent is hidden. If parent is hidden, child should be hidden regardless of parent's expanded state.
+        // So we need to know if "effective parent" is expanded.
+
+        // Actually simpler:
+        // A row is visible if all its ancestors are expanded.
+        // Since we traverse in order:
+        // We can keep track of "currently collapsed depth".
+        // If we hit a collapsed row at depth D, we skip all subsequent rows with depth > D until we hit depth <= D.
+
+        let skipUntilDepth = Infinity
+
+        data.forEach((row: any) => {
+            if (row.depth > skipUntilDepth) {
+                return // Skip hidden child
+            }
+
+            // Row is visible (passed skip check or depth <= skipUntilDepth)
+            // Reset skip if we went back up
+            if (row.depth <= skipUntilDepth) {
+                skipUntilDepth = Infinity
+            }
+
+            visible.push(row)
+
+            // If this row has children AND is NOT expanded, we basically start skipping everything deeper
+            if (row.hasChildren && !expanded.has(row.id)) {
+                skipUntilDepth = row.depth
+            }
+        })
+        return visible
+    }, [data, expanded, isGrouped])
+
     const columns = useMemo<ColumnDef<any>[]>(() => {
-        return database.properties.map(property => ({
+        return database.properties.map((property, index) => ({
             accessorKey: property.id,
             header: ({ column }) => (
                 <PropertyHeader
@@ -131,6 +189,12 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                         updateValue={updateValue}
                         row={row}
                         onPropertyUpdate={optimisticUpdateProperty}
+                        // Hierarchy Props
+                        isFirstColumn={index === 0}
+                        depth={row.original.depth}
+                        hasChildren={row.original.hasChildren}
+                        isExpanded={expanded.has(row.original.id)}
+                        onToggle={() => toggleRow(row.original.id)}
                     />
                 )
             },
@@ -141,10 +205,10 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
             enableSorting: true,
             size: property.width || 200,
         }))
-    }, [database.properties])
+    }, [database.properties, expanded, updateCell, optimisticUpdateProperty]) // added expanded dependency
 
     const table = useReactTable({
-        data,
+        data: visibleData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -520,7 +584,7 @@ function SortableHead({ header }: { header: any }) {
     )
 }
 
-function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row, onPropertyUpdate }: any) {
+function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row, onPropertyUpdate, ...props }: any) {
     const { focusedCell, setFocusedCell, editingCell, setEditingCell } = useDatabase()
 
     const isFocused = focusedCell?.rowId === rowId && focusedCell?.propertyId === propertyId
@@ -553,8 +617,8 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
     return (
         <div
             className={cn(
-                "w-full h-full min-h-[32px] relative outline-none",
-                isFocused && !isEditing && "z-10 ring-2 ring-primary inset-0 pointer-events-none"
+                "w-full h-full min-h-[32px] relative outline-none flex items-center",
+                isFocused && !isEditing && "z-10"
             )}
             onClick={() => {
                 if (!isEditing) {
@@ -569,31 +633,51 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
             onTouchEnd={onTouchEnd}
             onTouchMove={onTouchMove}
         >
-            {/* The ring element must be separate if we want it to not affect layout or check pointer events. 
-                 Actually ring css works fine on wrapper usually. But pointer-events-none on ring is trickier via just class.
-                 We added pointer-events-none to the class above only if it's the ring itself? No, that applies to div.
-                 Let's reshape: The div captures clicks. The ring should be visual.
-                 If we put ring on the div, and it's focused, we want basic clicks to work.
-                 We just want the border.
-             */}
+            {/* Indentation and Toggle for the first column */}
+            {(props as any).isFirstColumn && (
+                <div className="flex items-center" style={{ paddingLeft: `${((props as any).depth || 0) * 24}px` }}>
+                    {(props as any).hasChildren ? (
+                        <div
+                            role="button"
+                            className="w-5 h-5 flex items-center justify-center mr-1 hover:bg-muted rounded text-muted-foreground transition-colors cursor-pointer select-none"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                if ((props as any).onToggle) (props as any).onToggle()
+                            }}
+                        >
+                            {(props as any).isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                        </div>
+                    ) : (
+                        // Placeholder for alignment if we want depth to shift everything or just the text
+                        // Usually Notion shifts everything.
+                        // But if depth > 0 and no children, we still need padding, which is handled by parent div style.
+                        // We might need a small spacer if there are no children but it's a leaf node at depth X?
+                        // The padding is applied to the flex container.
+                        <div className="w-6" />
+                    )}
+                </div>
+            )}
+
             {isFocused && !isEditing && (
                 <div className="absolute inset-0 ring-2 ring-primary pointer-events-none z-10" />
             )}
 
-            <CellRenderer
-                getValue={getValue}
-                rowId={rowId}
-                propertyId={propertyId}
-                table={table}
-                column={column}
-                cell={{}}
-                isEditing={isEditing}
-                startEditing={startEditing}
-                stopEditing={stopEditing}
-                updateValue={updateValue}
-                row={row}
-                onPropertyUpdate={onPropertyUpdate}
-            />
+            <div className="flex-1 min-w-0">
+                <CellRenderer
+                    getValue={getValue}
+                    rowId={rowId}
+                    propertyId={propertyId}
+                    table={table}
+                    column={column}
+                    cell={{}}
+                    isEditing={isEditing}
+                    startEditing={startEditing}
+                    stopEditing={stopEditing}
+                    updateValue={updateValue}
+                    row={row}
+                    onPropertyUpdate={onPropertyUpdate}
+                />
+            </div>
         </div>
 
     )
