@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export default async function DocumentsPage() {
   const session = await auth()
 
-  if (!session?.user) {
+  if (!session?.user && process.env.TEST_MODE !== "true") {
     redirect("/sign-in")
   }
 

@@ -28,7 +28,7 @@ parser.functions.join = (arr: any[], delimiter: string) =>
     arr.join(delimiter)
 
 // Math functions (ek olarak)
-parser.functions.round = (num: number, decimals = 0) =>
+parser.functions.roundTo = (num: number, decimals = 0) =>
     Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals)
 parser.functions.toNumber = (val: any) => Number(val) || 0
 
@@ -139,7 +139,7 @@ export const availableFunctions = [
     { name: 'subtract', syntax: 'subtract(a, b)', description: 'Subtract b from a' },
     { name: 'multiply', syntax: 'multiply(a, b)', description: 'Multiply two numbers' },
     { name: 'divide', syntax: 'divide(a, b)', description: 'Divide a by b' },
-    { name: 'round', syntax: 'round(n, decimals)', description: 'Round number' },
+    { name: 'roundTo', syntax: 'roundTo(n, decimals)', description: 'Round number' },
     { name: 'abs', syntax: 'abs(n)', description: 'Absolute value' },
     { name: 'min', syntax: 'min(a, b, ...)', description: 'Minimum value' },
     { name: 'max', syntax: 'max(a, b, ...)', description: 'Maximum value' },

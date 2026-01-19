@@ -132,7 +132,7 @@ export const Navigation = () => {
 
     window.addEventListener("notion-document-update", onUpdate)
     return () => window.removeEventListener("notion-document-update", onUpdate)
-  }, [])
+  }, [pathname])
 
   const loadDocuments = async () => {
     setIsLoading(true)
@@ -226,7 +226,7 @@ export const Navigation = () => {
             <div className="flex items-center justify-between gap-x-2 mb-4">
               <div className="flex items-center gap-x-1 flex-1">
                 <span className="text-sm font-medium">
-                  {session?.user?.name?.split(' ')[0]}'s Notion
+                  {session?.user?.name?.split(' ')[0] || "Guest"}'s Notion
                 </span>
                 <NotificationsDropdown />
               </div>

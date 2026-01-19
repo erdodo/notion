@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
     DndContext,
@@ -57,6 +57,11 @@ export function SortableDocumentList({
     const [documents, setDocuments] = useState(docsToUse)
     const [activeId, setActiveId] = useState<string | null>(null)
     const [overId, setOverId] = useState<string | null>(null)
+
+    // Sync state with props
+    useEffect(() => {
+        setDocuments(docsToUse)
+    }, [docsToUse])
 
     // Recursion states
     const [expanded, setExpanded] = useState<Record<string, boolean>>({})

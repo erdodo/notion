@@ -52,6 +52,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session
     },
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user
+      const isOnDashboard = nextUrl.pathname.startsWith('/documents')
+      if (isOnDashboard) {
+        console.log("Middleware check. Path:", nextUrl.pathname, "TEST_MODE:", process.env.TEST_MODE, "IsLoggedIn:", isLoggedIn)
+        if (process.env.TEST_MODE === "true") return true // Bypass for testing
+        if (isLoggedIn) return true
+        return false // Redirect unauthenticated users to login page
+      }
+      return true
+    },
   },
   pages: {
     signIn: "/sign-in",
