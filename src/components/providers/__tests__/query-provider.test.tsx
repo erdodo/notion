@@ -3,17 +3,19 @@ import { render, screen } from '@testing-library/react'
 import { QueryProvider } from '../query-provider'
 
 // Mock dependencies
-vi.mock('@tanstack/react-query', () => ({
-  QueryClient: vi.fn(() => ({
-    clear: vi.fn(),
-    setDefaultOptions: vi.fn(),
-  })),
-  QueryClientProvider: ({ children, client }: any) => (
-    <div data-testid="query-client-provider" data-client={client ? 'true' : 'false'}>
-      {children}
-    </div>
-  ),
-}))
+vi.mock('@tanstack/react-query', () => {
+  return {
+    QueryClient: class {
+      clear = vi.fn()
+      setDefaultOptions = vi.fn()
+    },
+    QueryClientProvider: ({ children, client }: any) => (
+      <div data-testid="query-client-provider" data-client={client ? 'true' : 'false'}>
+        {children}
+      </div>
+    ),
+  }
+})
 
 describe('QueryProvider', () => {
   beforeEach(() => {

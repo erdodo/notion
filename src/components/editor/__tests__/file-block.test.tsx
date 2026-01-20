@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('FileBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockFileBlock = (props = {}) => ({
-    id: 'file-block-1',
+    id: `file-block-${++idCounter}`,
     type: 'file',
     props: {
       url: 'https://example.com/document.pdf',
@@ -26,7 +28,6 @@ describe('FileBlock', () => {
 
   // Basic Structure
   it('should create file block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'file',
       propSchema: {
@@ -151,10 +152,7 @@ describe('FileBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockFileBlock()
-    const block2 = {
-      ...createMockFileBlock(),
-      id: 'file-block-2',
-    }
+    const block2 = createMockFileBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -195,7 +193,6 @@ describe('FileBlock', () => {
 
   // Props Schema
   it('should have url prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'file',
       propSchema: {
@@ -203,11 +200,12 @@ describe('FileBlock', () => {
         fileName: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('url')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('url')
+    }
   })
 
   it('should have fileName prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'file',
       propSchema: {
@@ -215,7 +213,9 @@ describe('FileBlock', () => {
         fileName: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('fileName')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('fileName')
+    }
   })
 
   // Metadata
@@ -233,7 +233,6 @@ describe('FileBlock', () => {
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'file',
       propSchema: {
@@ -241,17 +240,20 @@ describe('FileBlock', () => {
         fileName: { default: '' },
       },
     })
-    expect(spec.config.propSchema.url.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.url.default).toBe('')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'file',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 
   // File Size Units

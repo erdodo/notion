@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('QuoteBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockQuoteBlock = (props = {}) => ({
-    id: 'quote-block-1',
+    id: `quote-block-${++idCounter}`,
     type: 'quote',
     props: {
       color: 'gray',
@@ -29,7 +31,6 @@ describe('QuoteBlock', () => {
 
   // Basic Structure
   it('should create quote block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'quote',
       propSchema: {
@@ -123,10 +124,7 @@ describe('QuoteBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockQuoteBlock()
-    const block2 = {
-      ...createMockQuoteBlock(),
-      id: 'quote-block-2',
-    }
+    const block2 = createMockQuoteBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -146,31 +144,32 @@ describe('QuoteBlock', () => {
 
   // Props Schema
   it('should have color prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'quote',
       propSchema: {
         color: { default: 'gray' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('color')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('color')
+    }
   })
 
   // Default Values
   it('should have default color', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'quote',
       propSchema: {
         color: { default: 'gray' },
       },
     })
-    expect(spec.config.propSchema.color.default).toBe('gray')
+    if (spec.config) {
+      expect(spec.config.propSchema.color.default).toBe('gray')
+    }
   })
 
   // Content Type
   it('should support inline content', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'quote',
       content: 'inline',

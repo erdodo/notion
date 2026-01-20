@@ -134,6 +134,7 @@ export async function updateDocument(
     content?: string
     icon?: string
     coverImage?: string
+    coverImagePosition?: number
   }
 ) {
   const user = await getCurrentUser()

@@ -92,6 +92,7 @@ model Page {
   content     String?   @db.Text
   icon        String?
   coverImage  String?
+  coverImagePosition Float @default(0.5)
   isPublished Boolean   @default(false)
   isArchived  Boolean   @default(false)
   isFavorite  Boolean   @default(false)

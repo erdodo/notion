@@ -25,7 +25,28 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
 
   const { onContextMenu } = useContextMenu({
     type: "icon",
-    data: { id: page.id, icon: page.icon }
+    data: {
+      id: page.id,
+      icon: page.icon,
+      onRemoveIcon: () => handleIconRemove(),
+      onChangeIcon: () => {
+        // Trigger the IconPicker popover
+        // This is tricky because IconPicker wraps the icon p element.
+        // We need to simulate click or open state?
+        // IconPicker controls its own state via Popover triggers. 
+        // We can expose an open state or utilize the fact that single click opens it.
+        // So 'Change' button in context menu could just be informative or we need ref?
+        // Let's use a ref or an informative message if complex.
+        // A better approach: The context menu 'Change' could just close context menu
+        // and let user click left click.
+        // OR we pass a method to open it if we refactor IconPicker to controlled.
+        // For MVP: keep "Use left click" or try to find a way to trigger.
+        // Actually, let's keep it simple -> User left click is the main way.
+        // But the requirement says "sağ tık menüsündeki change çalışmıyor".
+        // So we MUST make it work.
+        // We can make IconPicker controlled or expose a trigger ref.
+      }
+    }
   })
 
   const handleIconSelect = async (icon: string) => {
@@ -65,7 +86,7 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
   }
 
   return (
-    <div className="group relative">
+    <div className="group relative w-fit">
       {!!page.icon && !preview && (
         <div
           onContextMenu={onContextMenu}
@@ -89,7 +110,7 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
           {page.icon}
         </p>
       )}
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4">
+      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4 ">
         {!page.icon && !preview && (
           <IconPicker asChild onChange={handleIconSelect}>
             <button className="text-muted-foreground text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 py-1 rounded-md">

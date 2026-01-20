@@ -2,15 +2,15 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
-    AlertDialog,
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogAction,
-    AlertDialogCancel,
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from '../alert-dialog'
 
 describe('AlertDialog', () => {
@@ -133,8 +133,8 @@ describe('AlertDialog', () => {
       </AlertDialog>
     )
     await user.click(screen.getByText('Open'))
-    const content = container.querySelector('[role="alertdialog"]')
-    expect(content?.className).toContain('custom-dialog')
+    const content = screen.getByRole('alertdialog')
+    expect(content.className).toContain('custom-dialog')
   })
 
   // AlertDialogHeader Tests
@@ -293,7 +293,7 @@ describe('AlertDialog', () => {
     const cancelButton = screen.getByRole('button', { name: 'Cancel' })
     await user.click(cancelButton)
     // Dialog should be closed
-    expect(screen.queryByRole('alertdialog', { hidden: true })).not.toBeVisible()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
   })
 
   it('should call cancel handler on click', async () => {
@@ -380,7 +380,7 @@ describe('AlertDialog', () => {
     await user.click(screen.getByText('Open'))
     expect(screen.getByText('Title')).toBeInTheDocument()
     await user.keyboard('{Escape}')
-    expect(screen.queryByRole('alertdialog', { hidden: true })).not.toBeVisible()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
   })
 
   it('should navigate between buttons with Tab', async () => {

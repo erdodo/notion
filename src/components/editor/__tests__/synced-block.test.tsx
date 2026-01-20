@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('SyncedBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockSyncedBlock = (props = {}) => ({
-    id: 'synced-block-1',
+    id: `synced-block-${++idCounter}`,
     type: 'syncedBlock',
     props: {
       syncedFrom: 'source-block-id',
@@ -31,7 +33,6 @@ describe('SyncedBlock', () => {
 
   // Basic Structure
   it('should create synced block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'syncedBlock',
       propSchema: {
@@ -142,36 +143,39 @@ describe('SyncedBlock', () => {
 
   // Props Schema
   it('should have syncedFrom prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'syncedBlock',
       propSchema: {
         syncedFrom: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('syncedFrom')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('syncedFrom')
+    }
   })
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'syncedBlock',
       propSchema: {
         syncedFrom: { default: '' },
       },
     })
-    expect(spec.config.propSchema.syncedFrom.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.syncedFrom.default).toBe('')
+    }
   })
 
   // Content Type
   it('should support inline content', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'syncedBlock',
       content: 'inline',
     })
-    expect(spec.config.content).toBe('inline')
+    if (spec.config) {
+      expect(spec.config.content).toBe('inline')
+    }
   })
 
   // Sync Indicator

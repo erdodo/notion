@@ -93,6 +93,9 @@ export function MovePageModal() {
         }
     }
 
+    const rootLabel = "Private pages (root)"
+    const showRoot = query === "" || rootLabel.toLowerCase().includes(query.toLowerCase())
+
     return (
         <Dialog open={isOpen} onOpenChange={() => !moving && onClose()}>
             <DialogContent className="sm:max-w-md">
@@ -100,7 +103,7 @@ export function MovePageModal() {
                     <DialogTitle>Move page to...</DialogTitle>
                 </DialogHeader>
 
-                <Command className="border rounded-md">
+                <Command shouldFilter={false} className="border rounded-md">
                     <CommandInput
                         placeholder="Search pages..."
                         value={query}
@@ -110,14 +113,17 @@ export function MovePageModal() {
                         <CommandEmpty>No pages found</CommandEmpty>
 
                         {/* Move to root */}
-                        <CommandItem
-                            onSelect={() => handleMove(null)}
-                            className="flex items-center gap-2"
-                        >
-                            <Home className="h-4 w-4" />
-                            <span>Private pages (root)</span>
-                            {currentParentId === null && <Check className="h-4 w-4 ml-auto" />}
-                        </CommandItem>
+                        {showRoot && (
+                            <CommandItem
+                                onSelect={() => handleMove(null)}
+                                className="flex items-center gap-2"
+                                value={rootLabel}
+                            >
+                                <Home className="h-4 w-4" />
+                                <span>{rootLabel}</span>
+                                {currentParentId === null && <Check className="h-4 w-4 ml-auto" />}
+                            </CommandItem>
+                        )}
 
                         <CommandGroup heading="Pages">
                             {pages
@@ -127,6 +133,7 @@ export function MovePageModal() {
                                         key={page.id}
                                         onSelect={() => handleMove(page.id)}
                                         className="flex items-center gap-2"
+                                        value={page.title || "Untitled"}
                                     >
                                         <FolderOpen className="h-4 w-4" />
                                         <span>{page.icon || <FileText className="h-4 w-4" />}</span>

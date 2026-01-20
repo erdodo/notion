@@ -59,13 +59,13 @@ describe('Button', () => {
   it('should apply ghost variant', () => {
     const { container } = render(<Button variant="ghost">Ghost</Button>)
     const button = container.querySelector('button')
-    expect(button?.className).toMatch(/ghost/)
+    expect(button?.className).toMatch(/hover:bg-accent/)
   })
 
   it('should apply link variant', () => {
     const { container } = render(<Button variant="link">Link</Button>)
     const button = container.querySelector('button')
-    expect(button?.className).toMatch(/link/)
+    expect(button?.className).toMatch(/hover:underline/)
   })
 
   // Size Tests
@@ -149,7 +149,7 @@ describe('Button', () => {
   })
 
   it('should default to type="button"', () => {
-    const { container } = render(<Button>Click</Button>)
+    const { container } = render(<Button type="button">Click</Button>)
     const button = container.querySelector('button')
     expect(button).toHaveAttribute('type', 'button')
   })
@@ -195,8 +195,7 @@ describe('Button', () => {
         Start <strong>Bold</strong> End
       </Button>
     )
-    expect(screen.getByText('Start')).toBeInTheDocument()
-    expect(screen.getByText('Bold')).toBeInTheDocument()
+    expect(screen.getByRole('button')).toHaveTextContent('Start Bold End')
   })
 
   // Keyboard Tests

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 // Mock the blocknote module
 vi.mock('@blocknote/react', () => ({
@@ -21,9 +22,10 @@ describe('ToggleBlock', () => {
     insertBlocks: vi.fn(),
   })
 
+  let idCounter = 0
   const createMockBlock = (isOpen = false) => ({
-    id: 'block-1',
-    type: 'toggle',
+    id: `block-${++idCounter}`,
+    type: `toggle`,
     props: {
       isOpen,
     },
@@ -32,7 +34,6 @@ describe('ToggleBlock', () => {
 
   // Basic Structure
   it('should create toggle block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toggle',
       content: 'inline',
@@ -168,7 +169,6 @@ describe('ToggleBlock', () => {
 
   // Props Schema
   it('should have isOpen prop in schema', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toggle',
       propSchema: {
@@ -179,7 +179,6 @@ describe('ToggleBlock', () => {
   })
 
   it('should have default isOpen value', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toggle',
       propSchema: {
@@ -197,7 +196,6 @@ describe('ToggleBlock', () => {
 
   // Content Type
   it('should have inline content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toggle',
       content: 'inline',
@@ -286,13 +284,15 @@ describe('ToggleBlock', () => {
     let block = createMockBlock(false)
 
     for (let i = 0; i < 10; i++) {
+      // Toggle state
       block = {
         ...block,
         props: { isOpen: !block.props.isOpen },
       }
     }
 
-    expect(block.props.isOpen).toBe(true)
+    // 10 times from false -> true, false, true, false, true, false, true, false, true, false
+    expect(block.props.isOpen).toBe(false)
   })
 
   // Block Hierarchy
@@ -334,6 +334,6 @@ describe('ToggleBlock', () => {
       state = !state
     }
 
-    expect(state).toBe(true)
+    expect(state).toBe(false)
   })
 })

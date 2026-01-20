@@ -421,7 +421,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
             <div className="w-full flex-1 flex flex-col h-full overflow-hidden">
                 <div className="border border-border/50 rounded-sm overflow-hidden flex flex-col max-h-full">
                     <div ref={tableContainerRef} className="overflow-auto w-full flex-1 relative scrollbar-hide">
-                        <Table className="w-max min-w-full database-table border-collapse">
+                        <Table className="w-max min-w-full database-table border-collapse table-fixed">
                             <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border/50">
@@ -527,12 +527,13 @@ function SortableHead({ header }: { header: any }) {
         id: header.column.id,
     })
 
-    const style = {
-        transform: CSS.Translate.toString(transform),
+    const style: React.CSSProperties = {
+        transform: transform ? CSS.Translate.toString(transform) : undefined,
         transition,
         width: header.getSize(),
         zIndex: isDragging ? 100 : 'auto',
         opacity: isDragging ? 0.5 : 1,
+        position: 'relative'
     }
 
     return (
@@ -577,8 +578,11 @@ function SortableHead({ header }: { header: any }) {
                     }
                     document.addEventListener('touchend', onTouchEnd)
                 }}
-                className={`absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none hover:bg-primary opacity-0 group-hover:opacity-100 ${header.column.getIsResizing() ? 'bg-primary opacity-100' : ''
+                className={`absolute right-0 top-0 h-full w-2 cursor-col-resize select-none touch-none hover:bg-primary/50 opacity-0 group-hover:opacity-100 z-10 ${header.column.getIsResizing() ? 'bg-primary opacity-100' : ''
                     }`}
+                style={{
+                    transform: 'translateX(50%)' // Center on border
+                }}
             />
         </TableHead>
     )

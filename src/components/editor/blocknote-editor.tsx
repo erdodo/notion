@@ -12,8 +12,7 @@ import { useEdgeStore } from "@/lib/edgestore"
 import { SlashMenu } from "./slash-menu"
 import { PageMentionPicker } from "./page-mention-picker"
 import { FormattingToolbar } from "./formatting-toolbar"
-import { getBlockColorStyle, BlockColor } from "@/lib/block-utils"
-import { useCollaboration, useOptionalCollaboration } from "@/components/providers/collaboration-provider"
+import { useOptionalCollaboration } from "@/components/providers/collaboration-provider"
 import { useContextMenuStore } from "@/store/use-context-menu-store"
 
 
@@ -33,17 +32,7 @@ const filterSuggestionItems = (items: any[], query: string) => {
   )
 }
 
-const insertOrUpdateBlock = (editor: typeof schema.BlockNoteEditor, block: any) => {
-  const currentBlock = editor.getTextCursorPosition().block
 
-  editor.replaceBlocks([currentBlock], [block])
-
-  // Attempt to focus the new block
-  const newBlock = editor.getTextCursorPosition().block
-  if (newBlock) {
-    editor.setTextCursorPosition(newBlock, "end")
-  }
-}
 
 
 export const BlockNoteEditorComponent = ({
@@ -320,19 +309,52 @@ export const BlockNoteEditorComponent = ({
       // If we want to implement this, checking if previous/next sibling exists.
 
       // Finding the block in the document structure:
-      // Because of complexity with nesting, I will skip the implementation of "Move" in this iteration to avoid breaking the editor logic 
+      // Because of complexity with nesting, I will skip the implementation of "Move" in this iteration to avoid breaking the editor logic
       // or causing data loss, as it requires traversing the tree.
-      // PROMPT REQUIREMENT: "Mevcut bloğu... taşıma". 
+      // PROMPT REQUIREMENT: "Mevcut bloğu... taşıma".
       // I will defer this part or log a "Not implemented" if I can't do it safely.
       // Wait, I should try to do it if possible.
       // But I don't have enough context on the tree walker API here.
-      // I'll skip "Move" shortcut logic inside this handler for now to prevent bugs, 
+      // I'll skip "Move" shortcut logic inside this handler for now to prevent bugs,
       // or I check if I can simply use `editor.updateBlock`? No.
       // I'll leave a comment.
 
       // Actually, let me verify Duplicate and Link first. move is tough.
       // I'll exclude the Move logic from this code block to be safe.
     }
+  }
+
+  // Helper for block insertion that handles slash command cleanup
+  const insertOrUpdateBlock = (type: string, props: any = {}) => {
+    const currentBlock = editor.getTextCursorPosition().block
+    const content = currentBlock.content
+    const text = (Array.isArray(content) && content.length > 0) ? (content as any[]).map(c => c.text).join('') : ""
+    const command = `/${slashMenuQuery}`
+
+    if (text === command || text === "/" || text === "") {
+      // Replace block
+      editor.replaceBlocks([currentBlock], [{ type, props } as any])
+      setTimeout(() => {
+        const newBlock = editor.getTextCursorPosition().block
+        if (newBlock) editor.setTextCursorPosition(newBlock, "end")
+      }, 0)
+      return
+    }
+
+    if (text.endsWith(command)) {
+      const newText = text.slice(0, -command.length)
+      editor.updateBlock(currentBlock, {
+        content: [{ type: "text", text: newText, styles: {} }]
+      })
+      editor.insertBlocks([{ type, props } as any], currentBlock, "after")
+      setTimeout(() => {
+        const nextBlock = editor.getTextCursorPosition().nextBlock
+        if (nextBlock) editor.setTextCursorPosition(nextBlock, "end")
+      }, 0)
+      return
+    }
+
+    editor.insertBlocks([{ type, props } as any], currentBlock, "after")
   }
 
   // Define custom slash menu items
@@ -343,19 +365,22 @@ export const BlockNoteEditorComponent = ({
       {
         title: "Page Mention",
         onItemClick: () => {
-          // Instead of handling it here, we open the mention picker?
-          // Or we just insert a block? But we need to SELECT a page.
-          // So we should open the mention picker logic.
-          // Trigger mention logic manually:
           const currentBlock = editor.getTextCursorPosition().block
-          // We can simulate an @ typed or just open the picker.
-          // Let's open the picker at cursor.
-          // But the picker needs a position. 
-          // We'll reuse the slash menu position logic but switch mode.
+          const content = currentBlock.content
+          const text = (Array.isArray(content) && content.length > 0) ? (content as any[]).map(c => c.text).join('') : ""
+          const command = `/${slashMenuQuery}`
+
+          if (text.endsWith(command)) {
+            const newText = text.slice(0, -command.length)
+            editor.updateBlock(currentBlock, {
+              content: [{ type: "text", text: newText, styles: {} }]
+            })
+          } else if (text === command || text === "/") {
+            editor.updateBlock(currentBlock, { content: "" })
+          }
+
           setMentionOpen(true)
           setSlashMenuOpen(false)
-          // Position is already set if we clicked via slash menu? 
-          // Actually Slash menu closes. We use its position.
           setMentionPosition({ top: slashMenuPosition.y, left: slashMenuPosition.x })
         },
         aliases: ["mention", "page mention", "link page"],
@@ -366,7 +391,7 @@ export const BlockNoteEditorComponent = ({
       // ... existing custom items ...
       {
         title: "Image",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "image" }),
+        onItemClick: () => insertOrUpdateBlock("image"),
         aliases: ["image", "img", "picture"],
         group: "Media",
         icon: <div className="text-xl">🖼️</div>,
@@ -374,7 +399,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Video",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "video" }),
+        onItemClick: () => insertOrUpdateBlock("video"),
         aliases: ["video", "movie", "film"],
         group: "Media",
         icon: <div className="text-xl">🎥</div>,
@@ -382,7 +407,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Audio",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "audio" }),
+        onItemClick: () => insertOrUpdateBlock("audio"),
         aliases: ["audio", "music", "sound"],
         group: "Media",
         icon: <div className="text-xl">🎵</div>,
@@ -390,7 +415,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "File",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "file" }),
+        onItemClick: () => insertOrUpdateBlock("file"),
         aliases: ["file", "attachment", "document"],
         group: "Media",
         icon: <div className="text-xl">📄</div>,
@@ -398,7 +423,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Embed",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "embed" }),
+        onItemClick: () => insertOrUpdateBlock("embed"),
         aliases: ["embed", "iframe"],
         group: "Media",
         icon: <div className="text-xl">🔗</div>,
@@ -406,7 +431,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Toggle List",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "toggle" }),
+        onItemClick: () => insertOrUpdateBlock("toggle"),
         aliases: ["toggle", "collapse"],
         group: "Advanced",
         icon: <div className="text-xl"><ChevronRight size={18} /></div>,
@@ -414,7 +439,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Callout",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "callout" }),
+        onItemClick: () => insertOrUpdateBlock("callout"),
         aliases: ["callout", "attention", "alert"],
         group: "Advanced",
         icon: "💡",
@@ -422,7 +447,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Quote",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "quote" }),
+        onItemClick: () => insertOrUpdateBlock("quote"),
         aliases: ["quote", "citation"],
         group: "Basic",
         icon: "❝",
@@ -430,7 +455,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Divider",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "divider" }),
+        onItemClick: () => insertOrUpdateBlock("divider"),
         aliases: ["divider", "hr", "separator"],
         group: "Basic",
         icon: "―",
@@ -438,7 +463,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Table of Contents",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "toc" }),
+        onItemClick: () => insertOrUpdateBlock("toc"),
         aliases: ["toc", "outline"],
         group: "Advanced",
         icon: "📑",
@@ -446,7 +471,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Bookmark",
-        onItemClick: () => insertOrUpdateBlock(editor, { type: "bookmark" }),
+        onItemClick: () => insertOrUpdateBlock("bookmark"),
         aliases: ["bookmark", "link", "embed"],
         group: "Media",
         icon: "🔗",
@@ -456,15 +481,27 @@ export const BlockNoteEditorComponent = ({
         title: "Page",
         onItemClick: async () => {
           const currentBlock = editor.getTextCursorPosition().block
+          const text = (Array.isArray(currentBlock.content)) ? (currentBlock.content as any[]).map(c => c.text).join('') : ""
+          const command = `/${slashMenuQuery}`
+          let insertMode: 'replace' | 'after' = 'after'
+          if (text === command || text === "/" || text === "") {
+            insertMode = 'replace'
+          } else if (text.endsWith(command)) {
+            editor.updateBlock(currentBlock, { content: [{ type: "text", text: text.slice(0, -command.length), styles: {} }] })
+          }
+
           const { createDocument } = await import("@/app/(main)/_actions/documents")
           const doc = await createDocument("Untitled", documentId)
-          editor.replaceBlocks(
-            [currentBlock],
-            [{
-              type: "paragraph",
-              content: [{ type: "link", href: `/documents/${doc.id}`, content: "Untitled Page" }]
-            } as any]
-          )
+          const newBlock = {
+            type: "pageMention",
+            props: { pageId: doc.id }
+          } as any
+
+          if (insertMode === 'replace') {
+            editor.replaceBlocks([currentBlock], [newBlock])
+          } else {
+            editor.insertBlocks([newBlock], currentBlock, "after")
+          }
         },
         aliases: ["page", "new page"],
         group: "Basic",
@@ -475,15 +512,27 @@ export const BlockNoteEditorComponent = ({
         title: "Database - Full Page",
         onItemClick: async () => {
           const currentBlock = editor.getTextCursorPosition().block
+          const text = (Array.isArray(currentBlock.content)) ? (currentBlock.content as any[]).map(c => c.text).join('') : ""
+          const command = `/${slashMenuQuery}`
+          let insertMode: 'replace' | 'after' = 'after'
+          if (text === command || text === "/" || text === "") {
+            insertMode = 'replace'
+          } else if (text.endsWith(command)) {
+            editor.updateBlock(currentBlock, { content: [{ type: "text", text: text.slice(0, -command.length), styles: {} }] })
+          }
+
           const { createDatabase } = await import("@/app/(main)/_actions/database")
           const { page } = await createDatabase(documentId)
-          editor.replaceBlocks(
-            [currentBlock],
-            [{
-              type: "paragraph",
-              content: [{ type: "link", href: `/documents/${page.id}`, content: "Untitled Database" }]
-            } as any]
-          )
+          const newBlock = {
+            type: "paragraph",
+            content: [{ type: "link", href: `/documents/${page.id}`, content: "Untitled Database" }]
+          } as any
+
+          if (insertMode === 'replace') {
+            editor.replaceBlocks([currentBlock], [newBlock])
+          } else {
+            editor.insertBlocks([newBlock], currentBlock, "after")
+          }
         },
         aliases: ["database", "table", "db", "full page database"],
         group: "Basic",
@@ -494,38 +543,34 @@ export const BlockNoteEditorComponent = ({
         title: "Database - Inline",
         onItemClick: async () => {
           const currentBlock = editor.getTextCursorPosition().block
-          const { createDatabase, createLinkedDatabase } = await import(
-            "@/app/(main)/_actions/database"
-          )
+          const text = (Array.isArray(currentBlock.content)) ? (currentBlock.content as any[]).map(c => c.text).join('') : ""
+          const command = `/${slashMenuQuery}`
+          let insertMode: 'replace' | 'after' = 'after'
+          if (text === command || text === "/" || text === "") {
+            insertMode = 'replace'
+          } else if (text.endsWith(command)) {
+            editor.updateBlock(currentBlock, { content: [{ type: "text", text: text.slice(0, -command.length), styles: {} }] })
+          }
 
-          // 1. Yeni kaynak database oluştur (sub-page olarak)
+          const { createDatabase, createLinkedDatabase } = await import("@/app/(main)/_actions/database")
           const { page, database } = await createDatabase(documentId)
+          const linkedDb = await createLinkedDatabase(documentId!, database.id, "Untitled Database")
 
-          // 2. Şu anki sayfada LinkedDatabase kaydı oluştur
-          const linkedDb = await createLinkedDatabase(
-            documentId!,              // Mevcut sayfa
-            database.id,             // Kaynak database
-            "Untitled Database"      // Başlık
-          )
+          const newBlock = {
+            type: "inlineDatabase",
+            props: { linkedDatabaseId: linkedDb.id },
+          } as any
 
-          // 3. Editor'a inline database block ekle
-          editor.replaceBlocks(
-            [currentBlock],
-            [
-              {
-                type: "inlineDatabase",
-                props: {
-                  linkedDatabaseId: linkedDb.id,
-                },
-              },
-            ]
-          )
+          if (insertMode === 'replace') {
+            editor.replaceBlocks([currentBlock], [newBlock])
+          } else {
+            editor.insertBlocks([newBlock], currentBlock, "after")
+          }
 
-          // 4. Yeni block'a focus
-          editor.setTextCursorPosition(
-            editor.getTextCursorPosition().nextBlock ||
-            editor.getTextCursorPosition().block
-          )
+          setTimeout(() => {
+            const next = editor.getTextCursorPosition().nextBlock || editor.getTextCursorPosition().block
+            if (next) editor.setTextCursorPosition(next)
+          }, 0)
         },
         aliases: [
           "inline database",
@@ -540,16 +585,7 @@ export const BlockNoteEditorComponent = ({
       },
       {
         title: "Synced Block",
-        onItemClick: async () => {
-          // Create a new Synced Block (Master)
-          // Replace current block with Synced Block
-          editor.replaceBlocks(
-            [editor.getTextCursorPosition().block],
-            [{
-              type: "syncedBlock",
-            } as any]
-          )
-        },
+        onItemClick: async () => insertOrUpdateBlock("syncedBlock"),
         aliases: ["synced", "sync", "mirror", "copy block"],
         group: "Advanced",
         icon: <div className="text-xl">🔄</div>,
@@ -575,13 +611,7 @@ export const BlockNoteEditorComponent = ({
               return
             }
 
-            editor.replaceBlocks(
-              [editor.getTextCursorPosition().block],
-              [{
-                type: "syncedBlock",
-                props: props
-              } as any]
-            )
+            insertOrUpdateBlock("syncedBlock", props)
           } catch (e) {
             console.error(e)
           }
@@ -780,9 +810,9 @@ export const BlockNoteEditorComponent = ({
     // For now, let's insert the mention block.
     // Ideally we delete the '@query' text first.
     // But clearing partial text is hard without better selection awareness.
-    // We will just insert the mention block, user can delete the text if they want? 
+    // We will just insert the mention block, user can delete the text if they want?
     // Or we can try to replace. `replaceBlocks` replaces the *whole* block.
-    // Since it's a void block, it will replace the current paragraph if it's empty, 
+    // Since it's a void block, it will replace the current paragraph if it's empty,
     // or split?
     // Custom block is "content: none".
     // If we use `insertBlocks` with `currentBlock`, it inserts *after* (by default).
@@ -848,6 +878,7 @@ export const BlockNoteEditorComponent = ({
         theme={resolvedTheme === "dark" ? "dark" : "light"}
         onChange={handleEditorChange}
         slashMenu={false}
+        formattingToolbar={false}
         data-background-color-support="true"
       >
         {/* We use our custom menu outside */}
@@ -858,6 +889,27 @@ export const BlockNoteEditorComponent = ({
           items={filteredItems}
           selectedIndex={slashMenuIndex}
           onItemClick={(item: any) => {
+            // Remove the slash trigger text first
+            const selection = window.getSelection()
+            if (selection && selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0)
+              const text = range.startContainer.textContent || ""
+              const offset = range.startOffset
+              const textBefore = text.slice(0, offset)
+              const slashMatch = textBefore.match(/(?:^|\s)\/([a-zA-Z0-9]*)$/)
+
+              if (slashMatch) {
+                const slashIndex = textBefore.lastIndexOf('/')
+                const newText = text.slice(0, slashIndex) + text.slice(offset)
+                if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                  range.startContainer.textContent = newText
+                  range.setStart(range.startContainer, slashIndex)
+                  range.collapse(true)
+                }
+              }
+            }
+
+
             item.onItemClick(editor)
             setSlashMenuOpen(false)
           }}

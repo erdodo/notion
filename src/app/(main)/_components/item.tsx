@@ -120,13 +120,15 @@ export const Item = ({
       </div>
 
       <div className="flex items-center gap-x-2 ml-auto">
-        <button
-          onClick={handleCreate}
-          disabled={isCreating}
-          className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-0.5"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        {!!onCreate && (
+          <button
+            onClick={handleCreate}
+            disabled={isCreating}
+            className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-0.5"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger

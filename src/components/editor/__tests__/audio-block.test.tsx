@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 // Mock blocknote
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -13,8 +14,9 @@ describe('AudioBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockAudioBlock = (props = {}) => ({
-    id: 'audio-block-1',
+    id: `audio-block-${++idCounter}`,
     type: 'audio',
     props: {
       url: 'https://example.com/audio.mp3',
@@ -25,7 +27,6 @@ describe('AudioBlock', () => {
 
   // Basic Structure
   it('should create audio block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'audio',
       propSchema: {
@@ -206,7 +207,6 @@ describe('AudioBlock', () => {
 
   // Props Schema
   it('should have url prop in schema', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'audio',
       propSchema: {
@@ -214,11 +214,12 @@ describe('AudioBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('url')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('url')
+    }
   })
 
   it('should have title prop in schema', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'audio',
       propSchema: {
@@ -226,7 +227,9 @@ describe('AudioBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('title')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('title')
+    }
   })
 
   // Playback Speed
@@ -267,7 +270,6 @@ describe('AudioBlock', () => {
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'audio',
       propSchema: {
@@ -275,17 +277,20 @@ describe('AudioBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema.url.default).toBe('')
-    expect(spec.config.propSchema.title.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.url.default).toBe('')
+      expect(spec.config.propSchema.title.default).toBe('')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'audio',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 })

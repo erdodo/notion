@@ -62,7 +62,11 @@ export const CoverImageMenu = ({ data }: CoverImageMenuProps) => {
     return (
         <>
             <DropdownMenuItem onClick={() => {
-                toast.info("Use 'Change Limit' button on hover")
+                if (data.onChangeCover) {
+                    data.onChangeCover()
+                } else {
+                    toast.error("Action not available")
+                }
                 closeContextMenu()
             }}>
                 <ImageIcon className="h-4 w-4 mr-2" />
@@ -70,16 +74,15 @@ export const CoverImageMenu = ({ data }: CoverImageMenuProps) => {
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={() => {
-                toast.info("Reposition not implemented")
+                if (data.onReposition) {
+                    data.onReposition()
+                } else {
+                    toast.info("Reposition not available")
+                }
                 closeContextMenu()
             }}>
                 <Move className="h-4 w-4 mr-2" />
                 Reposition
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={onRandom}>
-                <Shuffle className="h-4 w-4 mr-2" />
-                Random
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

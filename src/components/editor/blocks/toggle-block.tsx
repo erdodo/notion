@@ -37,7 +37,6 @@ export const ToggleBlock = createReactBlockSpec(
             // of a block directly from the custom block content renderer in BlockNote (managed by Core).
             useEffect(() => {
                 if (!contentElement) return
-                if (!contentElement) return
 
                 // Traverse up to find the block element
                 // Structure: .bn-block > .bn-block-content > ... > contentElement
@@ -71,8 +70,6 @@ export const ToggleBlock = createReactBlockSpec(
                             className="mr-1 mt-1 p-0.5 rounded hover:bg-muted cursor-pointer select-none transition-colors"
                             onClick={toggleOpen}
                             contentEditable={false}
-                            // Add these to ensure it doesn't interfere with editor focus weirdly, 
-                            // though stopPropagation handles most.
                             onMouseDown={(e) => e.preventDefault()}
                         >
                             {
@@ -82,11 +79,6 @@ export const ToggleBlock = createReactBlockSpec(
                                     <ChevronRight size={18} className="text-muted-foreground" />
                                 )}
                         </div>
-                        {/* 
-                            The contentRef div must be accessible. 
-                            If it's empty, it might have 0 height which makes it hard to click.
-                            We add min-w and min-h to ensure it's clickable.
-                        */}
                         <div className={"flex-1 min-w-0 min-h-[24px]"} ref={contentRefCallback} />
                     </div>
                 </div>

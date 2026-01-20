@@ -43,10 +43,10 @@ export function FavoritesSection({ className }: FavoritesSectionProps) {
         return () => document.removeEventListener('favorite-changed', handleFavoriteChange)
     }, [])
 
-    if (favorites.length === 0) return null
     if (loading) {
         return <Skeleton className="h-4 w-[60%]" />
     }
+    if (favorites.length === 0) return null
 
     return (
         <Collapsible

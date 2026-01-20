@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider"
 import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
+import { DocumentPreviewProvider } from "@/components/providers/document-preview-provider"
 import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
               >
                 <Toaster position="bottom-center" />
                 <ModalProvider />
+                <DocumentPreviewProvider />
                 {children}
               </ThemeProvider>
             </QueryProvider>

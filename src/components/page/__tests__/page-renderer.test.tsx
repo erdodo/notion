@@ -74,7 +74,8 @@ describe('PageRenderer', () => {
   it('should render page renderer container', () => {
     render(<PageRenderer page={mockPage} />)
 
-    const container = screen.getByTestId('document-header').closest('div')
+    const header = screen.getByTestId('document-header')
+    const container = header.parentElement
     expect(container).toHaveClass('flex', 'flex-col', 'h-full', 'bg-background')
   })
 

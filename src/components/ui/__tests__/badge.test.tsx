@@ -53,13 +53,13 @@ describe('Badge', () => {
   it('should apply sm size', () => {
     const { container } = render(<Badge size="sm">Small</Badge>)
     const badge = container.querySelector('div')
-    expect(badge?.className).toMatch(/sm/)
+    expect(badge?.className).toContain('text-[10px]')
   })
 
   it('should apply lg size', () => {
     const { container } = render(<Badge size="lg">Large</Badge>)
     const badge = container.querySelector('div')
-    expect(badge?.className).toMatch(/lg/)
+    expect(badge?.className).toContain('px-3')
   })
 
   // Styling Tests
@@ -247,7 +247,7 @@ describe('Badge', () => {
   it('should have proper flex spacing', () => {
     const { container } = render(<Badge>Flex</Badge>)
     const badge = container.querySelector('div')
-    expect(badge?.className).toMatch(/justify-center/)
+    expect(badge?.className).toContain('inline-flex')
   })
 
   // Edge Cases

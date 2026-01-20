@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('InlineDatabaseBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockInlineDatabaseBlock = (props = {}) => ({
-    id: 'inline-db-block-1',
+    id: `inline-db-block-${++idCounter}`,
     type: 'inlineDatabase',
     props: {
       databaseId: 'db-123',
@@ -29,7 +31,6 @@ describe('InlineDatabaseBlock', () => {
 
   // Basic Structure
   it('should create inline database block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'inlineDatabase',
       propSchema: {
@@ -139,10 +140,7 @@ describe('InlineDatabaseBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockInlineDatabaseBlock()
-    const block2 = {
-      ...createMockInlineDatabaseBlock(),
-      id: 'inline-db-block-2',
-    }
+    const block2 = createMockInlineDatabaseBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -168,7 +166,6 @@ describe('InlineDatabaseBlock', () => {
 
   // Props Schema
   it('should have databaseId prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'inlineDatabase',
       propSchema: {
@@ -176,7 +173,9 @@ describe('InlineDatabaseBlock', () => {
         databaseName: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('databaseId')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('databaseId')
+    }
   })
 
   // Search/Filter

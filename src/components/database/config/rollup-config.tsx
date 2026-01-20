@@ -110,6 +110,24 @@ export function RollupConfig({ config, properties, onChange, onCancel }: RollupC
                 </div>
             )}
 
+            {/* Date Format (Only if show original/unique) */}
+            {(aggregation === 'show_original' || aggregation === 'show_unique') && (
+                <div className="space-y-2">
+                    <Label>Date Format (Optional)</Label>
+                    <Select value={config?.dateFormat || "default"} onValueChange={(v) => onChange({ ...config!, dateFormat: v === "default" ? undefined : v, aggregation, relationPropertyId, targetPropertyId })}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Default" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="default">Default</SelectItem>
+                            <SelectItem value="relative">Relative</SelectItem>
+                            <SelectItem value="US">US (MM/DD/YYYY)</SelectItem>
+                            <SelectItem value="ISO">ISO (YYYY-MM-DD)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
+
             <div className="flex gap-2">
                 {onCancel && (
                     <Button variant="outline" onClick={onCancel} className="flex-1">

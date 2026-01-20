@@ -209,7 +209,7 @@ export function SortableDocumentList({
             {createPortal(
                 <DragOverlay>
                     {activeDocument && (
-                        <div className="bg-background border rounded-md shadow-lg p-2 flex items-center gap-2 opacity-90 pl-4 w-60">
+                        <div className="bg-background border rounded-md shadow-lg p-2 flex items-center gap-2 w-auto min-w-[150px]">
                             <span className="text-[18px]">{activeDocument.icon || <FileText className="h-[18px] w-[18px]" />}</span>
                             <span className="text-sm font-medium">{activeDocument.title || 'Untitled'}</span>
                         </div>

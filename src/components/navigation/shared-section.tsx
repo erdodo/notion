@@ -33,10 +33,12 @@ export function SharedSection({ label = "Public" }: SharedSectionProps) {
     useEffect(() => {
         loadSharedDocuments()
 
-        // Listen for updates (e.g. sharing changes)
-        // Ideally we'd have a specific event for sharing changes, but standard update might work
-        // or we rely on page refresh for now.
-        // Let's hook into window focus or a custom event if we had one.
+        const onUpdate = () => {
+            loadSharedDocuments()
+        }
+
+        window.addEventListener("notion-document-update", onUpdate)
+        return () => window.removeEventListener("notion-document-update", onUpdate)
     }, [])
 
     const onRedirect = (documentId: string) => {

@@ -15,9 +15,9 @@ export const DividerBlock = createReactBlockSpec(
     },
     {
         render: (props) => (
-            <div className="py-2 cursor-pointer group" contentEditable={false} >
+            <div className="py-2 cursor-pointer group w-full" contentEditable={false} >
                 <hr
-                    className={`border-t-2 border-border group-hover:border-primary/50 transition-colors
+                    className={`w-full border-t-2 border-border group-hover:border-primary/50 transition-colors
               ${props.block.props.style === "dashed" ? "border-dashed" : ""} 
               ${props.block.props.style === "dotted" ? "border-dotted" : ""}
               ${props.block.props.style === "solid" ? "border-solid" : ""}

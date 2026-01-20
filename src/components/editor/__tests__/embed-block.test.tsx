@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('EmbedBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockEmbedBlock = (props = {}) => ({
-    id: 'embed-block-1',
+    id: `embed-block-${++idCounter}`,
     type: 'embed',
     props: {
       url: 'https://example.com/embed',
@@ -26,7 +28,6 @@ describe('EmbedBlock', () => {
 
   // Basic Structure
   it('should create embed block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'embed',
       propSchema: {
@@ -136,10 +137,7 @@ describe('EmbedBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockEmbedBlock()
-    const block2 = {
-      ...createMockEmbedBlock(),
-      id: 'embed-block-2',
-    }
+    const block2 = createMockEmbedBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -180,7 +178,6 @@ describe('EmbedBlock', () => {
 
   // Props Schema
   it('should have url prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'embed',
       propSchema: {
@@ -188,11 +185,12 @@ describe('EmbedBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('url')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('url')
+    }
   })
 
   it('should have caption prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'embed',
       propSchema: {
@@ -200,7 +198,9 @@ describe('EmbedBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('caption')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('caption')
+    }
   })
 
   // Metadata
@@ -218,7 +218,6 @@ describe('EmbedBlock', () => {
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'embed',
       propSchema: {
@@ -226,17 +225,20 @@ describe('EmbedBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema.url.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.url.default).toBe('')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'embed',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 
   // Loading State

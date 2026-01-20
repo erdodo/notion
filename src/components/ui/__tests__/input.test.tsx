@@ -33,44 +33,44 @@ describe('Input', () => {
   })
 
   it('should support email type', () => {
-    render(<Input type="email" />)
-    const input = screen.getByRole('textbox') as HTMLInputElement
-    expect(input.type).toBe('email')
+    const { container } = render(<Input type="email" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'email')
   })
 
   it('should support password type', () => {
-    render(<Input type="password" />)
-    const input = screen.getByRole('textbox') as HTMLInputElement
-    expect(input.type).toBe('password')
+    const { container } = render(<Input type="password" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'password')
   })
 
   it('should support number type', () => {
-    render(<Input type="number" />)
-    const input = screen.getByRole('spinbutton') as HTMLInputElement
-    expect(input.type).toBe('number')
+    const { container } = render(<Input type="number" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'number')
   })
 
   it('should support search type', () => {
-    render(<Input type="search" />)
-    const input = screen.getByRole('searchbox') as HTMLInputElement
-    expect(input.type).toBe('search')
+    const { container } = render(<Input type="search" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'search')
   })
 
   it('should support date type', () => {
-    render(<Input type="date" />)
-    const input = screen.getByDisplayValue(//) as HTMLInputElement
-    expect(input.type).toBe('date')
+    const { container } = render(<Input type="date" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'date')
   })
 
   it('should support file type', () => {
-    render(<Input type="file" />)
-    const input = screen.getByRole('button') as HTMLInputElement
-    expect(input.type).toBe('file')
+    const { container } = render(<Input type="file" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('type', 'file')
   })
 
   // Value Tests
   it('should handle controlled value', () => {
-    render(<Input value="test value" onChange={() => {}} />)
+    render(<Input value="test value" onChange={() => { }} />)
     const input = screen.getByDisplayValue('test value') as HTMLInputElement
     expect(input.value).toBe('test value')
   })
@@ -111,7 +111,7 @@ describe('Input', () => {
 
   // ReadOnly Tests
   it('should support readOnly prop', () => {
-    render(<Input readOnly value="read-only" onChange={() => {}} />)
+    render(<Input readOnly value="read-only" onChange={() => { }} />)
     const input = screen.getByDisplayValue('read-only') as HTMLInputElement
     expect(input.readOnly).toBe(true)
   })
@@ -154,21 +154,21 @@ describe('Input', () => {
 
   // Min/Max Tests
   it('should support min attribute', () => {
-    render(<Input type="number" min="0" />)
-    const input = screen.getByRole('spinbutton') as HTMLInputElement
-    expect(input.min).toBe('0')
+    const { container } = render(<Input type="number" min="0" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('min', '0')
   })
 
   it('should support max attribute', () => {
-    render(<Input type="number" max="100" />)
-    const input = screen.getByRole('spinbutton') as HTMLInputElement
-    expect(input.max).toBe('100')
+    const { container } = render(<Input type="number" max="100" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('max', '100')
   })
 
   it('should support step attribute', () => {
-    render(<Input type="number" step="0.5" />)
-    const input = screen.getByRole('spinbutton') as HTMLInputElement
-    expect(input.step).toBe('0.5')
+    const { container } = render(<Input type="number" step="0.5" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('step', '0.5')
   })
 
   // Pattern Tests
@@ -264,9 +264,9 @@ describe('Input', () => {
 
   // Autocomplete Tests
   it('should support autoComplete prop', () => {
-    render(<Input autoComplete="email" />)
-    const input = screen.getByRole('textbox') as HTMLInputElement
-    expect(input.autoComplete).toBe('email')
+    const { container } = render(<Input autoComplete="email" />)
+    const input = container.querySelector('input')
+    expect(input).toHaveAttribute('autocomplete', 'email')
   })
 
   // Keyboard Tests

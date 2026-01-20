@@ -47,7 +47,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
 
   return (
     <div className="pb-10 group/header relative">
-      <Cover url={page.coverImage} pageId={page.id} preview={preview} />
+      <Cover url={page.coverImage} pageId={page.id} preview={preview} position={page.coverImagePosition} />
 
 
 
@@ -58,11 +58,28 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
         </div>
 
         <div className="mt-8">
-          <TextareaAutosize
+          <input
             value={title}
-            onChange={handleTitleChange}
+            onChange={(e) => {
+              if (e.target.value.length <= 50) {
+                handleTitleChange(e as any)
+              }
+            }}
             onBlur={handleTitleBlur}
-            className="text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] bg-transparent resize-none w-full placeholder:text-muted-foreground/50 mt-4"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault()
+                // Focus on the editor
+                // We need a way to focus the BlockNote editor.
+                // Usually we can querySelector the editor or use a ref passed down.
+                // For now, let's try standard DOM focus on the first block.
+                const editor = document.querySelector(".bn-editor") as HTMLElement
+                if (editor) {
+                  editor.focus()
+                }
+              }
+            }}
+            className="text-5xl font-bold outline-none text-[#3F3F3F] dark:text-[#CFCFCF] bg-transparent w-full placeholder:text-muted-foreground/50 mt-4 truncate"
             placeholder="Untitled"
             disabled={preview}
           />

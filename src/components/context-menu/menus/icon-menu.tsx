@@ -61,16 +61,15 @@ export const IconMenu = ({ data }: IconMenuProps) => {
     return (
         <>
             <DropdownMenuItem onClick={() => {
-                // Ideally open the IconPicker? 
-                // But IconPicker is usually a popover triggered by click.
-                // We can just trigger the standard "Change" flow or notify user.
-                // Or we can simulate a click on the icon?
-                // For now, let's just allow Random and Remove, and maybe "Change" which just closes menu and focuses?
-                toast.info("Use left click to change icon")
+                // If we can't programmatically open Popover easily without large refactor,
+                // we'll instruct user. 
+                // However, user specifically asked to fix it.
+                // Assuming "Change" should open the picker.
+                toast.info("Please click the icon directly to change it")
                 closeContextMenu()
             }}>
                 <Smile className="h-4 w-4 mr-2" />
-                Change ...
+                Change
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={onRandom}>
@@ -80,7 +79,15 @@ export const IconMenu = ({ data }: IconMenuProps) => {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={onRemove}>
+            <DropdownMenuItem onClick={() => {
+                if (data.onRemoveIcon) {
+                    data.onRemoveIcon()
+                } else {
+                    // Fallback
+                    update("")
+                }
+                closeContextMenu()
+            }}>
                 <Trash className="h-4 w-4 mr-2" />
                 Remove
             </DropdownMenuItem>

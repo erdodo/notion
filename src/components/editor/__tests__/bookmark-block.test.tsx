@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('BookmarkBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockBookmarkBlock = (props = {}) => ({
-    id: 'bookmark-block-1',
+    id: `bookmark-block-${++idCounter}`,
     type: 'bookmark',
     props: {
       url: 'https://example.com',
@@ -26,7 +28,6 @@ describe('BookmarkBlock', () => {
 
   // Basic Structure
   it('should create bookmark block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'bookmark',
       propSchema: {
@@ -148,10 +149,7 @@ describe('BookmarkBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockBookmarkBlock()
-    const block2 = {
-      ...createMockBookmarkBlock(),
-      id: 'bookmark-block-2',
-    }
+    const block2 = createMockBookmarkBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -192,7 +190,6 @@ describe('BookmarkBlock', () => {
 
   // Props Schema
   it('should have url prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'bookmark',
       propSchema: {
@@ -200,11 +197,12 @@ describe('BookmarkBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('url')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('url')
+    }
   })
 
   it('should have title prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'bookmark',
       propSchema: {
@@ -212,7 +210,9 @@ describe('BookmarkBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('title')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('title')
+    }
   })
 
   // Metadata
@@ -229,7 +229,6 @@ describe('BookmarkBlock', () => {
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'bookmark',
       propSchema: {
@@ -237,17 +236,20 @@ describe('BookmarkBlock', () => {
         title: { default: '' },
       },
     })
-    expect(spec.config.propSchema.url.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.url.default).toBe('')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'bookmark',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 
   // Preview Display

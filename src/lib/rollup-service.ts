@@ -20,8 +20,10 @@ export interface RollupConfig {
     relationPropertyId: string
     targetPropertyId: string
     aggregation: AggregationType
+    dateFormat?: string
 }
 
+// ... computeRollup is same ...
 export function computeRollup(
     values: any[],
     aggregation: AggregationType
@@ -83,7 +85,7 @@ export function computeRollup(
 }
 
 // Aggregation type'a göre display format
-export function formatRollupValue(value: any, aggregation: AggregationType): string {
+export function formatRollupValue(value: any, aggregation: AggregationType, dateFormat?: string): string {
     if (value === null || value === undefined) return '-'
 
     switch (aggregation) {
@@ -96,7 +98,30 @@ export function formatRollupValue(value: any, aggregation: AggregationType): str
 
         case 'show_original':
         case 'show_unique':
-            return Array.isArray(value) ? value.join(', ') : String(value)
+            if (Array.isArray(value)) {
+                if (dateFormat) {
+                    // Try to format if it looks like date
+                    const formatDate = (v: any) => {
+                        const d = new Date(v)
+                        if (isNaN(d.getTime())) return String(v)
+                        // Simple date formatting based on standard locales or patterns
+                        // For MVP just standard locale string options
+                        if (dateFormat === "relative") {
+                            // Simple relative approximation
+                            const diff = (new Date().getTime() - d.getTime()) / (1000 * 3600 * 24)
+                            if (Math.abs(diff) < 1) return "Today"
+                            if (Math.abs(diff) < 2) return diff > 0 ? "Yesterday" : "Tomorrow"
+                            return d.toLocaleDateString()
+                        }
+                        if (dateFormat === "US") return d.toLocaleDateString("en-US")
+                        if (dateFormat === "ISO") return d.toISOString().split('T')[0]
+                        return d.toLocaleDateString()
+                    }
+                    return value.map(formatDate).join(', ')
+                }
+                return value.join(', ')
+            }
+            return String(value)
 
         default:
             return String(value)

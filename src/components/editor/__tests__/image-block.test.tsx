@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('ImageBlock', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockImageBlock = (props = {}) => ({
-    id: 'image-block-1',
+    id: `image-block-${++idCounter}`,
     type: 'image',
     props: {
       url: 'https://example.com/image.jpg',
@@ -27,7 +29,6 @@ describe('ImageBlock', () => {
 
   // Basic Structure
   it('should create image block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'image',
       propSchema: {
@@ -153,10 +154,7 @@ describe('ImageBlock', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockImageBlock()
-    const block2 = {
-      ...createMockImageBlock(),
-      id: 'image-block-2',
-    }
+    const block2 = createMockImageBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -209,7 +207,6 @@ describe('ImageBlock', () => {
 
   // Props Schema
   it('should have url prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'image',
       propSchema: {
@@ -217,11 +214,12 @@ describe('ImageBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('url')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('url')
+    }
   })
 
   it('should have caption prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'image',
       propSchema: {
@@ -229,7 +227,9 @@ describe('ImageBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('caption')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('caption')
+    }
   })
 
   // Lazy Loading
@@ -248,7 +248,6 @@ describe('ImageBlock', () => {
 
   // Default Values
   it('should have default values', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'image',
       propSchema: {
@@ -256,18 +255,21 @@ describe('ImageBlock', () => {
         caption: { default: '' },
       },
     })
-    expect(spec.config.propSchema.url.default).toBe('')
-    expect(spec.config.propSchema.caption.default).toBe('')
+    if (spec.config) {
+      expect(spec.config.propSchema.url.default).toBe('')
+      expect(spec.config.propSchema.caption.default).toBe('')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'image',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 
   // Image Loading

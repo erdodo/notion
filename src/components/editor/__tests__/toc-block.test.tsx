@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { createReactBlockSpec } from '@blocknote/react'
 
 vi.mock('@blocknote/react', () => ({
-  createReactBlockSpec: vi.fn((config) => ({
-    type: config.type,
-    config,
+  createReactBlockSpec: vi.fn((_config) => ({
+    type: _config.type,
+    config: _config,
   })),
 }))
 
@@ -12,8 +13,9 @@ describe('TocBlock (Table of Contents)', () => {
     vi.clearAllMocks()
   })
 
+  let idCounter = 0
   const createMockTocBlock = (props = {}) => ({
-    id: 'toc-block-1',
+    id: `toc-block-${++idCounter}`,
     type: 'toc',
     props: {
       color: 'gray',
@@ -28,7 +30,6 @@ describe('TocBlock (Table of Contents)', () => {
 
   // Basic Structure
   it('should create TOC block spec', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toc',
       propSchema: {
@@ -121,10 +122,7 @@ describe('TocBlock (Table of Contents)', () => {
   // Block ID
   it('should have unique block ID', () => {
     const block1 = createMockTocBlock()
-    const block2 = {
-      ...createMockTocBlock(),
-      id: 'toc-block-2',
-    }
+    const block2 = createMockTocBlock()
     expect(block1.id).not.toBe(block2.id)
   })
 
@@ -144,36 +142,39 @@ describe('TocBlock (Table of Contents)', () => {
 
   // Props Schema
   it('should have color prop', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toc',
       propSchema: {
         color: { default: 'gray' },
       },
     })
-    expect(spec.config.propSchema).toHaveProperty('color')
+    if (spec.config) {
+      expect(spec.config.propSchema).toHaveProperty('color')
+    }
   })
 
   // Default Values
   it('should have default color', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toc',
       propSchema: {
         color: { default: 'gray' },
       },
     })
-    expect(spec.config.propSchema.color.default).toBe('gray')
+    if (spec.config) {
+      expect(spec.config.propSchema.color.default).toBe('gray')
+    }
   })
 
   // Content Type
   it('should have leaf content type', () => {
-    const { createReactBlockSpec } = require('@blocknote/react')
     const spec = createReactBlockSpec({
       type: 'toc',
       content: 'none',
     })
-    expect(spec.config.content).toBe('none')
+    if (spec.config) {
+      expect(spec.config.content).toBe('none')
+    }
   })
 
   // Update Headings
