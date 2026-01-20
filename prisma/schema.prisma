@@ -207,8 +207,48 @@ model Database {
   templates       DatabaseTemplate[]
   automations     DatabaseAutomation[]
   linkedDatabases LinkedDatabase[]   @relation("LinkedDatabases")
+  views           DatabaseView[]
   
   @@index([pageId])
+}
+
+model DatabaseView {
+  id          String   @id @default(uuid())
+  databaseId  String
+  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  
+  name        String   @default("Untitled View")
+  type        ViewType @default(TABLE)
+  
+  // View-specific config
+  filter      Json?    // Filter rules
+  sort        Json?    // Sort rules
+  group       Json?    // Group by config
+  layout      Json?    // Layout specific settings (e.g. card size, calendar properties)
+  
+  // Property visibility per view
+  hiddenProperties Json? // [propertyId]
+  propertyWidths   Json? // {propertyId: width}
+  propertyOrder    Json? // [propertyId]
+  
+  // View settings
+  isLocked    Boolean  @default(false)
+  isDefault   Boolean  @default(false)
+  
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([databaseId])
+}
+
+enum ViewType {
+  TABLE
+  BOARD
+  CALENDAR
+  GALLERY
+  LIST
+  TIMELINE
 }
 
 // Property (Column) - Sütun tanımları

@@ -1,7 +1,4 @@
-"use client"
-
 import { useState } from "react"
-import { TableRow, TableCell } from "@/components/ui/table"
 import { ChevronRight, ChevronDown } from "lucide-react"
 import { flexRender } from "@tanstack/react-table"
 
@@ -25,8 +22,8 @@ export function GroupSection({ group, table, columns }: GroupSectionProps) {
 
     return (
         <>
-            <TableRow className="bg-secondary/20 hover:bg-secondary/30">
-                <TableCell colSpan={columns.length + 1} className="p-0">
+            <div className="bg-secondary/20 hover:bg-secondary/30 flex min-w-full border-b border-border/50">
+                <div className="p-0 flex-1">
                     <div
                         className="flex items-center gap-2 p-1 pl-2 cursor-pointer select-none"
                         onClick={() => setIsOpen(!isOpen)}
@@ -41,26 +38,30 @@ export function GroupSection({ group, table, columns }: GroupSectionProps) {
                             </span>
                         </span>
                     </div>
-                </TableCell>
-            </TableRow>
+                </div>
+            </div>
             {isOpen && groupRows.map((row: any) => (
-                <TableRow
+                <div
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="group h-[32px] hover:bg-muted/50 transition-colors border-b border-border/50"
+                    className="group h-[33px] flex hover:bg-muted/50 transition-colors border-b border-border/50 min-w-full"
                 >
                     {row.getVisibleCells().map((cell: any) => (
-                        <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top" style={{ width: cell.column.getSize() }}>
+                        <div
+                            key={cell.id}
+                            className="p-0 border-r border-border/50 last:border-r-0 relative flex-shrink-0"
+                            style={{ width: cell.column.getSize() }}
+                        >
                             {flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
                             )}
-                        </TableCell>
+                        </div>
                     ))}
-                    <TableCell className="border-l border-border/50 bg-transparent p-0 min-w-[50px]">
+                    <div className="border-l border-border/50 bg-transparent p-0 flex-1 min-w-[50px]">
                         <div className="h-full w-full" />
-                    </TableCell>
-                </TableRow>
+                    </div>
+                </div>
             ))}
         </>
     )

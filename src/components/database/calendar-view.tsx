@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { addMonths, format, subMonths } from "date-fns"
 import { addRow, updateCellByPosition } from "@/app/(main)/_actions/database"
 import { useEffect } from "react"
+import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
 
 interface CalendarViewProps {
     database: Database & {
@@ -17,7 +18,9 @@ interface CalendarViewProps {
     }
 }
 
-export function CalendarView({ database }: CalendarViewProps) {
+export function CalendarView({ database: initialDatabase }: CalendarViewProps) {
+    const { database, updateCell, addRow: addOptimisticRow } = useOptimisticDatabase(initialDatabase as any)
+
     const {
         calendarDateProperty,
         calendarDate,
@@ -54,15 +57,26 @@ export function CalendarView({ database }: CalendarViewProps) {
             pageId: null,
             order: database.rows.length,
             createdAt: new Date(),
-            updatedAt: new Date(), // This will be the created time
+            updatedAt: new Date(),
             cells: []
         }
-        // Optimistic add (requires store support, assume addOptimisticRow exists in context or similar)
-        // ... skipped strict optimistic for now to ensure simpler implementation first or use context
+
+        // Optimistically add row with the date set!
+        // We must fake the cell presence so it shows up in MonthGrid
+        if (dateProperty) {
+            newRow.cells.push({
+                id: `temp-cell-${tempId}`,
+                rowId: tempId,
+                propertyId: dateProperty.id,
+                value: date
+            })
+        }
+
+        addOptimisticRow(newRow)
 
         const createdRow = await addRow(database.id)
 
-        // Update date property
+        // Update date property on server
         if (dateProperty) {
             await updateCellByPosition(dateProperty.id, createdRow.id, date)
         }

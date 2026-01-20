@@ -64,8 +64,14 @@ interface DatabaseState {
     setFocusedCell: (cell: { propertyId: string, rowId: string } | null) => void
 
     // View State
+    currentViewId: string | null
+    setCurrentViewId: (id: string | null) => void
+
     currentView: 'table' | 'list' | 'board' | 'calendar' | 'gallery' | 'timeline'
     setCurrentView: (view: 'table' | 'list' | 'board' | 'calendar' | 'gallery' | 'timeline') => void
+
+    // Sync from server view
+    setFromView: (view: any) => void
 
     // Board View Configuration
     boardGroupByProperty: string | null
@@ -84,6 +90,8 @@ interface DatabaseState {
     // Gallery View Configuration
     galleryCardSize: 'small' | 'medium' | 'large'
     setGalleryCardSize: (size: string) => void
+    galleryColumns: number
+    setGalleryColumns: (columns: number) => void
     galleryCoverProperty: string | null
     setGalleryCoverProperty: (propertyId: string | null) => void
     galleryFitImage: boolean
@@ -112,8 +120,6 @@ interface DatabaseState {
     timelineDependencyProperty: string | null
     setTimelineDependencyProperty: (propertyId: string | null) => void
 }
-
-
 
 export const useDatabase = create<DatabaseState>()(
     persist(
@@ -170,9 +176,23 @@ export const useDatabase = create<DatabaseState>()(
             focusedCell: null,
             setFocusedCell: (cell) => set({ focusedCell: cell }),
 
-            // View State Initial Values
+            // View State
+            currentViewId: null,
+            setCurrentViewId: (id) => set({ currentViewId: id }),
+
             currentView: 'table',
             setCurrentView: (view) => set({ currentView: view }),
+
+            setFromView: (view) => set({
+                currentViewId: view.id,
+                currentView: view.type.toLowerCase(),
+                filters: view.filter || [],
+                sorts: view.sort || [],
+                groupByProperty: view.group?.propertyId || null,
+                visibleProperties: view.hiddenProperties && view.database?.properties ?
+                    view.database.properties.map((p: any) => p.id).filter((id: string) => !view.hiddenProperties.includes(id))
+                    : [],
+            }),
 
             boardGroupByProperty: null,
             setBoardGroupByProperty: (propertyId) => set({ boardGroupByProperty: propertyId }),
@@ -195,6 +215,8 @@ export const useDatabase = create<DatabaseState>()(
 
             galleryCardSize: 'medium',
             setGalleryCardSize: (size) => set({ galleryCardSize: size as any }),
+            galleryColumns: 4,
+            setGalleryColumns: (columns) => set({ galleryColumns: columns }),
             galleryCoverProperty: null,
             setGalleryCoverProperty: (propertyId) => set({ galleryCoverProperty: propertyId }),
             galleryFitImage: false,
@@ -240,6 +262,7 @@ export const useDatabase = create<DatabaseState>()(
                 calendarDateProperty: state.calendarDateProperty,
                 calendarView: state.calendarView,
                 galleryCardSize: state.galleryCardSize,
+                galleryColumns: state.galleryColumns,
                 galleryCoverProperty: state.galleryCoverProperty,
                 galleryFitImage: state.galleryFitImage,
                 timelineDateProperty: state.timelineDateProperty,

@@ -83,8 +83,8 @@ export function GalleryCard({
                     <h3 className="font-medium text-sm truncate">{title}</h3>
                 </div>
 
-                <div className="space-y-1">
-                    {displayProperties.slice(0, 3).map(prop => {
+                <div className="flex flex-col gap-1">
+                    {displayProperties.map(prop => {
                         const cell = row.cells.find(c => c.propertyId === prop.id)
                         // In gallery we usually show property name for context unless it's very obvious
                         return (

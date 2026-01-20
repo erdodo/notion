@@ -4,12 +4,13 @@ import { Property, PropertyType } from "@prisma/client"
 import { format } from "date-fns"
 import { Check, Link as LinkIcon, Calendar, Type, Hash, List, Tag } from "lucide-react"
 import { cn } from "@/lib/utils"
-// import { Badge } from "@/components/ui/badge" 
+import { Badge } from "@/components/ui/badge"
 import { RelationCell } from "@/components/database/cells/relation-cell"
 import { RollupCell } from "@/components/database/cells/rollup-cell"
 import { FormulaCell } from "@/components/database/cells/formula-cell"
 import { RelationConfig } from "@/lib/relation-service"
 import { RollupConfig } from "@/lib/rollup-service"
+import { getOptionColors } from "@/lib/notion-colors"
 
 interface PropertyValueProps {
     property: Property
@@ -56,27 +57,38 @@ export function PropertyValue({ property, value, compact, rowId }: PropertyValue
             return <span>{String(numValue)}</span>
 
         case 'SELECT':
-            // Value is the option ID usually, but here we expect the resolved value or object
-            const selectVal = typeof value === 'object' && value !== null ? ((value as any).name || (value as any).value || JSON.stringify(value)) : String(value)
+            const selectId = typeof value === 'object' && value !== null ? ((value as any).value || value) : value
+            if (!selectId) return null
 
-            return (
-                <span className={cn(
-                    "px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground text-xs",
-                    // Add color logic here if available
-                )}>
-                    {selectVal}
-                </span>
-            )
+            const selectOption = (property.options as any[])?.find((o: any) => o.id === selectId)
+
+            if (selectOption) {
+                const colors = getOptionColors(selectOption.color)
+                return (
+                    <Badge variant="secondary" className={cn("font-normal px-2 py-0.5", colors.bg, colors.text)}>
+                        {selectOption.name}
+                    </Badge>
+                )
+            }
+            return <span>{String(selectId)}</span>
 
         case 'MULTI_SELECT':
             if (!Array.isArray(value)) return null
+            const multiOptions = (property.options as any[]) || []
             return (
                 <div className="flex gap-1 flex-wrap">
-                    {value.map((v: any, i: number) => (
-                        <span key={i} className="px-1.5 py-0.5 rounded bg-secondary/50 text-xs">
-                            {v?.name || v}
-                        </span>
-                    ))}
+                    {value.map((v: any, i: number) => {
+                        // v might be ID or object
+                        const id = typeof v === 'object' ? v.id || v.value : v
+                        const option = multiOptions.find((o: any) => o.id === id)
+                        const colors = option ? getOptionColors(option.color) : { bg: '', text: '' }
+
+                        return (
+                            <Badge key={i} variant="secondary" className={cn("font-normal px-2 py-0.5", colors.bg, colors.text)}>
+                                {option?.name || String(id)}
+                            </Badge>
+                        )
+                    })}
                 </div>
             )
 
@@ -92,17 +104,42 @@ export function PropertyValue({ property, value, compact, rowId }: PropertyValue
             )
 
         case 'CHECKBOX':
-            return value ? <Check className="h-4 w-4 text-primary" /> : null
+            // Checkbox value can be boolean or 'Yes'/'No' string or object
+            const checked = value === true || value === 'true' || (typeof value === 'object' && value?.value === true)
+            return checked ? <Check className="h-4 w-4 text-primary" /> : <div className="h-4 w-4 border rounded-sm border-muted" />
 
         case 'URL':
             const urlVal = typeof value === 'object' && value !== null ? (value as any).value : value
             const urlStr = String(urlVal || "")
+            if (!urlStr) return null
             return (
                 <a href={urlStr} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center gap-1">
                     {!compact && <LinkIcon className="h-3 w-3" />}
                     <span className="truncate max-w-[150px]">{urlStr}</span>
                 </a>
             )
+
+        case 'EMAIL':
+        case 'PHONE':
+            const txtVal = typeof value === 'object' && value !== null ? ((value as any).value || "") : String(value || "")
+            return <span className="truncate">{txtVal}</span>
+
+        case 'STATUS':
+            const statusId = typeof value === 'object' && value !== null ? ((value as any).value || value) : value
+            if (!statusId) return null
+
+            const statusOptions = (property.options as any[]) || []
+            const statusOption = statusOptions.find((o: any) => o.id === statusId)
+
+            if (statusOption) {
+                const colors = getOptionColors(statusOption.color)
+                return (
+                    <Badge variant="secondary" className={cn("font-normal px-2 py-0.5", colors.bg, colors.text)}>
+                        {statusOption.name}
+                    </Badge>
+                )
+            }
+            return <span>{String(statusId)}</span>
 
         case 'RELATION':
             if (!rowId) return <span className="text-xs text-muted-foreground">No context</span>

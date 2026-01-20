@@ -317,7 +317,8 @@ export function useFilteredSortedData(database: DetailedDatabase): any[] {
 
         return {
             sortedRows: rows.map(r => ({
-                ...r.originalRow,
+                ...r,
+                cells: r.originalRow.cells, // Explicitly ensure cells are present
                 depth: r.depth || 0,
                 hasChildren: r.children && r.children.length > 0
             })),

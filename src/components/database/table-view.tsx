@@ -11,14 +11,6 @@ import {
 } from "@tanstack/react-table"
 import { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { CSS } from "@dnd-kit/utilities"
 import { PropertyHeader } from "./property-header"
 import { CellRenderer } from "./cell-renderer"
@@ -170,7 +162,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                     onEditProperty={(id, type) => setConfigDialog({ propertyId: id, type })}
                 />
             ),
-            cell: ({ getValue, row, column, table }) => {
+            cell: ({ getValue, row, column, table, cell }) => {
                 // Stable update callback
                 const updateValue = (value: any) => {
                     // Optimistic update
@@ -186,6 +178,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                         propertyId={property.id}
                         table={table}
                         column={column}
+                        cell={cell}
                         updateValue={updateValue}
                         row={row}
                         onPropertyUpdate={optimisticUpdateProperty}
@@ -420,105 +413,99 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
         >
             <div className="w-full flex-1 flex flex-col h-full overflow-hidden">
                 <div className="border border-border/50 rounded-sm overflow-hidden flex flex-col max-h-full">
-                    <div ref={tableContainerRef} className="overflow-auto w-full flex-1 relative scrollbar-hide">
-                        <Table className="w-max min-w-full database-table border-collapse table-fixed">
-                            <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-border/50">
-                                        <SortableContext
-                                            items={database.properties.map(p => p.id)}
-                                            strategy={horizontalListSortingStrategy}
-                                        >
-                                            {headerGroup.headers.map((header) => {
-                                                return (
-                                                    <SortableHead key={header.id} header={header} />
-                                                )
-                                            })}
-                                        </SortableContext>
-                                        <TableHead className="w-[50px] p-0 border-l border-border/50 bg-secondary/30">
-                                            <div className="flex items-center justify-center h-full">
-                                                <AddPropertyButton databaseId={database.id} />
-                                            </div>
-                                        </TableHead>
-                                    </TableRow>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {isGrouped ? (
-                                    groupedRows.map((group) => (
-                                        <GroupSection
-                                            key={group.groupKey}
-                                            group={group}
-                                            table={table}
-                                            columns={columns}
-                                        />
-                                    ))
+                    <div className="w-max min-w-full flex flex-col">
+                        <div className="sticky top-0 z-10 bg-background shadow-sm flex min-w-full border-b border-border/50">
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <div key={headerGroup.id} className="flex min-w-full hover:bg-transparent">
+                                    <SortableContext
+                                        items={database.properties.map(p => p.id)}
+                                        strategy={horizontalListSortingStrategy}
+                                    >
+                                        {headerGroup.headers.map((header) => {
+                                            return (
+                                                <SortableHead key={header.id} header={header} />
+                                            )
+                                        })}
+                                    </SortableContext>
+                                    <div className="w-[50px] p-0 border-l border-border/50 bg-secondary/30 flex-shrink-0">
+                                        <div className="flex items-center justify-center h-full">
+                                            <AddPropertyButton databaseId={database.id} />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex flex-col min-w-full">
+                            {isGrouped ? (
+                                groupedRows.map((group) => (
+                                    <GroupSection
+                                        key={group.groupKey}
+                                        group={group}
+                                        table={table}
+                                        columns={columns}
+                                    />
+                                ))
+                            ) : (
+                                table.getRowModel().rows?.length ? (
+                                    <>
+                                        {paddingTop > 0 && (
+                                            <div style={{ height: `${paddingTop}px` }} className="w-full" />
+                                        )}
+                                        {virtualRows.map((virtualRow) => {
+                                            const row = table.getRowModel().rows[virtualRow.index];
+                                            return (
+                                                <div
+                                                    key={row.id}
+                                                    data-state={row.getIsSelected() && "selected"}
+                                                    className="group h-[33px] flex hover:bg-muted/50 transition-colors border-b border-border/50 min-w-full"
+                                                >
+                                                    {row.getVisibleCells().map((cell) => (
+                                                        <div
+                                                            key={cell.id}
+                                                            className="p-0 border-r border-border/50 last:border-r-0 relative flex-shrink-0"
+                                                            style={{ width: cell.column.getSize() }}
+                                                        >
+                                                            {flexRender(
+                                                                cell.column.columnDef.cell,
+                                                                cell.getContext()
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                    <div className="border-l border-border/50 bg-transparent p-0 flex-1 min-w-[50px]">
+                                                        <div className="h-full w-full" />
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                        {paddingBottom > 0 && (
+                                            <div style={{ height: `${paddingBottom}px` }} className="w-full" />
+                                        )}
+                                    </>
                                 ) : (
-                                    table.getRowModel().rows?.length ? (
-                                        <>
-                                            {paddingTop > 0 && (
-                                                <TableRow>
-                                                    <TableCell style={{ height: `${paddingTop}px` }} colSpan={columns.length + 1} className="p-0 border-none" />
-                                                </TableRow>
-                                            )}
-                                            {virtualRows.map((virtualRow) => {
-                                                const row = table.getRowModel().rows[virtualRow.index];
-                                                return (
-                                                    <TableRow
-                                                        key={row.id}
-                                                        data-state={row.getIsSelected() && "selected"}
-                                                        className="group h-[32px] hover:bg-muted/50 transition-colors border-b border-border/50"
-                                                    >
-                                                        {row.getVisibleCells().map((cell) => (
-                                                            <TableCell key={cell.id} className="p-0 border-r border-border/50 last:border-r-0 relative database-cell align-top" style={{ width: cell.column.getSize() }}>
-                                                                {flexRender(
-                                                                    cell.column.columnDef.cell,
-                                                                    cell.getContext()
-                                                                )}
-                                                            </TableCell>
-                                                        ))}
-                                                        <TableCell className="border-l border-border/50 bg-transparent p-0 min-w-[50px]">
-                                                            <div className="h-full w-full" />
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            })}
-                                            {paddingBottom > 0 && (
-                                                <TableRow>
-                                                    <TableCell style={{ height: `${paddingBottom}px` }} colSpan={columns.length + 1} className="p-0 border-none" />
-                                                </TableRow>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell
-                                                colSpan={columns.length + 1}
-                                                className="h-24 text-center text-muted-foreground text-sm"
-                                            >
-                                                No entries.
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="border-t border-border/50 bg-background/50 backdrop-blur-sm sticky bottom-0 z-10 w-full" >
-                        <AddRowButton databaseId={database.id} onAdd={handleAddRow} />
+                                    <div className="h-24 flex items-center justify-center text-muted-foreground text-sm w-full border-b border-border/50">
+                                        No entries.
+                                    </div>
+                                )
+                            )}
+                        </div>
                     </div>
                 </div>
-
-                <PropertyConfigDialog
-                    databaseId={database.id}
-                    isOpen={!!configDialog}
-                    onOpenChange={(open) => !open && setConfigDialog(null)}
-                    configType={configDialog?.type || null}
-                    property={configDialog ? database.properties.find(p => p.id === configDialog.propertyId) : undefined}
-                    allProperties={database.properties}
-                    onPropertyUpdate={optimisticUpdateProperty}
-                />
+                <div className="border-t border-border/50 bg-background/50 backdrop-blur-sm sticky bottom-0 z-10 w-full" >
+                    <AddRowButton databaseId={database.id} onAdd={handleAddRow} />
+                </div>
             </div>
-        </DndContext>
+
+            <PropertyConfigDialog
+                databaseId={database.id}
+                isOpen={!!configDialog}
+                onOpenChange={(open) => !open && setConfigDialog(null)}
+                configType={configDialog?.type || null}
+                property={configDialog ? database.properties.find(p => p.id === configDialog.propertyId) : undefined}
+                allProperties={database.properties}
+                onPropertyUpdate={optimisticUpdateProperty}
+            />
+
+        </DndContext >
     )
 }
 
@@ -537,22 +524,25 @@ function SortableHead({ header }: { header: any }) {
     }
 
     return (
-        <TableHead
+        <div
             ref={setNodeRef}
             style={style}
             className={cn(
-                "h-9 px-0 border-r border-border/50 last:border-r-0 relative group bg-secondary/30 select-none text-xs font-normal text-muted-foreground",
+                "h-9 px-0 border-r border-border/50 last:border-r-0 relative group bg-secondary/30 select-none text-xs font-normal text-muted-foreground flex items-center flex-shrink-0",
                 isDragging && "bg-secondary/50"
             )}
             {...attributes}
             {...listeners}
         >
-            {header.isPlaceholder
-                ? null
-                : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                )}
+            <div className="w-full px-3 text-left truncate">
+                {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                    )}
+            </div>
+            {/* Resize Handle */}
             <div
                 onMouseDown={(e) => {
                     e.stopPropagation() // Prevent drag start when resizing
@@ -578,17 +568,17 @@ function SortableHead({ header }: { header: any }) {
                     }
                     document.addEventListener('touchend', onTouchEnd)
                 }}
-                className={`absolute right-0 top-0 h-full w-2 cursor-col-resize select-none touch-none hover:bg-primary/50 opacity-0 group-hover:opacity-100 z-10 ${header.column.getIsResizing() ? 'bg-primary opacity-100' : ''
+                className={`absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none hover:bg-primary/50 opacity-0 group-hover:opacity-100 z-10 ${header.column.getIsResizing() ? 'bg-primary opacity-100' : ''
                     }`}
                 style={{
                     transform: 'translateX(50%)' // Center on border
                 }}
             />
-        </TableHead>
+        </div>
     )
 }
 
-function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, row, onPropertyUpdate, ...props }: any) {
+function CellWrapper({ getValue, rowId, propertyId, table, column, cell, updateValue, row, onPropertyUpdate, ...props }: any) {
     const { focusedCell, setFocusedCell, editingCell, setEditingCell } = useDatabase()
 
     const isFocused = focusedCell?.rowId === rowId && focusedCell?.propertyId === propertyId
@@ -612,7 +602,8 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
     const { onContextMenu, onTouchStart, onTouchEnd, onTouchMove } = useContextMenu({
         type: "database-cell",
         data: {
-            rowId,
+            rowId, // Keep rowId for cell edit events
+            pageId: row.original.pageId || row.original.originalRow?.pageId, // Pass Page ID for doc ops
             propertyId,
             value: getValue()
         }
@@ -673,7 +664,7 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, updateValue, 
                     propertyId={propertyId}
                     table={table}
                     column={column}
-                    cell={{}}
+                    cell={props.cell}
                     isEditing={isEditing}
                     startEditing={startEditing}
                     stopEditing={stopEditing}

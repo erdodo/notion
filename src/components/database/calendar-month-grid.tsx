@@ -39,14 +39,19 @@ export function MonthGrid({ date, rows, datePropertyId, properties, onAddRow, on
     // Find title property
     const titleProp = properties.find(p => p.type === 'TITLE')
 
+    // Helper to unwrap value safely
+    const unwrapValue = (val: any): any => {
+        if (val && typeof val === 'object' && 'value' in val) {
+            return unwrapValue(val.value)
+        }
+        return val
+    }
+
     rows.forEach(row => {
         const dateCell = row.cells.find(c => c.propertyId === datePropertyId)
-        if (!dateCell?.value) return
+        // Unwrap date value
+        const rawValue = unwrapValue(dateCell?.value)
 
-        let rawValue = dateCell.value
-        if (typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue) {
-            rawValue = (rawValue as any).value
-        }
         if (!rawValue) return
 
         const dateStr = format(new Date(String(rawValue)), 'yyyy-MM-dd')
@@ -54,10 +59,9 @@ export function MonthGrid({ date, rows, datePropertyId, properties, onAddRow, on
 
         // Resolve title
         const titleCell = row.cells.find(c => c.propertyId === titleProp?.id)
-        const rawTitle = titleCell?.value
-        const title = typeof rawTitle === 'object' && rawTitle !== null && 'value' in rawTitle
-            ? String((rawTitle as any).value)
-            : String(rawTitle || "Untitled")
+        const rawTitle = unwrapValue(titleCell?.value)
+
+        const title = rawTitle ? String(rawTitle) : "Untitled"
 
         eventsByDate[dateStr].push({ ...row, title })
     })

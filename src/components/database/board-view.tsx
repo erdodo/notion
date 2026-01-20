@@ -30,7 +30,12 @@ interface BoardViewProps {
     }
 }
 
-export function BoardView({ database }: BoardViewProps) {
+import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
+
+
+export function BoardView({ database: initialDatabase }: BoardViewProps) {
+    const { database, updateCell, addRow: addOptimisticRow, addProperty: addOptimisticProperty, updateProperty: optimisticUpdateProperty } = useOptimisticDatabase(initialDatabase as any)
+
     const { boardGroupByProperty } = useDatabase()
     // Cast result to FilteredDataResult and use sortedRows
     const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
@@ -265,6 +270,9 @@ export function BoardView({ database }: BoardViewProps) {
                 else newValue = { value: targetGroupId }
             }
 
+            // Optimistic update
+            updateCell(activeRowId, groupByProperty.id, newValue)
+
             // Call Server
             await updateCellByPosition(groupByProperty.id, activeRowId, newValue)
         }
@@ -288,7 +296,7 @@ export function BoardView({ database }: BoardViewProps) {
 
         // Optimistically add row (Note: cells are empty initially)
         // Optimistically add row (Note: cells are empty initially)
-        // addOptimisticRow(newRow) - TODO: Implement optimistic update hook
+        addOptimisticRow(newRow)
 
         // Server Call
         const createdRow = await addRow(database.id)

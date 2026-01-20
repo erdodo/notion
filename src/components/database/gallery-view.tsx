@@ -23,16 +23,11 @@ export function GalleryView({ database }: GalleryViewProps) {
         galleryCardSize,
         galleryCoverProperty,
         galleryFitImage,
-        setSelectedRowId
+        setSelectedRowId,
+        galleryColumns
     } = useDatabase()
 
     const { sortedRows: filteredRows } = useFilteredSortedData(database) as unknown as FilteredDataResult
-
-    const gridClasses = {
-        small: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
-        medium: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
-        large: "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
-    }
 
     const handleAddRow = async () => {
         const tempId = crypto.randomUUID()
@@ -59,7 +54,12 @@ export function GalleryView({ database }: GalleryViewProps) {
 
     return (
         <div className="p-4 h-full overflow-y-auto">
-            <div className={cn("grid gap-4", gridClasses[galleryCardSize])}>
+            <div
+                className="grid gap-4"
+                style={{
+                    gridTemplateColumns: `repeat(${galleryColumns || 4}, minmax(0, 1fr))`
+                }}
+            >
                 {filteredRows.map(row => (
                     <GalleryCard
                         key={row.id}

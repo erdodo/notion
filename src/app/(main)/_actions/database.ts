@@ -52,6 +52,14 @@ export async function createDatabase(parentId?: string) {
                     type: "TITLE",
                     order: 0,
                 }
+            },
+            views: {
+                create: {
+                    name: "Table",
+                    type: "TABLE",
+                    order: 0,
+                    isDefault: true
+                }
             }
         }
     })
@@ -71,6 +79,9 @@ export async function getDatabase(pageId: string) {
         where: { pageId },
         include: {
             properties: {
+                orderBy: { order: 'asc' }
+            },
+            views: {
                 orderBy: { order: 'asc' }
             },
             rows: {

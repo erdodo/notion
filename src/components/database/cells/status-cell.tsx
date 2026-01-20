@@ -26,7 +26,7 @@ const GROUPS = [
     { id: "complete", label: "Complete", color: "text-green-500" },
 ] as const
 
-export function StatusCell({ getValue, updateValue, column, onPropertyUpdate }: CellProps) {
+export function StatusCell({ getValue, updateValue, column, onPropertyUpdate, startEditing, stopEditing }: CellProps) {
     const initialValue = getValue()
     const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
 
@@ -102,7 +102,10 @@ export function StatusCell({ getValue, updateValue, column, onPropertyUpdate }: 
 
     return (
         <div className="h-full w-full py-1.5 px-2">
-            <Popover>
+            <Popover onOpenChange={(open) => {
+                if (open) startEditing?.()
+                else stopEditing?.()
+            }}>
                 <PopoverTrigger asChild>
                     <div className="h-full w-full cursor-pointer min-h-[24px]">
                         {selectedOption ? (

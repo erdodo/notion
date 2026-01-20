@@ -51,14 +51,14 @@ export const PageMenu = ({ documentId, isArchived }: PageMenuProps) => {
                     Page History
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onArchive} className="text-red-600 focus:text-red-600">
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                </DropdownMenuItem>
                 <div className="text-xs text-muted-foreground p-2">
                     Last edited just now
                 </div>
-                {/* 
-                    Add Delete/Archive options if desired, 
-                    but strictly we just need Page History for now.
-                    Keeping it clean.
-                 */}
+
             </DropdownMenuContent>
         </DropdownMenu>
     )

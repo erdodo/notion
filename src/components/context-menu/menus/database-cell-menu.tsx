@@ -19,7 +19,8 @@ import { useRouter } from "next/navigation"
 
 interface DatabaseCellMenuProps {
     data: {
-        rowId: string // Page ID
+        rowId: string // Row ID
+        pageId?: string // Page ID (for doc ops)
         propertyId: string
         value: any
         [key: string]: any
@@ -31,7 +32,7 @@ export const DatabaseCellMenu = ({ data }: DatabaseCellMenuProps) => {
     const { closeContextMenu } = useContextMenuStore()
 
     const { mutate: remove } = useMutation({
-        mutationFn: () => removeDocument(data.rowId),
+        mutationFn: () => removeDocument(data.pageId || data.rowId),
         onSuccess: () => {
             toast.success("Row moved to trash")
             router.refresh()
@@ -43,7 +44,7 @@ export const DatabaseCellMenu = ({ data }: DatabaseCellMenuProps) => {
     })
 
     const { mutate: duplicate } = useMutation({
-        mutationFn: () => duplicateDocument(data.rowId),
+        mutationFn: () => duplicateDocument(data.pageId || data.rowId),
         onSuccess: () => {
             toast.success("Row duplicated")
             router.refresh()

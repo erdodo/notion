@@ -195,6 +195,7 @@ export function FilterPopover({ properties }: FilterPopoverProps) {
                                         {properties.map(property => (
                                             <CommandItem
                                                 key={property.id}
+                                                value={property.name}
                                                 onSelect={() => {
                                                     addFilter({
                                                         id: crypto.randomUUID(),
@@ -215,6 +216,6 @@ export function FilterPopover({ properties }: FilterPopoverProps) {
                     </Popover>
                 </div>
             </PopoverContent>
-        </Popover>
+        </Popover >
     )
 }

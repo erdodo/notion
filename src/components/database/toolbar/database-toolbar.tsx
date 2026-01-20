@@ -6,10 +6,11 @@ import { FilterPopover } from "./filter-popover"
 import { SortPopover } from "./sort-popover"
 import { ViewSwitcher } from "./view-switcher"
 import { ViewOptions } from "./view-options"
-import { Database, Property } from "@prisma/client"
+import { ViewSettingsMenu } from "./view-settings-menu"
+import { Database, Property, DatabaseView } from "@prisma/client"
 
 interface DatabaseToolbarProps {
-    database: Database & { properties: Property[] }
+    database: Database & { properties: Property[], views?: DatabaseView[] }
 }
 
 export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
@@ -19,7 +20,8 @@ export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
         <div className="flex items-center justify-between px-2 py-3 border-b mb-2 gap-4">
             <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
                 {/* View Switcher */}
-                <ViewSwitcher />
+                <ViewSwitcher database={database} />
+                <ViewSettingsMenu databaseId={database.id} views={database.views || []} />
 
                 <div className="w-[1px] h-4 bg-border mx-2 shrink-0" />
 

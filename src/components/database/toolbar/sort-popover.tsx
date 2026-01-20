@@ -76,6 +76,7 @@ export function SortPopover({ properties }: SortPopoverProps) {
                                         {properties.map(property => (
                                             <CommandItem
                                                 key={property.id}
+                                                value={property.name}
                                                 onSelect={() => {
                                                     addSort({
                                                         id: crypto.randomUUID(),
