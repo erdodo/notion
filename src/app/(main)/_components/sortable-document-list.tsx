@@ -26,16 +26,9 @@ import { createPortal } from "react-dom"
 import { FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ItemSkeleton } from "./item-skeleton"
+import { Document } from "@/store/use-documents-store"
 
-interface Document {
-    id: string
-    title: string
-    icon?: string | null
-    parentId?: string | null
-    _count: {
-        children: number
-    }
-}
+
 
 interface SortableDocumentListProps {
     documents?: Document[]

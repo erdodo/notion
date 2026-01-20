@@ -4,16 +4,11 @@ import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { cn } from "@/lib/utils"
 import { Item } from "./item"
+import { Document } from "@/store/use-documents-store"
 import { ReactNode } from "react"
 
 interface SortableItemProps {
-    document: {
-        id: string
-        title: string
-        icon?: string | null
-        parentId?: string | null
-        _count: { children: number }
-    }
+    document: Document
     level: number
     isOver: boolean
     onExpand: () => void
@@ -60,7 +55,7 @@ export function SortableItem({
                 level={level}
                 expanded={expanded}
                 onExpand={onExpand}
-                hasChildren={document._count.children > 0}
+                hasChildren={(document._count?.children || 0) > 0}
             // Pass drag listeners via wrapper div
             />
 

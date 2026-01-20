@@ -3,6 +3,13 @@
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import {
+  emitDocCreate,
+  emitDocUpdate,
+  emitDocArchive,
+  emitDocRestore,
+  emitDocDelete
+} from "@/lib/websocket-emitter"
 
 async function getCurrentUser() {
   const session = await auth()
@@ -49,11 +56,21 @@ export async function createDocument(title: string = "Untitled", parentDocumentI
     }
   })
 
-  // @ts-ignore
-  const io = global.io
-  if (io) {
-    io.emit("doc:create", document)
-  }
+  // Emit WebSocket event for real-time sync
+  emitDocCreate({
+    document: {
+      id: document.id,
+      title: document.title,
+      icon: document.icon,
+      isArchived: document.isArchived,
+      isPublished: document.isPublished,
+      parentId: document.parentId,
+      userId: document.userId,
+      createdAt: document.createdAt,
+      updatedAt: document.updatedAt,
+    },
+    userId: user.id,
+  })
 
   revalidatePath("/documents")
   return document
@@ -198,25 +215,12 @@ export async function updateDocument(
     })
 
 
-    // Trigger update for real-time sync
-    // @ts-ignore
-    const io = global.io
-    console.log("[Action:updateDocument] Checking for global.io:", !!io);
-
-    if (io) {
-      console.log("[Action:updateDocument] Emitting update for:", documentId);
-      // If content is being updated, send to room (people viewing the doc)
-      if (data.content) {
-        io.to(`document-${documentId}`).emit("doc:update", data)
-      }
-
-      // If metadata is updated (title, icon), broadcast to everyone (for sidebar)
-      // We also send to the room just in case, or rely on the fact that if i'm in the room i get global too?
-      // Actually global io.emit sends to everyone.
-      if (data.title !== undefined || data.icon !== undefined || data.coverImage !== undefined) {
-        io.emit("doc:update", { id: documentId, ...data })
-      }
-    }
+    // Emit WebSocket event for real-time sync
+    emitDocUpdate({
+      id: documentId,
+      updates: data,
+      userId: user.id,
+    })
 
     revalidatePath(`/documents/${documentId}`)
     return document
@@ -312,11 +316,11 @@ export async function archiveDocument(documentId: string) {
     }
   })
 
-  // @ts-ignore
-  const io = global.io
-  if (io) {
-    io.emit("doc:update", { id: documentId, isArchived: true })
-  }
+  // Emit WebSocket event for real-time sync
+  emitDocArchive({
+    id: documentId,
+    userId: user.id,
+  })
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
@@ -367,11 +371,11 @@ export async function restoreDocument(documentId: string) {
     }
   })
 
-  // @ts-ignore
-  const io = global.io
-  if (io) {
-    io.emit("doc:update", { id: documentId, isArchived: false, parentId })
-  }
+  // Emit WebSocket event for real-time sync
+  emitDocRestore({
+    id: documentId,
+    userId: user.id,
+  })
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
@@ -405,11 +409,11 @@ export async function removeDocument(documentId: string) {
     }
   })
 
-  // @ts-ignore
-  const io = global.io
-  if (io) {
-    io.emit("doc:delete", documentId)
-  }
+  // Emit WebSocket event for real-time sync
+  emitDocDelete({
+    id: documentId,
+    userId: user.id,
+  })
 
   revalidatePath("/documents")
   revalidatePath("/documents/[documentId]", "page")

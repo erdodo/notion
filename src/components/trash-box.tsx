@@ -8,14 +8,9 @@ import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/spinner"
 import { ConfirmModal } from "@/components/modals/confirm-modal"
-import { useDocumentsStore } from "@/store/use-documents-store"
+import { useDocumentsStore, Document } from "@/store/use-documents-store"
 
-interface Document {
-  id: string
-  title: string
-  icon?: string | null
-  isArchived: boolean
-}
+
 
 interface TrashBoxProps {
   documents: Document[]
@@ -75,11 +70,12 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
   }
 
   const onRemove = async (documentId: string) => {
-    const promise = removeDocument(documentId).then(() => {
+    const promise = (async () => {
+      await removeDocument(documentId)
       // Remove from local state and store
       setTrashPages(trashPages.filter(doc => doc.id !== documentId))
       router.push("/documents")
-    })
+    })()
 
     toast.promise(promise, {
       loading: "Deleting page...",
