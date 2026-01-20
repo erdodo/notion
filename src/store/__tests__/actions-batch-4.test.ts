@@ -5,7 +5,7 @@ import { sharePage, removeShare, checkPageAccess } from '@/app/(main)/_actions/s
 import { searchUsers } from '@/app/(main)/_actions/users'
 import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
-import { pusherServer } from '@/lib/pusher'
+// import { pusherServer } from '@/lib/pusher'
 import { revalidatePath } from 'next/cache'
 
 vi.mock('@/lib/db', () => ({

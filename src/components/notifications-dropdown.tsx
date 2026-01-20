@@ -17,7 +17,7 @@ import {
     markAsRead,
     markAllAsRead
 } from "@/app/(main)/_actions/notifications"
-import { pusherClient } from "@/lib/pusher-client"
+import { useSocket } from "@/components/providers/socket-provider"
 import { useSession } from "next-auth/react"
 import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
@@ -39,20 +39,24 @@ export function NotificationsDropdown() {
     }, [])
 
     // Real-time bildirimler
+    const { socket } = useSocket()
+
     useEffect(() => {
-        if (!session?.user?.id) return
+        if (!session?.user?.id || !socket) return
 
-        const channel = pusherClient.subscribe(`user-${session.user.id}`)
+        const channelName = `user-${session.user.id}`
+        socket.emit("join-room", channelName)
 
-        channel.bind("notification", (data: any) => {
+        socket.on("notification", (data: any) => {
             loadNotifications()
             setUnreadCount(prev => prev + 1)
         })
 
         return () => {
-            pusherClient.unsubscribe(`user-${session.user.id}`)
+            socket.emit("leave-room", channelName)
+            socket.off("notification")
         }
-    }, [session?.user?.id])
+    }, [session?.user?.id, socket])
 
     const loadNotifications = async () => {
         setLoading(true)

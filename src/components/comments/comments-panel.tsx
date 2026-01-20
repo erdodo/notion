@@ -21,7 +21,7 @@ import {
 } from "@/app/(main)/_actions/comments"
 import { formatDistanceToNow } from "date-fns"
 // import { tr } from "date-fns/locale" // Removed locale to avoid issues if not needed or not setup
-import { pusherClient } from "@/lib/pusher-client"
+import { useSocket } from "@/components/providers/socket-provider"
 import { UserMentionInput } from "./user-mention-input"
 import { cn } from "@/lib/utils"
 
@@ -51,29 +51,35 @@ export function CommentsPanel({ pageId, isOpen, onClose }: CommentsPanelProps) {
     }, [isOpen, pageId])
 
     // Real-time güncellemeler
+    const { socket } = useSocket()
+
     useEffect(() => {
-        if (!isOpen) return
+        if (!isOpen || !socket) return
 
-        const channel = pusherClient.subscribe(`page-${pageId}`)
+        const channelName = `page-${pageId}`
+        socket.emit("join-room", channelName)
 
-        channel.bind("comment-added", (data: { comment: CommentWithRelations }) => {
+        socket.on("comment-added", (data: { comment: CommentWithRelations }) => {
             setComments(prev => [data.comment, ...prev])
         })
 
-        channel.bind("comment-deleted", (data: { commentId: string }) => {
+        socket.on("comment-deleted", (data: { commentId: string }) => {
             setComments(prev => prev.filter(c => c.id !== data.commentId))
         })
 
-        channel.bind("comment-updated", (data: { commentId: string, content: string }) => {
+        socket.on("comment-updated", (data: { commentId: string, content: string }) => {
             setComments(prev => prev.map(c =>
                 c.id === data.commentId ? { ...c, content: data.content } : c
             ))
         })
 
         return () => {
-            pusherClient.unsubscribe(`page-${pageId}`)
+            socket.emit("leave-room", channelName)
+            socket.off("comment-added")
+            socket.off("comment-deleted")
+            socket.off("comment-updated")
         }
-    }, [isOpen, pageId])
+    }, [isOpen, pageId, socket])
 
     const loadComments = async () => {
         setLoading(true)

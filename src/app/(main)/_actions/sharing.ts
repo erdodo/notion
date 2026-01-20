@@ -2,7 +2,6 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { pusherServer } from "@/lib/pusher"
 import { revalidatePath } from "next/cache"
 import { nanoid } from "nanoid"
 import { ShareRole, Page, PageShare, User } from "@prisma/client"
@@ -87,16 +86,16 @@ export async function sharePage(
             })
 
             // Real-time bildirim
-            await pusherServer.trigger(
-                `user-${targetUser.id}`,
-                "notification",
-                {
+            // @ts-ignore
+            const io = global.io
+            if (io) {
+                io.to(`user-${targetUser.id}`).emit("notification", {
                     type: "PAGE_SHARED",
                     pageId,
                     title: page.title,
                     actor: session.user.name
-                }
-            )
+                })
+            }
         } else {
             // Email gönder (TODO: email service entegrasyonu)
             console.log(`Send invite invite to ${data.email}`)

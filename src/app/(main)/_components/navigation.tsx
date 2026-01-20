@@ -2,20 +2,19 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Database, Upload } from "lucide-react"
+import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Upload, Star, Globe, Clock, Users } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useSearch } from "@/hooks/use-search"
 import { useSettings } from "@/hooks/use-settings"
 import { useSession } from "next-auth/react"
-import { getSidebarDocuments, createDocument, getArchivedDocuments } from "../_actions/documents"
+import { getSidebarDocuments, createDocument, getArchivedDocuments, getSharedDocuments } from "../_actions/documents"
+import { getFavorites, getRecentPages, getPublishedPages } from "../_actions/navigation"
 import { createDatabase as createDatabaseAction } from "../_actions/database"
 import { useSidebar } from "@/hooks/use-sidebar"
-import { DocumentList } from "./document-list"
+import { useDocumentsStore } from "@/store/use-documents-store"
+import { useSocket } from "@/components/providers/socket-provider"
 import { SortableDocumentList } from "./sortable-document-list"
-import { FavoritesSection } from "@/components/navigation/favorites-section"
-import { SharedSection } from "@/components/navigation/shared-section"
-import { PublishedSection } from "@/components/navigation/published-section"
-import { RecentSection } from "@/components/navigation/recent-section"
+import { SidebarSection } from "./sidebar-section"
 import { ItemSkeleton } from "./item-skeleton"
 import { TrashBox } from "@/components/trash-box"
 import { ImportModal } from "@/components/modals/import-modal"
@@ -45,14 +44,32 @@ export const Navigation = () => {
   const settings = useSettings()
   const { isCollapsed, toggle, collapse, expand } = useSidebar()
   const isMobile = useMediaQuery("(max-width: 768px)")
+  const {
+    documents,
+    setDocuments,
+    addDocument,
+    updateDocument,
+    removeDocument,
+    setTrashPages,
+    trashPages,
+    archiveDocument,
+    recentPages,
+    setRecentPages,
+    favoritePages,
+    setFavoritePages,
+    publishedPages,
+    setPublishedPages,
+    sharedPages,
+    setSharedPages
+  } = useDocumentsStore()
+  const { socket } = useSocket()
 
   const isResizingRef = useRef(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const [isResetting, setIsResetting] = useState(false)
-  const [documents, setDocuments] = useState<Document[]>([])
+
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
-  const [archivedDocuments, setArchivedDocuments] = useState<Document[]>([])
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
   const resetWidth = useCallback(() => {
@@ -104,56 +121,73 @@ export const Navigation = () => {
     }
   }, [isCollapsed, handleCollapse, resetWidth])
 
+  // Socket Listeners for Sidebar Data Freshness
+  // We need to listen to generic updates and possibly re-fetch specific lists if we want 100% accuracy
+  // OR we rely on generic doc:update to patch specific lists (which store.updateDocument does)
+  // But adding/removing from favorites/recent requires specific events or manual fetch on change.
+  // For now, let's stick to base document events.
   useEffect(() => {
-    loadDocuments()
-    loadArchivedDocuments()
+    if (!socket) return
 
-    const onUpdate = (event: Event) => {
-      const customEvent = event as CustomEvent<{ id: string; title?: string; icon?: string }>
-      const { id, title, icon } = customEvent.detail
+    socket.on("doc:create", (newDoc) => {
+      addDocument(newDoc)
+    })
 
-      if (id) {
-        setDocuments(prevDocs => prevDocs.map(doc => {
-          if (doc.id === id) {
-            return {
-              ...doc,
-              ...(title !== undefined && { title }),
-              ...(icon !== undefined && { icon })
-            } as any
-          }
-          return doc
-        }))
-      } else {
-        // Fallback for full reload if no ID (e.g. delete/create)
-        loadDocuments()
-        loadArchivedDocuments()
+    socket.on("doc:update", ({ id, ...updates }) => {
+      updateDocument(id, updates)
+      if (updates.isArchived === true) {
+        archiveDocument(id)
       }
+    })
+
+    socket.on("doc:delete", (id) => {
+      removeDocument(id)
+    })
+
+    return () => {
+      socket.off("doc:create")
+      socket.off("doc:update")
+      socket.off("doc:delete")
     }
+  }, [socket, addDocument, updateDocument, removeDocument, archiveDocument])
 
-    window.addEventListener("notion-document-update", onUpdate)
-    return () => window.removeEventListener("notion-document-update", onUpdate)
-  }, [pathname])
-
-  const loadDocuments = async () => {
+  // Initial Load of All Data
+  const loadAllData = async () => {
     setIsLoading(true)
     try {
-      const docs = await getSidebarDocuments()
+      const [docs, archived, recent, favorites, published, shared] = await Promise.all([
+        getSidebarDocuments(),
+        getArchivedDocuments(),
+        getRecentPages(),
+        getFavorites(),
+        getPublishedPages(),
+        getSharedDocuments()
+      ])
+
       setDocuments(docs)
+      setRecentPages(recent)
+      setFavoritePages(favorites)
+      setPublishedPages(published)
+      setSharedPages(shared)
+      setTrashPages(archived)
+
     } catch (error) {
-      console.error("Error loading documents:", error)
+      console.error("Error loading sidebar data:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const loadArchivedDocuments = async () => {
-    try {
-      const docs = await getArchivedDocuments()
-      setArchivedDocuments(docs)
-    } catch (error) {
-      console.error("Error loading archived documents:", error)
+  useEffect(() => {
+    loadAllData()
+
+    // Listen for custom events that might trigger re-fetch of specific lists (like favorites)
+    const handleFavoriteChange = () => {
+      getFavorites().then(setFavoritePages)
     }
-  }
+    document.addEventListener('favorite-changed', handleFavoriteChange)
+    return () => document.removeEventListener('favorite-changed', handleFavoriteChange)
+  }, [])
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault()
@@ -187,23 +221,17 @@ export const Navigation = () => {
     setIsCreating(true)
     try {
       const document = await createDocument("Untitled")
-      await loadDocuments()
+      // No need to loadDocuments, optimistic update or socket will handle it?
+      // Actually create returns the doc, we can add it directly.
+      // But socket might also send it back? 
+      // Current implementation broadcasts doc:create, so we might get duplicate if we also add here.
+      // But we are the creator, so maybe we should add immediately for speed.
+      // Store `addDocument` usually brings to top.
+      // Let's rely on socket or `loadDocuments` if we want to be sure.
+      // For now, let's re-fetch to be safe or just push.
       router.push(`/documents/${document.id}`)
     } catch (error) {
       console.error("Error creating document:", error)
-    } finally {
-      setIsCreating(false)
-    }
-  }
-
-  const handleCreateDatabase = async () => {
-    setIsCreating(true)
-    try {
-      const { page } = await createDatabaseAction()
-      await loadDocuments()
-      router.push(`/documents/${page.id}`)
-    } catch (error) {
-      console.error("Error creating database:", error)
     } finally {
       setIsCreating(false)
     }
@@ -219,8 +247,6 @@ export const Navigation = () => {
           isMobile && "w-0"
         )}
       >
-
-
         <div className="flex flex-col h-full">
           <div className="p-3 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between gap-x-2 mb-4">
@@ -262,24 +288,40 @@ export const Navigation = () => {
                 <Plus className="h-4 w-4" />
                 <span>New Page</span>
               </button>
-
             </div>
 
             <hr className="my-2" />
 
             <div className="mt-4">
-              {/* Favorites Section */}
-              <FavoritesSection />
+              {/* Favorites */}
+              <SidebarSection
+                label="Favorites"
+                icon={Star}
+                data={favoritePages}
+              />
 
-              {/* Published Section */}
-              <PublishedSection />
+              {/* Published */}
+              <SidebarSection
+                label="Published"
+                icon={Globe}
+                data={publishedPages}
+              />
 
-              {/* Recent Section */}
-              <RecentSection />
+              {/* Recent */}
+              <SidebarSection
+                label="Recent"
+                icon={Clock}
+                data={recentPages}
+              />
+
+              {/* Shared */}
+              <SidebarSection
+                label="Shared"
+                icon={Users}
+                data={sharedPages}
+              />
 
               <hr className="my-2" />
-              {/* Shared Section (Public) */}
-              <SharedSection label="Public" />
 
               <p className="text-xs text-muted-foreground px-2 mb-2 pt-4">
                 Private
@@ -303,7 +345,6 @@ export const Navigation = () => {
             </div>
           </div>
 
-          {/* Bottom Section - Settings */}
           <div className="p-3 border-t bg-secondary/50">
             <button
               onClick={() => setIsImportModalOpen(true)}
@@ -325,7 +366,7 @@ export const Navigation = () => {
                 className="p-0 w-72"
                 side={isMobile ? "bottom" : "right"}
               >
-                <TrashBox documents={archivedDocuments} />
+                <TrashBox documents={trashPages} />
               </PopoverContent>
             </Popover>
             <button
@@ -335,11 +376,7 @@ export const Navigation = () => {
               <Settings className="h-4 w-4" />
               <span>Settings</span>
             </button>
-
-
-
           </div>
-
         </div>
 
         <div

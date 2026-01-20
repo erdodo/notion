@@ -94,39 +94,37 @@ export const BlockNoteEditorComponent = ({
   useEffect(() => {
     if (!editor || !parsedContent) return
 
-    const hydrate = async () => {
-      // Debug logs
-      console.log("Hydration Check initiated", {
-        hasParsed: !!parsedContent,
-        parsedLen: parsedContent?.length
-      })
-
-      if (!parsedContent || parsedContent.length === 0) return
-
+    const syncContent = async () => {
       const currentBlocks = editor.document
+      const currentJson = JSON.stringify(currentBlocks)
+      const newJson = JSON.stringify(parsedContent)
 
-      const isEditorEmpty = currentBlocks.length === 0 ||
-        (currentBlocks.length === 1 &&
-          currentBlocks[0].type === "paragraph" &&
-          (!currentBlocks[0].content || currentBlocks[0].content.length === 0))
+      // If content differs, replace it
+      // This handles both initial hydration (current is empty)
+      // and remote updates (current is different)
+      if (currentJson !== newJson) {
+        // Check if editor is empty to log hydration
+        const isEditorEmpty = currentBlocks.length === 0 ||
+          (currentBlocks.length === 1 && currentBlocks[0].content === undefined)
 
-      console.log("Editor State:", { isEditorEmpty, currentLen: currentBlocks.length })
+        console.log(`[Editor] Syncing content. Empty? ${isEditorEmpty}`, {
+          currentLen: currentBlocks.length,
+          newLen: parsedContent.length
+        })
 
-      if (isEditorEmpty) {
-        console.log("Hydrating editor from initialContent...")
         try {
+          // Save cursor? It's hard because indices change. 
+          // For now, simple replace.
           editor.replaceBlocks(editor.document, parsedContent)
-          console.log("Hydration success")
         } catch (e) {
-          console.error("Hydration failed", e)
+          console.error("Content sync failed", e)
         }
       }
     }
 
-    // Small delay to ensure editor is ready (Yjs sync, etc)
-    const timer = setTimeout(hydrate, 100)
+    // Debounce slightly to avoid rapid-fire replacements during typing loops if any
+    const timer = setTimeout(syncContent, 10)
     return () => clearTimeout(timer)
-
   }, [editor, parsedContent])
 
   // Paste Handler for Synced Blocks

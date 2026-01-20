@@ -2,7 +2,6 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { pusherServer } from "@/lib/pusher"
 import { UserPresence } from "@prisma/client"
 
 // Presence güncelle
@@ -36,13 +35,17 @@ export async function updatePresence(
     })
 
     // Real-time broadcast
-    await pusherServer.trigger(`page-${pageId}`, "presence-update", {
-        userId: session.user.id,
-        userName: session.user.name,
-        userImage: session.user.image,
-        cursorPosition,
-        status: "ONLINE"
-    })
+    // @ts-ignore
+    const io = global.io
+    if (io) {
+        io.to(`page-${pageId}`).emit("presence-update", {
+            userId: session.user.id,
+            userName: session.user.name,
+            userImage: session.user.image,
+            cursorPosition,
+            status: "ONLINE"
+        })
+    }
 }
 
 // Sayfadan ayrıl
@@ -62,9 +65,13 @@ export async function leavePresence(pageId: string): Promise<void> {
     })
 
     // Real-time broadcast
-    await pusherServer.trigger(`page-${pageId}`, "presence-leave", {
-        userId: session.user.id
-    })
+    // @ts-ignore
+    const io = global.io
+    if (io) {
+        io.to(`page-${pageId}`).emit("presence-leave", {
+            userId: session.user.id
+        })
+    }
 }
 
 // Sayfadaki aktif kullanıcıları al

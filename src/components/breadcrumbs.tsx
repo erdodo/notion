@@ -6,6 +6,7 @@ import { ChevronRight, Home } from "lucide-react"
 import { getPageBreadcrumbs } from "@/app/(main)/_actions/navigation"
 import { cn } from "@/lib/utils"
 import { useContextMenu } from "@/hooks/use-context-menu"
+import { useSocket } from "@/components/providers/socket-provider"
 
 interface BreadcrumbsProps {
     pageId: string
@@ -21,12 +22,29 @@ interface BreadcrumbItem {
 export function Breadcrumbs({ pageId, className }: BreadcrumbsProps) {
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
     const [loading, setLoading] = useState(true)
+    const { socket } = useSocket()
 
     useEffect(() => {
         getPageBreadcrumbs(pageId)
             .then(setBreadcrumbs)
             .finally(() => setLoading(false))
     }, [pageId])
+
+    useEffect(() => {
+        if (!socket) return
+
+        socket.on("doc:update", (updatedDoc: any) => {
+            setBreadcrumbs(prev => prev.map(item =>
+                item.id === updatedDoc.id
+                    ? { ...item, ...updatedDoc }
+                    : item
+            ))
+        })
+
+        return () => {
+            socket.off("doc:update")
+        }
+    }, [socket])
 
     if (loading) {
         return (

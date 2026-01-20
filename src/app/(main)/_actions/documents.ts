@@ -2,7 +2,6 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { pusherServer } from "@/lib/pusher"
 import { revalidatePath } from "next/cache"
 
 async function getCurrentUser() {
@@ -49,6 +48,12 @@ export async function createDocument(title: string = "Untitled", parentDocumentI
       parentId: parentDocumentId || null,
     }
   })
+
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.emit("doc:create", document)
+  }
 
   revalidatePath("/documents")
   return document
@@ -192,12 +197,26 @@ export async function updateDocument(
       }
     })
 
+
     // Trigger update for real-time sync
-    await pusherServer.trigger(
-      `document-${documentId}`,
-      "document-update",
-      data
-    )
+    // @ts-ignore
+    const io = global.io
+    console.log("[Action:updateDocument] Checking for global.io:", !!io);
+
+    if (io) {
+      console.log("[Action:updateDocument] Emitting update for:", documentId);
+      // If content is being updated, send to room (people viewing the doc)
+      if (data.content) {
+        io.to(`document-${documentId}`).emit("doc:update", data)
+      }
+
+      // If metadata is updated (title, icon), broadcast to everyone (for sidebar)
+      // We also send to the room just in case, or rely on the fact that if i'm in the room i get global too?
+      // Actually global io.emit sends to everyone.
+      if (data.title !== undefined || data.icon !== undefined || data.coverImage !== undefined) {
+        io.emit("doc:update", { id: documentId, ...data })
+      }
+    }
 
     revalidatePath(`/documents/${documentId}`)
     return document
@@ -284,7 +303,7 @@ export async function archiveDocument(documentId: string) {
   await archiveChildrenRecursively(documentId, user.id)
 
   // Then archive the parent
-  await db.page.update({
+  const updatedDocument = await db.page.update({
     where: {
       id: documentId,
     },
@@ -292,6 +311,12 @@ export async function archiveDocument(documentId: string) {
       isArchived: true,
     }
   })
+
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.emit("doc:update", { id: documentId, isArchived: true })
+  }
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
@@ -318,9 +343,7 @@ export async function restoreDocument(documentId: string) {
     throw new Error("Document not found")
   }
 
-  // Smart restoration logic:
-  // If parent is archived, move to root (parentId: null)
-  // Otherwise keep the hierarchy
+  // Smart restoration logic...
   let parentId = document.parentId
 
   if (parentId) {
@@ -331,19 +354,24 @@ export async function restoreDocument(documentId: string) {
       }
     })
 
-    // If parent is archived, move to root
     if (parent?.isArchived) {
       parentId = null
     }
   }
 
-  await db.page.update({
+  const restoredDocument = await db.page.update({
     where: { id: documentId },
     data: {
       isArchived: false,
       parentId: parentId,
     }
   })
+
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.emit("doc:update", { id: documentId, isArchived: false, parentId })
+  }
 
   revalidatePath("/documents")
   revalidatePath(`/documents/${documentId}`)
@@ -370,17 +398,22 @@ export async function removeDocument(documentId: string) {
     return { success: true }
   }
 
-  // Delete the document (will cascade to children due to onDelete: Cascade in schema)
+  // Delete the document
   await db.page.delete({
     where: {
       id: documentId,
     }
   })
 
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.emit("doc:delete", documentId)
+  }
+
   revalidatePath("/documents")
   revalidatePath("/documents/[documentId]", "page")
 
-  // Return coverImage URL for client-side EdgeStore cleanup if needed
   return { success: true, coverImage: document.coverImage }
 }
 
@@ -804,11 +837,12 @@ export async function restorePage(documentId: string, historyId: string) {
   })
 
   // Trigger update
-  await pusherServer.trigger(
-    `document-${documentId}`,
-    "document-update",
-    { content: history.content }
-  )
+  // Trigger update
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.to(`document-${documentId}`).emit("doc:update", { content: history.content })
+  }
 
   revalidatePath(`/documents/${documentId}`)
   return { success: true }

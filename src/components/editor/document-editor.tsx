@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { useDebouncedCallback } from "use-debounce"
 import { updateDocument } from "@/app/(main)/_actions/documents"
-import { pusherClient } from "@/lib/pusher-client"
+import { useSocket } from "@/components/providers/socket-provider"
 
 // Import BlockNote editor dynamically to prevent SSR issues
 const BlockNoteEditorComponent = dynamic(
@@ -23,11 +23,17 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
   const [isSaving, setIsSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
+
+  const { socket } = useSocket()
+
   useEffect(() => {
-    const channel = pusherClient.subscribe(`document-${documentId}`)
+    if (!socket) return
+
+    // Join the room for this document
+    socket.emit("join-room", `document-${documentId}`)
 
     // Listen for updates
-    channel.bind("document-update", (data: any) => {
+    socket.on("doc:update", (data: any) => {
       // If we receive content update and it's different, update state
       // We should be careful about overwriting user's own typing
       // Ideally we check if the update came from another user, but simplified:
@@ -37,9 +43,10 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
     })
 
     return () => {
-      pusherClient.unsubscribe(`document-${documentId}`)
+      socket.emit("leave-room", `document-${documentId}`)
+      socket.off("doc:update")
     }
-  }, [documentId, content])
+  }, [documentId, content, socket])
 
   // Debounced save function - waits 2 seconds after user stops typing
   const debouncedSave = useDebouncedCallback(

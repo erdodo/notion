@@ -7,6 +7,7 @@ import { getPublishedPages } from "@/app/(main)/_actions/navigation"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { useDocumentsStore } from "@/store/use-documents-store"
 
 interface Page {
     id: string
@@ -20,7 +21,7 @@ interface PublishedSectionProps {
 }
 
 export function PublishedSection({ className }: PublishedSectionProps) {
-    const [publishedPages, setPublishedPages] = useState<Page[]>([])
+    const { publishedPages, setPublishedPages } = useDocumentsStore()
     const [loading, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -32,12 +33,7 @@ export function PublishedSection({ className }: PublishedSectionProps) {
         }
 
         fetchPublished()
-
-        // Listen for generic document updates which might effectively indicate publish changes 
-        // if we decide to trigger full reloads. 
-        // For now, simpler to just fetch on mount. 
-        // A reload is needed to see changes unless we add a specific event which is out of scope for "just displaying list" request unless specified.
-    }, [])
+    }, [setPublishedPages])
 
     if (loading || publishedPages.length === 0) return null
 

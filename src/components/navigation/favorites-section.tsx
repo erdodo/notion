@@ -7,6 +7,7 @@ import { getFavorites } from "@/app/(main)/_actions/navigation"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { useDocumentsStore } from "@/store/use-documents-store"
 import { Skeleton } from "../ui/skeleton"
 
 interface Page {
@@ -21,7 +22,7 @@ interface FavoritesSectionProps {
 }
 
 export function FavoritesSection({ className }: FavoritesSectionProps) {
-    const [favorites, setFavorites] = useState<Page[]>([])
+    const { favoritePages, setFavoritePages } = useDocumentsStore()
     const [loading, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -29,7 +30,7 @@ export function FavoritesSection({ className }: FavoritesSectionProps) {
     useEffect(() => {
         const fetchFavorites = () => {
             getFavorites()
-                .then(setFavorites)
+                .then(setFavoritePages)
                 .finally(() => setLoading(false))
         }
 
@@ -46,7 +47,7 @@ export function FavoritesSection({ className }: FavoritesSectionProps) {
     if (loading) {
         return <Skeleton className="h-4 w-[60%]" />
     }
-    if (favorites.length === 0) return null
+    if (favoritePages.length === 0) return null
 
     return (
         <Collapsible
@@ -72,7 +73,7 @@ export function FavoritesSection({ className }: FavoritesSectionProps) {
 
             <CollapsibleContent>
                 <div className="ml-4 space-y-0.5">
-                    {favorites.map(page => (
+                    {favoritePages.map(page => (
                         <Link
                             key={page.id}
                             href={`/documents/${page.id}`}

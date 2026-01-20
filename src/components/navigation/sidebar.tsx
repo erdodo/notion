@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation"
 import { Plus, Search, Settings, Trash } from "lucide-react"
 import { createPage, getPages } from "@/actions/page"
 import { useSession } from "next-auth/react"
+import { useDocumentsStore } from "@/store/use-documents-store"
+import { useSocket } from "@/components/providers/socket-provider"
 import { PageItem } from "./page-item"
 
 export const Sidebar = () => {
   const router = useRouter()
   const { data: session } = useSession()
-  const [pages, setPages] = useState<any[]>([])
+  const { documents, setDocuments, addDocument, updateDocument, removeDocument } = useDocumentsStore()
+  const { socket } = useSocket()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -19,12 +22,34 @@ export const Sidebar = () => {
     }
   }, [session])
 
+  useEffect(() => {
+    if (!socket) return
+
+    socket.on("doc:create", (newDoc) => {
+      addDocument(newDoc)
+    })
+
+    socket.on("doc:update", ({ id, ...updates }) => {
+      updateDocument(id, updates)
+    })
+
+    socket.on("doc:delete", (id) => {
+      removeDocument(id)
+    })
+
+    return () => {
+      socket.off("doc:create")
+      socket.off("doc:update")
+      socket.off("doc:delete")
+    }
+  }, [socket, addDocument, updateDocument, removeDocument])
+
   const loadPages = async () => {
     if (!session?.user?.id) return
 
     try {
       const fetchedPages = await getPages()
-      setPages(fetchedPages)
+      setDocuments(fetchedPages)
     } catch (error) {
       console.error("Error loading pages:", error)
     }
@@ -36,7 +61,13 @@ export const Sidebar = () => {
     setIsLoading(true)
     try {
       const page = await createPage()
-      await loadPages()
+      // We can rely on socket or optimistically update. 
+      // For now, let's just push and let socket sync or manual load? 
+      // Existing code called loadPages().
+      // If we emit event from server, we don't need loadPages here if we trust socket.
+      // But let's keep loadPages or manual add for safety until server emit is confirmed working.
+      // Actually, let's just add it locally immediately to be snappy.
+      addDocument(page)
       router.push(`/documents/${page.id}`)
     } catch (error) {
       console.error("Error creating page:", error)
@@ -89,7 +120,7 @@ export const Sidebar = () => {
             Private
           </p>
           <div className="space-y-1">
-            {pages.map((page) => (
+            {documents.filter(doc => !doc.isArchived).map((page) => (
               <PageItem
                 key={page.id}
                 page={page}

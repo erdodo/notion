@@ -32,6 +32,15 @@ async function getCurrentUser() {
   }
 }
 
+
+const emit = (event: string, data: any) => {
+  // @ts-ignore
+  const io = global.io
+  if (io) {
+    io.emit(event, data)
+  }
+}
+
 export async function createPage(parentId?: string) {
   const user = await getCurrentUser()
 
@@ -47,6 +56,7 @@ export async function createPage(parentId?: string) {
     }
   })
 
+  emit("doc:create", page)
   revalidatePath("/")
   return page
 }
@@ -108,10 +118,10 @@ export async function updatePage(pageId: string, data: {
     throw new Error("Unauthorized")
   }
 
-  const page = await db.page.updateMany({
+  const page = await db.page.update({
     where: {
       id: pageId,
-      userId: user.id,
+      userId: user.id, // Ensure ownership
     },
     data: {
       ...data,
@@ -120,6 +130,7 @@ export async function updatePage(pageId: string, data: {
     }
   })
 
+  emit("doc:update", page)
   revalidatePath("/")
   return page
 }
@@ -141,13 +152,24 @@ export async function archivePage(pageId: string) {
     })
 
     for (const child of children) {
+      // Recursive archive? 
+      // Original logic was recursive.
       await archiveRecursive(child.id)
+
+      // Update child
+      await db.page.update({
+        where: { id: child.id },
+        data: { isArchived: true }
+      })
+      emit("doc:update", { id: child.id, isArchived: true })
     }
 
+    // Update current
     await db.page.update({
       where: { id },
       data: { isArchived: true }
     })
+    emit("doc:update", { id, isArchived: true })
   }
 
   await archiveRecursive(pageId)
@@ -186,6 +208,7 @@ export async function restorePage(pageId: string) {
         where: { id: parentId },
         data: { isArchived: false }
       })
+      emit("doc:update", { id: parentId, isArchived: false })
 
       if (parent.parentId) {
         await restoreParent(parent.parentId)
@@ -197,11 +220,12 @@ export async function restorePage(pageId: string) {
     await restoreParent(page.parentId)
   }
 
-  await db.page.update({
+  const restoredPage = await db.page.update({
     where: { id: pageId },
     data: { isArchived: false }
   })
 
+  emit("doc:update", restoredPage)
   revalidatePath("/")
 }
 
@@ -218,6 +242,7 @@ export async function deletePage(pageId: string) {
     }
   })
 
+  emit("doc:delete", pageId)
   revalidatePath("/")
 }
 

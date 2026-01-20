@@ -2,12 +2,57 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { pusherServer } from "@/lib/pusher"
 import { revalidatePath } from "next/cache"
 import { Comment, Comment as PrismaComment } from "@prisma/client" // Fix import if needed or just use type inference
 import { checkPageAccess } from "./sharing"
 
 // ============ COMMENTS ============
+
+// Yorumları getir
+export async function getComments(pageId: string) {
+    const session = await auth()
+    if (!session?.user?.id) return []
+
+    // Erişim kontrolü
+    const access = await checkPageAccess(pageId)
+    if (!access.hasAccess) {
+        return []
+    }
+
+    return db.comment.findMany({
+        where: {
+            pageId,
+            parentId: null // Sadece ana yorumları getir
+        },
+        include: {
+            user: {
+                select: { id: true, name: true, image: true }
+            },
+            replies: {
+                include: {
+                    user: {
+                        select: { id: true, name: true, image: true }
+                    }
+                },
+                orderBy: { createdAt: 'asc' }
+            }
+        },
+        orderBy: { createdAt: 'desc' }
+    })
+}
+
+// Yorum sayısını getir
+export async function getCommentCount(pageId: string): Promise<number> {
+    const session = await auth()
+    if (!session?.user?.id) return 0
+
+    const access = await checkPageAccess(pageId)
+    if (!access.hasAccess) return 0
+
+    return db.comment.count({
+        where: { pageId }
+    })
+}
 
 // Yorum ekle
 export async function addComment(
@@ -69,10 +114,7 @@ export async function addComment(
                 })
 
                 // Real-time
-                await pusherServer.trigger(`user-${userId}`, "notification", {
-                    type: "MENTION",
-                    commentId: comment.id
-                })
+                // Real-time notification handled below via socket
             }
         }
     }
@@ -114,98 +156,34 @@ export async function addComment(
         })
     }
 
+
     // Real-time güncelleme
-    await pusherServer.trigger(`page-${pageId}`, "comment-added", {
-        comment: {
-            ...comment,
-            user: { id: session.user.id, name: session.user.name, image: session.user.image }
+    // @ts-ignore
+    const io = global.io
+    if (io) {
+        io.to(`page-${pageId}`).emit("comment-added", {
+            comment: {
+                ...comment,
+                user: { id: session.user.id, name: session.user.name, image: session.user.image }
+            }
+        })
+
+        // Notify mentioned users (direct socket to user room)
+        if (data.mentionedUserIds?.length) {
+            for (const userId of data.mentionedUserIds) {
+                io.to(`user-${userId}`).emit("notification", {
+                    type: "MENTION",
+                    commentId: comment.id
+                })
+            }
         }
-    })
+    }
 
     revalidatePath(`/documents/${pageId}`)
     return comment
 }
 
-// Yorumları listele
-export async function getComments(pageId: string) {
-    const session = await auth()
-
-    // Erişim kontrolü
-    const access = await checkPageAccess(pageId)
-    if (!access.hasAccess) {
-        throw new Error("Unauthorized")
-    }
-
-    const comments = await db.comment.findMany({
-        where: {
-            pageId,
-            parentId: null // Sadece root yorumlar
-        },
-        include: {
-            user: { select: { id: true, name: true, image: true } },
-            replies: {
-                include: {
-                    user: { select: { id: true, name: true, image: true } },
-                    mentions: {
-                        include: {
-                            user: { select: { id: true, name: true } }
-                        }
-                    }
-                },
-                orderBy: { createdAt: 'asc' }
-            },
-            mentions: {
-                include: {
-                    user: { select: { id: true, name: true } }
-                }
-            }
-        },
-        orderBy: { createdAt: 'desc' }
-    })
-
-    return comments
-}
-
-// Yorum sayısını al
-export async function getCommentCount(pageId: string) {
-    const session = await auth()
-
-    // Erişim kontrolü (basit)
-    const access = await checkPageAccess(pageId)
-    if (!access.hasAccess) {
-        return 0
-    }
-
-    const count = await db.comment.count({
-        where: {
-            pageId,
-            parentId: null // Sadece root yorumlar mı? Genelde indication için total count daha iyi olabilir veya top level.
-            // Kullanıcı "varsa" dedi, yani herhangi bir yorum. ParentId checkini kaldıralım mı?
-            // Notion usually indicates if there is strictly any comment. Let's count all.
-        }
-    })
-
-    return count
-}
-
-// Blok yorumlarını al
-export async function getBlockComments(
-    pageId: string,
-    blockId: string
-) {
-    return db.comment.findMany({
-        where: { pageId, blockId },
-        include: {
-            user: { select: { id: true, name: true, image: true } },
-            replies: {
-                include: {
-                    user: { select: { id: true, name: true, image: true } }
-                }
-            }
-        },
-        orderBy: { createdAt: 'asc' }
-    })
-}
+// ... existing code ...
 
 // Yorum düzenle
 export async function updateComment(
@@ -232,10 +210,14 @@ export async function updateComment(
     })
 
     // Real-time güncelleme
-    await pusherServer.trigger(`page-${comment.pageId}`, "comment-updated", {
-        commentId,
-        content
-    })
+    // @ts-ignore
+    const io = global.io
+    if (io) {
+        io.to(`page-${comment.pageId}`).emit("comment-updated", {
+            commentId,
+            content
+        })
+    }
 
     revalidatePath(`/documents/${comment.pageId}`)
 }
@@ -260,9 +242,13 @@ export async function deleteComment(commentId: string): Promise<void> {
     await db.comment.delete({ where: { id: commentId } })
 
     // Real-time güncelleme
-    await pusherServer.trigger(`page-${comment.pageId}`, "comment-deleted", {
-        commentId
-    })
+    // @ts-ignore
+    const io = global.io
+    if (io) {
+        io.to(`page-${comment.pageId}`).emit("comment-deleted", {
+            commentId
+        })
+    }
 
     revalidatePath(`/documents/${comment.pageId}`)
 }

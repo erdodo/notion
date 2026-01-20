@@ -8,6 +8,7 @@ import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/spinner"
 import { ConfirmModal } from "@/components/modals/confirm-modal"
+import { useDocumentsStore } from "@/store/use-documents-store"
 
 interface Document {
   id: string
@@ -22,8 +23,24 @@ interface TrashBoxProps {
 
 export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
   const router = useRouter()
+  const { trashPages, setTrashPages, removeDocument } = useDocumentsStore()
   const [search, setSearch] = useState("")
-  const [documents, setDocuments] = useState<Document[]>(initialDocuments)
+
+  // Initial load or sync
+  // Note: trashPages might be empty initially. 
+  // Should we use initialDocuments? 
+  // Ideally, sidebar/trash button opens this modal, and maybe it fetched data? 
+  // Let's assume initialDocuments is passed from parent component (likely server component)?
+  // Actually, TrashBox is usually a client component inside a Popover.
+  // The props `documents` seem to come from there.
+  // Let's sync prop to store on mount.
+  useState(() => {
+    if (initialDocuments) {
+      setTrashPages(initialDocuments)
+    }
+  })
+
+  const documents = trashPages; // Use store data
 
   const filteredDocuments = documents.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase())
@@ -40,8 +57,13 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
     event.stopPropagation()
 
     const promise = restoreDocument(documentId).then(() => {
-      // Remove from local state
-      setDocuments(documents.filter(doc => doc.id !== documentId))
+      // Store update handled by logic or explicit removal
+      setTrashPages(trashPages.filter(doc => doc.id !== documentId))
+      // Also, we might want to add it back to `documents` list? 
+      // The store's `documents` list is usually fetched. If we want immediate update:
+      // We can't easily add it because we don't have the full object structure maybe?
+      // But `restoreDocument` returns success.
+      // For now, removing from Trash is key.
       router.refresh()
     })
 
@@ -54,8 +76,8 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
 
   const onRemove = async (documentId: string) => {
     const promise = removeDocument(documentId).then(() => {
-      // Remove from local state
-      setDocuments(documents.filter(doc => doc.id !== documentId))
+      // Remove from local state and store
+      setTrashPages(trashPages.filter(doc => doc.id !== documentId))
       router.push("/documents")
     })
 

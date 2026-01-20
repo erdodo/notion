@@ -6,6 +6,7 @@ import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provi
 import { QueryProvider } from "@/components/providers/query-provider"
 import { ModalProvider } from "@/components/providers/modal-provider"
 import { DocumentPreviewProvider } from "@/components/providers/document-preview-provider"
+import { SocketProvider } from "@/components/providers/socket-provider"
 import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
@@ -31,10 +32,12 @@ export default function RootLayout({
                 disableTransitionOnChange
                 storageKey="notion-theme"
               >
-                <Toaster position="bottom-center" />
-                <ModalProvider />
-                <DocumentPreviewProvider />
-                {children}
+                <SocketProvider>
+                  <Toaster position="bottom-center" />
+                  <ModalProvider />
+                  <DocumentPreviewProvider />
+                  {children}
+                </SocketProvider>
               </ThemeProvider>
             </QueryProvider>
           </EdgeStoreProviderWrapper>

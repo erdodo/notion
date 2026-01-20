@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, ReactNode, useMemo } from "react"
-import { pusherClient } from "@/lib/pusher-client"
+import { useSocket } from "@/components/providers/socket-provider" // Replaced pusherClient
 import * as Y from "yjs"
 import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from "y-protocols/awareness"
 import { useSession } from "next-auth/react"
@@ -73,10 +73,9 @@ export const CollaborationProvider = ({ documentId, children }: CollaborationPro
     const router = useRouter()
     const [activeUsers, setActiveUsers] = useState<UserInfo[]>([])
 
+    const { socket } = useSocket()
+
     // Create Yjs Doc and Awareness
-    // We use a singleton-like pattern via useMemo to ensure they persist across renders
-    // Create Yjs Doc and Awareness
-    // Recreate when documentId changes to ensure fresh state for each page
     const { yDoc, awareness, provider } = useMemo(() => {
         const doc = new Y.Doc()
         const aware = new Awareness(doc)
@@ -84,7 +83,7 @@ export const CollaborationProvider = ({ documentId, children }: CollaborationPro
         return { yDoc: doc, awareness: aware, provider: prov }
     }, [documentId])
 
-    // User Color - consistent for the session
+    // User Color
     const userColor = useMemo(() => {
         return randomColor({
             luminosity: 'dark',
@@ -92,93 +91,88 @@ export const CollaborationProvider = ({ documentId, children }: CollaborationPro
         })
     }, [])
 
-    // Debounce sending updates to Pusher
+    // Debounce sending updates
     const sendAwarenessUpdate = useDebouncedCallback((update: Uint8Array) => {
+        if (!socket) return
         const updateStr = toBase64(update)
-        const channel = pusherClient.subscribe(`presence-doc-${documentId}`)
-        // Trigger client event
-        channel.trigger('client-awareness-update', { update: updateStr })
+        socket.emit("awareness-update", {
+            roomId: `presence-doc-${documentId}`,
+            update: updateStr
+        })
     }, 200)
 
     useEffect(() => {
-        if (!session?.user?.email) return
+        if (!socket || !session?.user?.email) return
 
-        const channelName = `presence-doc-${documentId}`
-        const channel = pusherClient.subscribe(channelName)
+        const roomId = `presence-doc-${documentId}`
+        socket.emit("join-room", roomId)
 
-        const updateMembers = () => {
-            // Use Pusher members for the "Active Users" list (Avatars)
-            // @ts-ignore
-            const membersFn = channel.members
-            if (!membersFn) return
-
-            const currentMembers: UserInfo[] = []
-            // @ts-ignore
-            membersFn.each((member: any) => {
-                // Avoid adding self to the list if desired, but usually we want to show all OR exclude self.
-                // Usually show others.
-                if (member.id !== session.user?.email) {
-                    currentMembers.push({
-                        name: member.info.name || "Anonymous",
-                        email: member.info.email,
-                        image: member.info.image,
-                        color: randomColor({ seed: member.id, luminosity: 'dark' }) // Deterministic color from ID if possible
-                    })
-                }
-            })
-            setActiveUsers(currentMembers)
-        }
-
-        // Bind events
-        channel.bind("pusher:subscription_succeeded", () => {
-            updateMembers()
-            // Broadcast local awareness immediately so others see my cursor
-            const update = encodeAwarenessUpdate(awareness, [awareness.clientID])
-            sendAwarenessUpdate(update)
-        })
-        channel.bind("pusher:member_added", updateMembers)
-        channel.bind("pusher:member_removed", updateMembers)
-
-        // Generic Document Update (Optimistic UI)
-        channel.bind("document-update", () => {
-            router.refresh()
-        })
-
-        // Cloud Awareness Broadcast
-        channel.bind("client-awareness-update", ({ update }: { update: string }) => {
+        // Handle remote awareness updates
+        const handleRemoteAwareness = ({ update }: { update: string }) => {
             try {
                 const updateBuffer = fromBase64(update)
                 applyAwarenessUpdate(awareness, updateBuffer, "remote")
             } catch (e) {
                 console.error("Error applying awareness update", e)
             }
-        })
+        }
+
+        socket.on("awareness-update", handleRemoteAwareness)
 
         // Local Awareness -> Broadcast
-        const handleAwarenessUpdate = ({ added, updated, removed }: any, origin: any) => {
+        const handleLocalAwareness = ({ added, updated, removed }: any, origin: any) => {
             if (origin === 'local') {
                 const update = encodeAwarenessUpdate(awareness, [awareness.clientID])
                 sendAwarenessUpdate(update)
             }
         }
 
-        awareness.on('update', handleAwarenessUpdate)
+        awareness.on('update', handleLocalAwareness)
 
         // Set Local State
         awareness.setLocalStateField("user", {
             name: session.user.name,
             color: userColor,
+            image: session.user.image,
+            email: session.user.email,
         })
 
-        return () => {
-            pusherClient.unsubscribe(channelName)
-            channel.unbind_all()
-            awareness.off('update', handleAwarenessUpdate)
-            // We do NOT destroy yDoc here because this component might unmount/remount
-            // Actually we SHOULD destroy to clean up listeners.
-            // But provider is separate.
+        // Broadcast local awareness immediately
+        const update = encodeAwarenessUpdate(awareness, [awareness.clientID])
+        sendAwarenessUpdate(update)
+
+        // Active Users Management - Simplified:
+        // We can get active users from awareness states
+        const updateActiveUsers = () => {
+            const states = awareness.getStates()
+            const users: UserInfo[] = []
+            states.forEach((state: any) => {
+                if (state.user) {
+                    users.push(state.user)
+                }
+            })
+            // Filter duplicates based on email if needed, or strictly use clientID
+            // For UI, we usually unique by user email
+            const uniqueUsers = Array.from(new Map(users.map(u => [u.email, u])).values())
+                .filter(u => u.email !== session.user?.email) // Exclude self from "Active Users" list? Pusher logic did.
+
+            // Defer state update to avoid "Cannot update a component while rendering a different component"
+            // This happens because BlockNote might trigger awareness changes during its render phase.
+            setTimeout(() => {
+                setActiveUsers(uniqueUsers)
+            }, 0)
         }
-    }, [documentId, session, awareness, sendAwarenessUpdate, userColor])
+
+        awareness.on('change', updateActiveUsers)
+        updateActiveUsers() // Initial
+
+        return () => {
+            socket.emit("leave-room", roomId)
+            socket.off("awareness-update", handleRemoteAwareness)
+            awareness.off('update', handleLocalAwareness)
+            awareness.off('change', updateActiveUsers)
+        }
+    }, [documentId, session, awareness, sendAwarenessUpdate, userColor, socket])
 
     return (
         <CollaborationContext.Provider value={{ provider, yDoc, user: { name: session?.user?.name || "Me", color: userColor }, activeUsers }}>

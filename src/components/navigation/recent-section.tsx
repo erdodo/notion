@@ -7,6 +7,7 @@ import { getRecentPages } from "@/app/(main)/_actions/navigation"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { useDocumentsStore } from "@/store/use-documents-store"
 
 interface Page {
     id: string
@@ -20,7 +21,7 @@ interface RecentSectionProps {
 }
 
 export function RecentSection({ className }: RecentSectionProps) {
-    const [recentPages, setRecentPages] = useState<Page[]>([])
+    const { recentPages, setRecentPages } = useDocumentsStore()
     const [loading, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false) // Default collapsed
 
@@ -28,7 +29,7 @@ export function RecentSection({ className }: RecentSectionProps) {
         getRecentPages(5)
             .then(setRecentPages)
             .finally(() => setLoading(false))
-    }, [])
+    }, [setRecentPages])
 
     if (loading || recentPages.length === 0) return null
 
