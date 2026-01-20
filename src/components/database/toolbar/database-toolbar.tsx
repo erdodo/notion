@@ -46,7 +46,7 @@ export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
                 {/* Removed useless multiple horizontal button */}
                 <Button
                     size="sm"
-                    className="h-7 text-xs bg-primary text-primary-foreground ml-2"
+                    className="h-7 text-xs bg-[#2383e2] hover:bg-[#1d70c2] text-white ml-2 border-none"
                     onClick={() => {
                         // TODO: trigger add row for current view
                         // We will implement a global trigger mechanism next.

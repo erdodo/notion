@@ -6,7 +6,7 @@ export default function PublicLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="h-full dark:bg-[#1F1F1F] flex flex-col">
+    <div className="h-full bg-background flex flex-col">
       <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <div className="flex items-center gap-x-2">
@@ -24,8 +24,8 @@ export default function PublicLayout({
         <div className="container flex h-12 max-w-screen-2xl items-center justify-center">
           <p className="text-xs text-muted-foreground">
             Powered by{" "}
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="font-medium hover:underline"
             >
               Notion Clone

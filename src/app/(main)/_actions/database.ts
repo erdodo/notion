@@ -97,6 +97,48 @@ export async function getDatabase(pageId: string) {
     return database
 }
 
+// Public/Shared Database Access
+export async function getPublicDatabase(pageId: string) {
+    const session = await auth()
+    // Need to verify access:
+    // 1. Is page published?
+    // 2. Or is user the owner?
+    // 3. Or does user have share access?
+
+    const database = await db.database.findUnique({
+        where: { pageId },
+        include: {
+            properties: {
+                orderBy: { order: 'asc' }
+            },
+            views: {
+                orderBy: { order: 'asc' }
+            },
+            rows: {
+                orderBy: { order: 'asc' },
+                include: {
+                    cells: true,
+                    page: true
+                }
+            },
+            page: true
+        }
+    })
+
+    if (!database) return null
+
+    // Access Check
+    const isOwner = session?.user?.id === database.page.userId
+    const isPublished = database.page.isPublished
+
+    // Simple check for now. Ideally check shares too if logged in.
+    if (!isPublished && !isOwner) {
+        return null
+    }
+
+    return database
+}
+
 export async function deleteDatabase(databaseId: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")

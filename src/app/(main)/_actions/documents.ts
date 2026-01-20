@@ -157,6 +157,10 @@ export async function updateDocument(
     icon?: string
     coverImage?: string
     coverImagePosition?: number
+    isSmallText?: boolean
+    isFullWidth?: boolean
+    fontStyle?: string
+    isLocked?: boolean
   }
 ) {
   const user = await getCurrentUser()

@@ -68,7 +68,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
             {!page.isArchived && (
               <FavoriteButton pageId={page.id} />
             )}
-            <PageMenu documentId={page.id} isArchived={page.isArchived} />
+            <PageMenu documentId={page.id} isArchived={page.isArchived} document={page} />
           </div>
         </nav >
 

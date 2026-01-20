@@ -13,20 +13,20 @@ interface PageRendererProps {
 
 export function PageRenderer({ page, row, isPreview }: PageRendererProps) {
     return (
-        <div className="flex flex-col h-full bg-background relative group">
+        <div className={`flex flex-col h-full bg-background relative group ${page.fontStyle === 'mono' ? 'font-mono' : page.fontStyle === 'serif' ? 'font-serif' : 'font-sans'}`}>
             <DocumentHeader page={page} preview={isPreview} />
 
             {row && (
-                <div className="px-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
+                <div className={`${page.isFullWidth ? 'px-4 w-full' : 'px-12 md:w-[50vw] md:mx-auto lg:w-[60vw]'} `}>
                     <PageProperties row={row} />
                 </div>
             )}
 
-            <div className="pb-40">
+            <div className={`pb-40 ${page.isFullWidth ? 'px-4 w-full' : 'px-12 md:w-[50vw] md:mx-auto lg:w-[60vw]'} ${page.isSmallText ? 'text-sm' : ''}`}>
                 <DocumentEditor
                     documentId={page.id}
                     initialContent={page.content}
-                    editable={!isPreview && !page.isArchived}
+                    editable={!isPreview && !page.isArchived && !page.isLocked}
                 />
             </div>
         </div>

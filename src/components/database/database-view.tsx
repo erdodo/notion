@@ -93,7 +93,8 @@ export function DatabaseView({ database }: DatabaseViewProps) {
     return (
         <div className="flex flex-col h-full bg-background relative group">
             {/* Center container like pages */}
-            <div className="flex-1 w-full max-w-[900px] mx-auto px-4 md:px-12 pb-24 pt-4 overflow-hidden flex flex-col">
+            {/* Center container like pages */}
+            <div className="flex-1 w-full px-4 md:px-12 pb-24 pt-4 overflow-hidden flex flex-col">
                 <DatabaseToolbar database={database} />
                 <div className="flex-1 flex flex-col h-full overflow-hidden border-t border-border/40 mt-2">
                     {currentView === 'table' && <TableView database={database} />}

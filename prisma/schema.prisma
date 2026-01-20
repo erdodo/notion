@@ -141,6 +141,13 @@ model Page {
   // Presence
   activeUsers     UserPresence[]
   
+
+  // Customization
+  isSmallText Boolean   @default(false)
+  isFullWidth Boolean   @default(false)
+  fontStyle   String    @default("DEFAULT") // DEFAULT (sans), SERIF, MONO
+  isLocked    Boolean   @default(false)
+
   // History
   history         PageHistory[]
 

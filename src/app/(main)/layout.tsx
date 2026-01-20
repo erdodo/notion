@@ -88,7 +88,7 @@ export default function MainLayout({
   })
 
   return (
-    <div className="h-full flex dark:bg-[#1F1F1F]">
+    <div className="h-full flex bg-background">
       <GlobalContextMenu />
       <Navigation />
       <main className="flex-1 h-full overflow-y-auto">

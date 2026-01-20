@@ -297,6 +297,41 @@ export function ShareDialog({
                                 Create guest link
                             </Button>
                         )}
+                        <div className="pt-4 mt-2 border-t space-y-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Globe className="h-4 w-4 text-sky-500" />
+                                <div>
+                                    <p className="text-sm font-medium">Preview Mode</p>
+                                    <p className="text-xs text-muted-foreground">View page as a visitor</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    value={`${window?.location?.origin}/preview/${pageId}`}
+                                    readOnly
+                                    className="flex-1 text-sm h-8"
+                                />
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 w-8 px-0"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(`${window?.location?.origin}/preview/${pageId}`);
+                                        toast.success("Preview link copied");
+                                    }}
+                                >
+                                    <Copy className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 px-2"
+                                    onClick={() => window.open(`/preview/${pageId}`, '_blank')}
+                                >
+                                    Open
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </DialogContent>

@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 
-import { getPublicDocument } from "@/app/(main)/_actions/documents"
+import { getPublicDocument, getDocument } from "@/app/(main)/_actions/documents"
+import { getPublicDatabase } from "@/app/(main)/_actions/database"
+import { auth } from "@/lib/auth"
 import { Cover } from "@/components/cover"
+import { DatabaseView } from "@/components/database/database-view"
 import DocumentEditor from "@/components/editor/document-editor"
 
 interface PreviewPageProps {
@@ -98,21 +101,36 @@ export default async function PreviewPage({
   params
 }: PreviewPageProps) {
   const { documentId } = await params
-  const document = await getPublicDocument(documentId)
+  const session = await auth()
+
+  // 1. Try public access first
+  let document = await getPublicDocument(documentId)
+
+  // 2. If not public, check if user is authorized (owner/shared) using getDocument
+  if (!document && session?.user) {
+    document = await getDocument(documentId)
+  }
 
   if (!document) {
     return redirect("/")
   }
 
-  if (!document.isPublished) {
-    return redirect("/")
+  // Fetch Database if it is a database page
+  let database = null;
+  if (document.isDatabase) {
+    database = await getPublicDatabase(documentId);
+    // Fallback to internal getDatabase if public fails (e.g. owner viewing private db)
+    if (!database && session?.user) {
+      // Note: getPublicDatabase handles owner check too, but assumes standard include structure.
+      // If it returned null, it means not published AND not owner.
+    }
   }
 
   return (
-    <div className="pb-40">
+    <div className={`pb-40 bg-background ${document.fontStyle === 'mono' ? 'font-mono' : document.fontStyle === 'serif' ? 'font-serif' : 'font-sans'}`}>
       <Cover url={document.coverImage || undefined} preview />
-      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
-        <div className="pl-[54px] pt-6">
+      <div className={`mx-auto ${document.isFullWidth ? 'px-4 w-full' : 'md:w-3xl lg:w-4xl'}`}>
+        <div className={`pl-[54px] pt-6 ${document.isSmallText ? 'text-sm' : ''}`}>
           <div className="flex items-center gap-x-2 text-6xl">
             {document.icon && (
               <span>{document.icon}</span>
@@ -122,11 +140,20 @@ export default async function PreviewPage({
             </h1>
           </div>
         </div>
-        <DocumentEditor
-          documentId={document.id}
-          initialContent={document.content}
-          editable={false}
-        />
+
+        {database ? (
+          <div className="mt-4">
+            <DatabaseView database={database as any} />
+          </div>
+        ) : (
+          <div className={`${document.isSmallText ? 'text-sm' : ''}`}>
+            <DocumentEditor
+              documentId={document.id}
+              initialContent={document.content}
+              editable={false}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

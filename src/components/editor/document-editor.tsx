@@ -73,23 +73,23 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
   }, [debouncedSave, editable])
 
   return (
-    <div className="px-12 pb-40 md:max-w-3xl md:mx-auto lg:max-w-4xl min-w-[300px]">
-      <div className="relative">
-        {/* Save indicator */}
-        {editable && (
-          <div className="absolute top-0 right-0 text-xs text-muted-foreground">
-            {isSaving && <span>Saving...</span>}
-            {!isSaving && lastSaved && <span>Saved</span>}
-          </div>
-        )}
 
-        <BlockNoteEditorComponent
-          initialContent={content}
-          onChange={handleContentChange}
-          editable={editable}
-          documentId={documentId}
-        />
-      </div>
+    <div className="relative">
+      {/* Save indicator */}
+      {editable && (
+        <div className="absolute top-0 right-0 text-xs text-muted-foreground">
+          {isSaving && <span>Saving...</span>}
+          {!isSaving && lastSaved && <span>Saved</span>}
+        </div>
+      )}
+
+      <BlockNoteEditorComponent
+        initialContent={content}
+        onChange={handleContentChange}
+        editable={editable}
+        documentId={documentId}
+      />
     </div>
+
   )
 }
