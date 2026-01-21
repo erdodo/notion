@@ -307,7 +307,7 @@ export function ShareDialog({
                             </div>
                             <div className="flex gap-2">
                                 <Input
-                                    value={`${window?.location?.origin}/preview/${pageId}`}
+                                    value={`${origin}/preview/${pageId}`}
                                     readOnly
                                     className="flex-1 text-sm h-8"
                                 />
@@ -316,7 +316,7 @@ export function ShareDialog({
                                     size="sm"
                                     className="h-8 w-8 px-0"
                                     onClick={() => {
-                                        navigator.clipboard.writeText(`${window?.location?.origin}/preview/${pageId}`);
+                                        navigator.clipboard.writeText(`${origin}/preview/${pageId}`);
                                         toast.success("Preview link copied");
                                     }}
                                 >

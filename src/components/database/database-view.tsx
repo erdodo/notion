@@ -12,7 +12,8 @@ import { RowDetailModal } from "./row-detail-modal"
 import { useDatabase } from "@/hooks/use-database"
 import { DatabaseToolbar } from "./toolbar/database-toolbar"
 import { RowDetailDrawer } from "./row-detail-drawer"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import { DocumentHeader } from "@/components/editor/document-header"
 
 interface DatabaseViewProps {
     database: Database & {
@@ -20,13 +21,14 @@ interface DatabaseViewProps {
         rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
         views: DatabaseViewModelType[]
     }
+    page?: Page
     viewConfig?: any
     isLinked?: boolean
 }
 
 import { useViewPersistence } from "@/hooks/use-view-persistence"
 
-export function DatabaseView({ database }: DatabaseViewProps) {
+export function DatabaseView({ database, page }: DatabaseViewProps) {
     if (!database) {
         return <div className="p-4 text-muted-foreground">Database not found</div>
     }
@@ -47,81 +49,57 @@ export function DatabaseView({ database }: DatabaseViewProps) {
     const rows = database.rows || []
     const selectedRow = selectedRowId ? rows.find(r => r.id === selectedRowId) : null
 
-    // Initialize view from database default if needed
-    // Track previous view ID to detect meaningful switches vs server refresh
-    const prevViewIdRef = useRef<string | null>(null)
-
+    // Set view on mount if we have views
     useEffect(() => {
-        if (database.views && database.views.length > 0) {
-            // Find default view or first view
+        if (database.views && database.views.length > 0 && !currentViewId) {
             const defaultView = database.views.find(v => v.isDefault) || database.views[0]
-
-            if (!currentViewId) {
-                // Initial load: Sync to default only if no ID
-                setFromView(defaultView)
-            } else {
-                // ID exists in store. Verify it exists in THIS database's views
-                const exists = database.views.find(v => v.id === currentViewId)
-                if (!exists) {
-                    // ID suggests different DB or deleted view. Reset to default.
-                    setFromView(defaultView)
-                }
-                // Else: It exists, so we keep using it (persistence worked).
-            }
-        } else {
-            // If we have an ID, check if it's a SWITCH or a REFRESH
-            const isViewSwitch = currentViewId !== prevViewIdRef.current
-
-            if (isViewSwitch) {
-                // It's a switch! We MUST load the new view's config
-                const newView = database.views.find((v: any) => v.id === currentViewId)
-                if (newView) {
-                    setFromView(newView)
-                } else {
-                    // ID not found? fallback
-                    setFromView(defaultView)
-                }
-                prevViewIdRef.current = currentViewId
-            } else {
-                // It's a server update (revalidating path).
-                // Do NOT reset local state (filters, sorts) by calling setFromView.
-            }
+            setCurrentViewId(defaultView.id)
+            setFromView(defaultView.type)
         }
+    }, [database.views, currentViewId, setCurrentViewId, setFromView])
 
-    }, [database.views, setFromView, currentViewId])
+    const renderView = () => {
+        switch (currentView) {
+            case ViewType.BOARD:
+                return <BoardView database={database} />
+            case ViewType.CALENDAR:
+                return <CalendarView database={database} />
+            case ViewType.GALLERY:
+                return <GalleryView database={database} />
+            case ViewType.LIST:
+                return <ListView database={database} />
+            case ViewType.TIMELINE:
+                return <TimelineView database={database} />
+            default:
+                return <TableView database={database} />
+        }
+    }
 
     return (
-        <div className="flex flex-col h-full bg-background relative group">
-            {/* Center container like pages */}
-            {/* Center container like pages */}
-            <div className="flex-1 w-full px-4 md:px-12 pb-24 pt-4 overflow-hidden flex flex-col">
-                <DatabaseToolbar database={database} />
-                <div className="flex-1 flex flex-col h-full overflow-hidden border-t border-border/40 mt-2">
-                    {currentView === 'table' && <TableView database={database} />}
-                    {currentView === 'board' && <BoardView database={database} />}
-                    {currentView === 'calendar' && <CalendarView database={database} />}
-                    {currentView === 'gallery' && <GalleryView database={database} />}
-                    {currentView === 'list' && <ListView database={database} />}
-                    {currentView === 'timeline' && <TimelineView database={database} />}
-                </div>
+        <div className="flex flex-col h-full">
+            {/* Add DocumentHeader if page is provided */}
+            {page && <DocumentHeader page={page} />}
+
+            <DatabaseToolbar database={database} />
+
+            <div className="flex-1 overflow-auto">
+                {renderView()}
             </div>
 
-            {selectedRow && (
-                openMode === 'side' ? (
-                    <RowDetailDrawer
-                        row={selectedRow}
-                        database={database}
-                        isOpen={!!selectedRow}
-                        onClose={() => setSelectedRowId(null)}
-                    />
-                ) : (
-                    <RowDetailModal
-                        row={selectedRow}
-                        database={database}
-                        isOpen={!!selectedRow}
-                        onClose={() => setSelectedRowId(null)}
-                    />
-                )
+            {selectedRow && openMode === 'modal' && (
+                <RowDetailModal
+                    row={selectedRow}
+                    properties={database.properties}
+                    onClose={() => setSelectedRowId(null)}
+                />
+            )}
+
+            {selectedRow && openMode === 'drawer' && (
+                <RowDetailDrawer
+                    row={selectedRow}
+                    properties={database.properties}
+                    onClose={() => setSelectedRowId(null)}
+                />
             )}
         </div>
     )

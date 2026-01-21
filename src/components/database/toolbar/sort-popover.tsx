@@ -30,9 +30,13 @@ export function SortPopover({ properties }: SortPopoverProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="sm" className={`h-8 gap-1 px-2 ${sorts.length > 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-7 w-7 p-0 ${sorts.length > 0 ? 'text-primary' : ''}`}
+                    title="Sort"
+                >
                     <ArrowUpDown className="h-4 w-4" />
-                    <span className="hidden sm:inline">Sort</span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-3" align="start">

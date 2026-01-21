@@ -94,14 +94,13 @@ export function FilterPopover({ properties }: FilterPopoverProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="sm" className={cn("h-8 gap-1 px-2", filters.length > 0 ? 'text-primary' : 'text-muted-foreground')}>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-7 w-7 p-0 ${filters.length > 0 ? 'text-primary' : ''}`}
+                    title="Filter"
+                >
                     <Filter className="h-4 w-4" />
-                    <span className="hidden sm:inline">Filter</span>
-                    {filters.length > 0 && (
-                        <span className="ml-1 bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full">
-                            {filters.length}
-                        </span>
-                    )}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[400px] p-3" align="start">

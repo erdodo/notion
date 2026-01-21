@@ -77,7 +77,7 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
         )}
 
         {page.isDatabase && database ? (
-          <DatabaseView database={database as any} />
+          <DatabaseView database={database as any} page={page} />
         ) : (
           <PageRenderer
             page={page}

@@ -10,6 +10,7 @@ import { addMonths, format, subMonths } from "date-fns"
 import { addRow, updateCellByPosition } from "@/app/(main)/_actions/database"
 import { useEffect } from "react"
 import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
+import { usePageNavigation } from "@/hooks/use-page-navigation"
 
 interface CalendarViewProps {
     database: Database & {
@@ -20,6 +21,7 @@ interface CalendarViewProps {
 
 export function CalendarView({ database: initialDatabase }: CalendarViewProps) {
     const { database, updateCell, addRow: addOptimisticRow } = useOptimisticDatabase(initialDatabase as any)
+    const { navigateToPage } = usePageNavigation()
 
     const {
         calendarDateProperty,
@@ -82,6 +84,12 @@ export function CalendarView({ database: initialDatabase }: CalendarViewProps) {
         }
     }
 
+    const handleEventClick = (rowId: string) => {
+        const row = database.rows.find(r => r.id === rowId)
+        if (row?.pageId) {
+            navigateToPage(row.pageId)
+        }
+    }
 
     useEffect(() => {
         const handleAddEvent = () => handleAddRow(calendarDate) // Use current calendar date or today
@@ -120,7 +128,7 @@ export function CalendarView({ database: initialDatabase }: CalendarViewProps) {
                     datePropertyId={dateProperty.id}
                     properties={database.properties}
                     onAddRow={handleAddRow}
-                    onEventClick={(rowId) => useDatabase.getState().setSelectedRowId(rowId)}
+                    onEventClick={handleEventClick}
                 />
             </div>
         </div>

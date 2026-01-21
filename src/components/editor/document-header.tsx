@@ -84,14 +84,21 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
     }
   }
 
-  // Update state if props change (navigation)
+  // Update state only when navigating to a different page (page.id changes)
+  // Don't override local edits when page prop updates
+  const pageIdRef = useRef(page.id)
+
   useEffect(() => {
-    setTitle(page.title)
-    setIcon(page.icon)
-    setCoverImage(page.coverImage)
-    setCoverImagePosition(page.coverImagePosition)
-    previousTitleRef.current = page.title
-  }, [page.title, page.icon, page.coverImage, page.coverImagePosition])
+    // Only reset state if we navigated to a different page
+    if (pageIdRef.current !== page.id) {
+      setTitle(page.title)
+      setIcon(page.icon)
+      setCoverImage(page.coverImage)
+      setCoverImagePosition(page.coverImagePosition)
+      previousTitleRef.current = page.title
+      pageIdRef.current = page.id
+    }
+  }, [page.id, page.title, page.icon, page.coverImage, page.coverImagePosition])
 
 
   const pageData = { ...page, title, icon, coverImage, coverImagePosition }

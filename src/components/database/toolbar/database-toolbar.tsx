@@ -1,62 +1,190 @@
 import { Button } from "@/components/ui/button"
-import { Filter, ArrowUpDown, MoreHorizontal, Search } from "lucide-react"
+import { Filter, ArrowUpDown, Search, Maximize2, Zap, ChevronRight, ChevronLeft, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useDatabase } from "@/hooks/use-database"
 import { FilterPopover } from "./filter-popover"
 import { SortPopover } from "./sort-popover"
 import { ViewSwitcher } from "./view-switcher"
-import { ViewOptions } from "./view-options"
 import { ViewSettingsMenu } from "./view-settings-menu"
 import { Database, Property, DatabaseView } from "@prisma/client"
+import { Badge } from "@/components/ui/badge"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { useState } from "react"
+import { toast } from "sonner"
 
 interface DatabaseToolbarProps {
     database: Database & { properties: Property[], views?: DatabaseView[] }
 }
 
 export function DatabaseToolbar({ database }: DatabaseToolbarProps) {
-    const { searchQuery, setSearchQuery } = useDatabase()
+    const { searchQuery, setSearchQuery, filters, sorts, removeFilter, removeSort } = useDatabase()
+    const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isFullPage, setIsFullPage] = useState(false)
+    const [searchOpen, setSearchOpen] = useState(false)
 
     return (
-        <div className="flex items-center justify-between px-2 py-3 border-b mb-2 gap-4">
-            <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
-                {/* View Switcher */}
-                <ViewSwitcher database={database} />
-                <ViewSettingsMenu databaseId={database.id} views={database.views || []} />
-
-                <div className="w-[1px] h-4 bg-border mx-2 shrink-0" />
-
-                <ViewOptions database={database} />
-
-                <div className="w-[1px] h-4 bg-border mx-2 shrink-0" />
-
-                <FilterPopover properties={database.properties} />
-                <SortPopover properties={database.properties} />
-            </div>
-
-            <div className="flex items-center gap-1 shrink-0">
-                <div className="relative hidden sm:block">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                    <Input
-                        placeholder="Search"
-                        className="h-7 w-[160px] pl-7 text-xs bg-secondary/50 border-none focus-visible:ring-1"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+        <div className="flex flex-col gap-2">
+            {/* Main Toolbar */}
+            <div className="flex items-center justify-between px-2 py-2 border-b gap-4">
+                <div className="flex items-center gap-2">
+                    {/* View Switcher */}
+                    <ViewSwitcher database={database} />
                 </div>
-                {/* Removed useless multiple horizontal button */}
-                <Button
-                    size="sm"
-                    className="h-7 text-xs bg-[#2383e2] hover:bg-[#1d70c2] text-white ml-2 border-none"
-                    onClick={() => {
-                        // TODO: trigger add row for current view
-                        // We will implement a global trigger mechanism next.
-                        const event = new CustomEvent('database-add-row')
-                        window.dispatchEvent(event)
-                    }}
-                >
-                    New
-                </Button>
+
+                {/* Right side - Icon-only buttons */}
+                <div className="flex items-center gap-1">
+                    {!isCollapsed && (
+                        <>
+                            <FilterPopover properties={database.properties} />
+                            <SortPopover properties={database.properties} />
+
+                            {/* Search Popover */}
+                            <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 w-7 p-0"
+                                        title="Search"
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80 p-3" align="end">
+                                    <div className="space-y-2">
+                                        <div className="text-xs font-medium text-muted-foreground">Search</div>
+                                        <Input
+                                            placeholder="Type to search..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="h-8"
+                                            autoFocus
+                                        />
+                                        {searchQuery && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-6 text-xs w-full"
+                                                onClick={() => setSearchQuery("")}
+                                            >
+                                                Clear search
+                                            </Button>
+                                        )}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+
+                            {/* Automations - Placeholder */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0"
+                                title="Automations"
+                                onClick={() => toast.info("Automations coming soon!")}
+                            >
+                                <Zap className="h-4 w-4" />
+                            </Button>
+
+                            {/* Full Page Toggle */}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className={`h-7 w-7 p-0 ${isFullPage ? 'text-primary' : ''}`}
+                                title={isFullPage ? "Exit full page" : "Full page"}
+                                onClick={() => {
+                                    setIsFullPage(!isFullPage)
+                                    toast.info(isFullPage ? "Exited full page mode" : "Entered full page mode")
+                                }}
+                            >
+                                <Maximize2 className="h-4 w-4" />
+                            </Button>
+                        </>
+                    )}
+
+                    {/* Collapse/Expand Toggle */}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        title={isCollapsed ? "Show toolbar" : "Hide toolbar"}
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                    >
+                        {isCollapsed ? (
+                            <ChevronLeft className="h-4 w-4" />
+                        ) : (
+                            <ChevronRight className="h-4 w-4" />
+                        )}
+                    </Button>
+
+                    <ViewSettingsMenu
+                        databaseId={database.id}
+                        views={database.views || []}
+                        database={database}
+                    />
+
+                    <Button
+                        size="sm"
+                        className="h-7 text-xs bg-[#2383e2] hover:bg-[#1d70c2] text-white ml-2 border-none px-3"
+                        onClick={() => {
+                            const event = new CustomEvent('database-add-row')
+                            window.dispatchEvent(event)
+                        }}
+                    >
+                        New
+                    </Button>
+                </div>
             </div>
+
+            {/* Active Filters/Sorts Row */}
+            {(filters.length > 0 || sorts.length > 0) && (
+                <div className="flex items-center gap-2 px-2 pb-2">
+                    {filters.map((filter, index) => {
+                        const property = database.properties.find(p => p.id === filter.propertyId)
+                        return (
+                            <Badge
+                                key={index}
+                                variant="secondary"
+                                className="gap-1 pr-1 text-xs h-6"
+                            >
+                                <span className="font-normal">
+                                    {property?.name}: {filter.value || filter.operator}
+                                </span>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-4 w-4 p-0 hover:bg-transparent"
+                                    onClick={() => removeFilter(index)}
+                                >
+                                    <X className="h-3 w-3" />
+                                </Button>
+                            </Badge>
+                        )
+                    })}
+
+                    {sorts.map((sort, index) => {
+                        const property = database.properties.find(p => p.id === sort.propertyId)
+                        return (
+                            <Badge
+                                key={index}
+                                variant="secondary"
+                                className="gap-1 pr-1 text-xs h-6"
+                            >
+                                <span className="font-normal">
+                                    {property?.name}: {sort.direction === 'asc' ? '↑' : '↓'}
+                                </span>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-4 w-4 p-0 hover:bg-transparent"
+                                    onClick={() => removeSort(index)}
+                                >
+                                    <X className="h-3 w-3" />
+                                </Button>
+                            </Badge>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     )
 }

@@ -714,6 +714,9 @@ export async function getLinkedDatabase(linkedDbId: string) {
                     properties: {
                         orderBy: { order: "asc" },
                     },
+                    views: {
+                        orderBy: { order: "asc" },
+                    },
                     rows: {
                         orderBy: { order: "asc" },
                         include: {

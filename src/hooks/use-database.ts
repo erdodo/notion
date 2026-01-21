@@ -108,6 +108,10 @@ interface DatabaseState {
     openMode: 'side' | 'center'
     setOpenMode: (mode: 'side' | 'center') => void
 
+    // Page Open Mode
+    pageOpenMode: 'current' | 'new-tab' | 'dialog' | 'drawer'
+    setPageOpenMode: (mode: 'current' | 'new-tab' | 'dialog' | 'drawer') => void
+
     // Timeline View Configuration
     timelineDateProperty: string | null
     setTimelineDateProperty: (propertyId: string | null) => void
@@ -185,7 +189,7 @@ export const useDatabase = create<DatabaseState>()(
 
             setFromView: (view) => set({
                 currentViewId: view.id,
-                currentView: view.type.toLowerCase(),
+                currentView: view.type?.toLowerCase(),
                 filters: view.filter || [],
                 sorts: view.sort || [],
                 groupByProperty: view.group?.propertyId || null,
@@ -238,6 +242,10 @@ export const useDatabase = create<DatabaseState>()(
             openMode: 'center',
             setOpenMode: (mode) => set({ openMode: mode }),
 
+            // Page Open Mode
+            pageOpenMode: 'current',
+            setPageOpenMode: (mode) => set({ pageOpenMode: mode }),
+
             // Timeline View Configuration
             timelineDateProperty: null,
             setTimelineDateProperty: (propertyId) => set({ timelineDateProperty: propertyId }),
@@ -269,7 +277,8 @@ export const useDatabase = create<DatabaseState>()(
                 timelineGroupByProperty: state.timelineGroupByProperty,
                 timelineScale: state.timelineScale,
                 timelineDependencyProperty: state.timelineDependencyProperty,
-                openMode: state.openMode
+                openMode: state.openMode,
+                pageOpenMode: state.pageOpenMode
             }),
         }
     )

@@ -27,6 +27,7 @@ import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dn
 import { ChevronRight, ChevronDown } from "lucide-react"
 import { GroupSection } from "./shared/group-section"
 import { useContextMenu } from "@/hooks/use-context-menu"
+import { CalculationCell } from "./calculation-cell"
 
 interface TableViewProps {
     database: Database & {
@@ -150,7 +151,22 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
     }, [data, expanded, isGrouped])
 
     const columns = useMemo<ColumnDef<any>[]>(() => {
-        return database.properties.map((property, index) => ({
+        // Row Number Column
+        const indexColumn: ColumnDef<any> = {
+            id: 'index',
+            header: () => (
+                <div className="w-full text-center text-muted-foreground text-[10px] font-normal">#</div>
+            ),
+            cell: ({ row }) => (
+                <div className="w-[30px] flex items-center justify-center text-muted-foreground text-[10px] select-none">
+                    {row.index + 1}
+                </div>
+            ),
+            size: 40,
+            enableResizing: false,
+        }
+
+        const propertyColumns = database.properties.map((property, index) => ({
             accessorKey: property.id,
             header: ({ column }) => (
                 <PropertyHeader
@@ -191,6 +207,9 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                     />
                 )
             },
+            footer: ({ table }) => (
+                <CalculationCell property={property} rows={table.getFilteredRowModel().rows} />
+            ),
             meta: {
                 property: property,
                 getPageId: (rowId: string) => null
@@ -198,6 +217,8 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
             enableSorting: true,
             size: property.width || 200,
         }))
+
+        return [indexColumn, ...propertyColumns]
     }, [database.properties, expanded, updateCell, optimisticUpdateProperty]) // added expanded dependency
 
     const table = useReactTable({

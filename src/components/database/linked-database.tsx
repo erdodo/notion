@@ -57,53 +57,42 @@ export function LinkedDatabaseView({ linkedDb, editable = true, onDelete }: Link
 
     return (
         <div className="border rounded-lg overflow-hidden">
-            {/* Header */}
+            {/* Header - styled like page mention block */}
             <div className="flex items-center justify-between p-3 border-b bg-muted/30">
-                <div className="flex items-center gap-2">
+                <button
+                    onClick={() => window.location.href = `/documents/${sourceDatabase.pageId}`}
+                    className="inline-flex items-center gap-2 px-2 py-1 rounded bg-muted hover:bg-muted/80 text-sm group transition-colors"
+                >
                     {/* @ts-ignore */}
-                    <span className="text-lg">{sourceDatabase.page?.icon || '📊'}</span>
-                    <span className="font-medium">
+                    <span className="text-xl">{sourceDatabase.page?.icon || '📊'}</span>
+                    <span className="font-medium group-hover:underline underline-offset-2">
                         {/* @ts-ignore */}
-                        {linkedDb.title || (sourceDatabase as any).page?.title}
+                        {linkedDb.title || (sourceDatabase as any).page?.title || 'Untitled Database'}
                     </span>
-                </div>
+                </button>
 
                 <div className="flex items-center gap-1">
-                    {/* Open source database */}
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        asChild
-                    >
-                        <Link href={`/documents/${sourceDatabase.pageId}`}>
-                            <ExternalLink className="h-4 w-4" />
-                        </Link>
-                    </Button>
-
-                    {/* Delete linked database (YENİ) */}
-                    {onDelete && editable && (
+                    {editable && onDelete && (
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                >
+                                    <Trash2 className="h-4 w-4 text-muted-foreground" />
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>Remove database?</AlertDialogTitle>
+                                    <AlertDialogTitle>Remove linked database?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        This will remove the database from this page.
-                                        The original database and its data will not be deleted.
+                                        This will remove the linked database from this page. The source database will not be affected.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                        onClick={onDelete}
-                                        className="bg-destructive text-destructive-foreground"
-                                    >
-                                        Remove
-                                    </AlertDialogAction>
+                                    <AlertDialogAction onClick={onDelete}>Remove</AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>

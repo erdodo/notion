@@ -7,7 +7,12 @@ import DocumentEditor from "@/components/editor/document-editor"
 
 interface PageRendererProps {
     page: Page
-    row?: DatabaseRow & { cells: Cell[]; database: Database & { properties: Property[] } }
+    row?: (DatabaseRow & {
+        cells: Cell[]
+        database: Database & {
+            properties: Property[]
+        }
+    }) | null
     isPreview?: boolean
 }
 
@@ -16,7 +21,7 @@ export function PageRenderer({ page, row, isPreview }: PageRendererProps) {
         <div className={`flex flex-col h-full bg-background relative group ${page.fontStyle === 'mono' ? 'font-mono' : page.fontStyle === 'serif' ? 'font-serif' : 'font-sans'}`}>
             <DocumentHeader page={page} preview={isPreview} />
 
-            {row && (
+            {row && row.database && (
                 <div className={`${page.isFullWidth ? 'px-4 w-full' : 'px-12 md:w-[50vw] md:mx-auto lg:w-[60vw]'} `}>
                     <PageProperties row={row} />
                 </div>

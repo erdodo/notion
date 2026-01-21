@@ -5,6 +5,7 @@ import TextareaAutosize from "react-textarea-autosize"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FileText, Maximize2 } from "lucide-react"
+import { usePageNavigation } from "@/hooks/use-page-navigation"
 
 export function TitleCell({
     getValue,
@@ -21,6 +22,7 @@ export function TitleCell({
     // If object {value: "..."}.
     const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
     const [value, setValue] = useState(val || "")
+    const { navigateToPage, pageOpenMode } = usePageNavigation()
 
     useEffect(() => {
         // Sync external value
@@ -40,14 +42,39 @@ export function TitleCell({
     // originalRow is the Prisma DatabaseRow object which contains pageId
     const pageId = row?.original?.originalRow?.pageId || rowId
 
+    const handleClick = (e: React.MouseEvent) => {
+        console.log('TitleCell clicked', { isEditing, target: (e.target as HTMLElement).tagName, pageOpenMode, pageId })
+
+        // Don't navigate if user is editing
+        if (isEditing) {
+            console.log('Skipping navigation - editing')
+            return
+        }
+
+        // Don't navigate if clicking on textarea
+        if ((e.target as HTMLElement).tagName === 'TEXTAREA') {
+            console.log('Skipping navigation - textarea clicked')
+            return
+        }
+
+        e.preventDefault()
+        e.stopPropagation()
+
+        console.log('Calling navigateToPage with:', pageId)
+        navigateToPage(pageId)
+    }
+
     return (
-        <div className="flex items-center group relative h-full w-full min-h-[32px]">
-            <Link
-                href={`/documents/${pageId}`}
+        <div
+            className="flex items-center group relative h-full w-full min-h-[32px] cursor-pointer"
+            onClick={handleClick}
+        >
+            <button
+                onClick={handleClick}
                 className="absolute left-[-20px] opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded"
             >
                 <Maximize2 className="h-3 w-3 text-muted-foreground" />
-            </Link>
+            </button>
 
             {/* Icon */}
             <div className="mr-2 flex items-center justify-center">

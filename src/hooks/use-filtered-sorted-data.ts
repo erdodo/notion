@@ -1,12 +1,13 @@
 
 import { useDatabase } from "./use-database"
 import { useMemo } from "react"
-import { Database, Property, DatabaseRow, Cell, PropertyType, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, PropertyType, Page, DatabaseView } from "@prisma/client"
 import { isToday, isTomorrow, isYesterday, subWeeks, subMonths, isBefore, isAfter, isEqual, startOfDay, isSameDay } from "date-fns"
 
 export type DetailedDatabase = Database & {
     properties: Property[]
     rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+    views: DatabaseView[]
 }
 
 export interface GroupedResult {

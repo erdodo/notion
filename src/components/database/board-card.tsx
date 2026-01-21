@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { DatabaseRow, Property, Cell, Page } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { PropertyBadge } from "./shared/property-badge"
+import { usePageNavigation } from "@/hooks/use-page-navigation"
 
 interface BoardCardProps {
     row: DatabaseRow & { cells: Cell[]; page: Page | null }
@@ -15,6 +16,7 @@ interface BoardCardProps {
 
 export function BoardCard({ row, properties }: BoardCardProps) {
     const { visibleProperties } = useDatabase()
+    const { navigateToPage } = usePageNavigation()
 
     const {
         attributes,
@@ -53,6 +55,12 @@ export function BoardCard({ row, properties }: BoardCardProps) {
     // Actually, let's show all for now if empty? No, usually hidden.
     const propsToShow = properties.filter(p => p.type !== 'TITLE' && visibleProperties.includes(p.id))
 
+    const handleClick = () => {
+        if (row.pageId) {
+            navigateToPage(row.pageId)
+        }
+    }
+
     if (isDragging) {
         return (
             <div
@@ -69,10 +77,8 @@ export function BoardCard({ row, properties }: BoardCardProps) {
             style={style}
             {...attributes}
             {...listeners}
-            {...attributes}
-            {...listeners}
             className="group"
-            onClick={() => useDatabase.getState().setSelectedRowId(row.id)}
+            onClick={handleClick}
         >
             <Card
                 className={cn(
