@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: notion
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d notion"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # This URL should use the service name 'db' as the host
+      DATABASE_URL: "postgresql://user:password@db:5432/notion?schema=public"
+      
+      # === Clerk Environment Variables ===
+      # Find these in your Clerk Dashboard
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "your_clerk_publishable_key"
+      CLERK_SECRET_KEY: "your_clerk_secret_key"
+      NEXT_PUBLIC_CLERK_SIGN_IN_URL: "/sign-in"
+      NEXT_PUBLIC_CLERK_SIGN_UP_URL: "/sign-up"
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "/documents"
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: "/documents"
+      
+      # === Edge Store Environment Variables ===
+      # Find these in your Edge Store Dashboard
+      EDGE_STORE_ACCESS_KEY: "your_edge_store_access_key"
+      EDGE_STORE_SECRET_KEY: "your_edge_store_secret_key"
+      
+      # === Next.js Environment Variables ===
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+
+volumes:
+  postgres_data:
