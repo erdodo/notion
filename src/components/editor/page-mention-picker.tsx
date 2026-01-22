@@ -74,7 +74,7 @@ export function PageMentionPicker({
         <Popover open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <PopoverAnchor
                 style={{
-                    position: 'absolute',
+                    position: 'fixed',
                     top: position.top,
                     left: position.left
                 }}
@@ -85,6 +85,7 @@ export function PageMentionPicker({
                 sideOffset={5}
             >
                 <Command>
+
                     <CommandInput
                         placeholder="Search pages..."
                         value={query}

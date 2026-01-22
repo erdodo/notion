@@ -20,7 +20,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { SortableItem } from "./sortable-item"
-import { getSidebarDocuments, createDocument } from "../_actions/documents"
+import { getSidebarDocuments } from "../_actions/documents"
 import { reorderPages } from "@/app/(main)/_actions/navigation"
 import { createPortal } from "react-dom"
 import { FileText } from "lucide-react"
@@ -161,9 +161,11 @@ export function SortableDocumentList({
             >
                 <div className="space-y-0.5">
                     {documents.map(doc => {
+                        if(!doc?.id) return null;
                         const isExpanded = expanded[doc.id]
                         const childDocs = children[doc.id]
                         const isLoading = loading[doc.id]
+
 
                         return (
                             <SortableItem
@@ -194,7 +196,7 @@ export function SortableDocumentList({
             </SortableContext>
 
             {/* Drag overlay - portal ile render (Only render at root or handle carefully)
-          If we use recursion, multiple DragOverlays might be an issue. 
+          If we use recursion, multiple DragOverlays might be an issue.
           But since we use separate DndContexts (so far implied), each handles its own overlay.
           Actually, nested DndContexts? Yes.
           Ideally we only want one Overlay visible.

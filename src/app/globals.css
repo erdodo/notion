@@ -147,6 +147,43 @@ a,
   margin: 4px 0;
 }
 
+/* Toggle Block - Hide children when closed */
+.toggle-block-wrapper[data-toggle-open="false"]~.bn-block-group {
+  display: none;
+}
+
+/* Toggle Block - Show children when open with animation */
+.toggle-block-wrapper[data-toggle-open="true"]~.bn-block-group {
+  display: block;
+  animation: toggleSlideDown 200ms ease-out;
+}
+
+/* Fallback: Use parent block's data attribute if wrapper doesn't work */
+.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open="false"])>.bn-block-group {
+  display: none;
+}
+
+.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open="true"])>.bn-block-group {
+  display: block;
+  animation: toggleSlideDown 200ms ease-out;
+}
+
+@keyframes toggleSlideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+
+
 
 
 /* Micro-interactions */

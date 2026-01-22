@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Search, Trash, Undo, FileText } from "lucide-react"
 import { toast } from "sonner"
@@ -21,19 +21,12 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
   const { trashPages, setTrashPages, removeDocument } = useDocumentsStore()
   const [search, setSearch] = useState("")
 
-  // Initial load or sync
-  // Note: trashPages might be empty initially. 
-  // Should we use initialDocuments? 
-  // Ideally, sidebar/trash button opens this modal, and maybe it fetched data? 
-  // Let's assume initialDocuments is passed from parent component (likely server component)?
-  // Actually, TrashBox is usually a client component inside a Popover.
-  // The props `documents` seem to come from there.
-  // Let's sync prop to store on mount.
-  useState(() => {
-    if (initialDocuments) {
+  // Sync initialDocuments to store on mount or when it changes
+  useEffect(() => {
+    if (initialDocuments && initialDocuments.length > 0) {
       setTrashPages(initialDocuments)
     }
-  })
+  }, [initialDocuments, setTrashPages])
 
   const documents = trashPages; // Use store data
 

@@ -33,12 +33,12 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
     socket.emit("join-room", `document-${documentId}`)
 
     // Listen for updates
-    socket.on("doc:update", (data: any) => {
+    socket.on("doc:update", (payload: any) => {
+      // Server emits { id, updates, userId }
       // If we receive content update and it's different, update state
       // We should be careful about overwriting user's own typing
-      // Ideally we check if the update came from another user, but simplified:
-      if (data.content && data.content !== content) {
-        setContent(data.content)
+      if (payload?.updates?.content && payload.updates.content !== content) {
+        setContent(payload.updates.content)
       }
     })
 

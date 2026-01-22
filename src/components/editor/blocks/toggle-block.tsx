@@ -1,10 +1,18 @@
 "use client"
 
 import { createReactBlockSpec } from "@blocknote/react"
-import { ChevronRight, ChevronDown } from "lucide-react"
-import { useEffect, useState, useCallback } from "react"
+import { ChevronRight } from "lucide-react"
+import React from "react"
 
-
+/**
+ * Toggle Block - A collapsible block that can contain nested content
+ * 
+ * Features:
+ * - Click on chevron or title area to toggle open/closed state
+ * - Supports nested blocks as children
+ * - Smooth transitions with CSS animations
+ * - Accessible with proper ARIA attributes
+ */
 export const ToggleBlock = createReactBlockSpec(
     {
         type: "toggle",
@@ -18,68 +26,56 @@ export const ToggleBlock = createReactBlockSpec(
     {
         render: (props) => {
             const { block, editor } = props
-            const isOpen = block.props.isOpen
-            const [contentElement, setContentElement] = useState<HTMLElement | null>(null)
+            const isOpen = block.props.isOpen as boolean
 
-            const contentRefCallback = useCallback((node: HTMLElement | null) => {
-                setContentElement(node)
-                if (props.contentRef) {
-                    if (typeof props.contentRef === "function") {
-                        props.contentRef(node)
-                    } else {
-                        (props.contentRef as any).current = node
-                    }
-                }
-            }, [props.contentRef])
-
-            // Handle children visibility via DOM manipulation
-            // This is necessary because we typically cannot control the "children" rendering 
-            // of a block directly from the custom block content renderer in BlockNote (managed by Core).
-            useEffect(() => {
-                if (!contentElement) return
-
-                // Traverse up to find the block element
-                // Structure: .bn-block > .bn-block-content > ... > contentElement
-                const blockContent = contentElement.closest(".bn-block-content")
-                if (!blockContent) return
-
-                const blockElement = blockContent.closest(".bn-block")
-                if (!blockElement) return
-
-                // The children container is usually a sibling of bn-block-content
-                const childrenContainer = blockElement.querySelector(".bn-block-children") as HTMLElement
-
-                if (childrenContainer) {
-                    childrenContainer.style.display = isOpen ? "block" : "none"
-                }
-
-            }, [isOpen, contentElement])
-
-            const toggleOpen = (e: React.MouseEvent) => {
+            const handleToggle = (e: React.MouseEvent) => {
                 e.preventDefault()
                 e.stopPropagation()
+
                 editor.updateBlock(block, {
                     props: { isOpen: !isOpen },
                 })
             }
 
             return (
-                <div className="flex flex-col my-1">
-                    <div className="flex items-start group">
+                <div
+                    className="toggle-block-wrapper"
+                    data-toggle-open={isOpen}
+                >
+                    <div
+                        className="flex items-start gap-2 group cursor-pointer hover:bg-accent/50 rounded-sm transition-colors py-0.5 px-1 -mx-1"
+                        onClick={handleToggle}
+                        role="button"
+                        aria-expanded={isOpen}
+                        aria-label={isOpen ? "Collapse section" : "Expand section"}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                handleToggle(e as any)
+                            }
+                        }}
+                    >
+                        {/* Toggle Icon */}
                         <div
-                            className="mr-1 mt-1 p-0.5 rounded hover:bg-muted cursor-pointer select-none transition-colors"
-                            onClick={toggleOpen}
+                            className="flex-shrink-0 mt-1 transition-transform duration-200"
+                            style={{
+                                transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                            }}
                             contentEditable={false}
-                            onMouseDown={(e) => e.preventDefault()}
                         >
-                            {
-                                isOpen ? (
-                                    <ChevronDown size={18} className="text-muted-foreground" />
-                                ) : (
-                                    <ChevronRight size={18} className="text-muted-foreground" />
-                                )}
+                            <ChevronRight size={18} className="text-muted-foreground" />
                         </div>
-                        <div className={"flex-1 min-w-0 min-h-[24px]"} ref={contentRefCallback} />
+
+                        {/* Content - Title */}
+                        <div
+                            className="flex-1 min-w-0 min-h-[24px]"
+                            ref={props.contentRef}
+                            onClick={(e) => {
+                                // Allow text editing - stop propagation to prevent toggle
+                                e.stopPropagation()
+                            }}
+                        />
                     </div>
                 </div>
             )

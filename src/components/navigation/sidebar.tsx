@@ -12,7 +12,7 @@ import { PageItem } from "./page-item"
 export const Sidebar = () => {
   const router = useRouter()
   const { data: session } = useSession()
-  const { documents, setDocuments, addDocument, updateDocument, removeDocument } = useDocumentsStore()
+  const { documents, setDocuments, addDocument, updateDocument, removeDocument, archiveDocument } = useDocumentsStore()
   const { socket } = useSocket()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -25,24 +25,41 @@ export const Sidebar = () => {
   useEffect(() => {
     if (!socket) return
 
-    socket.on("doc:create", (newDoc) => {
-      addDocument(newDoc)
+    socket.on("doc:create", (payload) => {
+      // Server emits { document, userId }
+      if (payload?.document) {
+        addDocument(payload.document)
+      }
     })
 
-    socket.on("doc:update", ({ id, ...updates }) => {
-      updateDocument(id, updates)
+    socket.on("doc:update", (payload) => {
+      // Server emits { id, updates, userId }
+      if (payload?.id && payload?.updates) {
+        updateDocument(payload.id, payload.updates)
+      }
     })
 
-    socket.on("doc:delete", (id) => {
-      removeDocument(id)
+    socket.on("doc:delete", (payload) => {
+      // Server emits { id, userId }
+      if (payload?.id) {
+        removeDocument(payload.id)
+      }
+    })
+
+    socket.on("doc:archive", (payload) => {
+      // Server emits { id, userId }
+      if (payload?.id) {
+        archiveDocument(payload.id)
+      }
     })
 
     return () => {
       socket.off("doc:create")
       socket.off("doc:update")
       socket.off("doc:delete")
+      socket.off("doc:archive")
     }
-  }, [socket, addDocument, updateDocument, removeDocument])
+  }, [socket, addDocument, updateDocument, removeDocument, archiveDocument])
 
   const loadPages = async () => {
     if (!session?.user?.id) return

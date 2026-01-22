@@ -33,12 +33,15 @@ export function Breadcrumbs({ pageId, className }: BreadcrumbsProps) {
     useEffect(() => {
         if (!socket) return
 
-        socket.on("doc:update", (updatedDoc: any) => {
-            setBreadcrumbs(prev => prev.map(item =>
-                item.id === updatedDoc.id
-                    ? { ...item, ...updatedDoc }
-                    : item
-            ))
+        socket.on("doc:update", (payload: any) => {
+            // Server emits { id, updates, userId }
+            if (payload?.id && payload?.updates) {
+                setBreadcrumbs(prev => prev.map(item =>
+                    item.id === payload.id
+                        ? { ...item, ...payload.updates }
+                        : item
+                ))
+            }
         })
 
         return () => {

@@ -129,25 +129,44 @@ export const Navigation = () => {
   useEffect(() => {
     if (!socket) return
 
-    socket.on("doc:create", (newDoc) => {
-      addDocument(newDoc)
-    })
-
-    socket.on("doc:update", ({ id, ...updates }) => {
-      updateDocument(id, updates)
-      if (updates.isArchived === true) {
-        archiveDocument(id)
+    socket.on("doc:create", (payload) => {
+      // Server emits { document, userId }
+      if (payload?.document) {
+        addDocument(payload.document)
+        // Also add to recent pages since we just created/opened it
+        setRecentPages([payload.document, ...recentPages.slice(0, 9)])
       }
     })
 
-    socket.on("doc:delete", (id) => {
-      removeDocument(id)
+    socket.on("doc:update", (payload) => {
+      // Server emits { id, updates, userId }
+      if (payload?.id && payload?.updates) {
+        updateDocument(payload.id, payload.updates)
+        if (payload.updates.isArchived === true) {
+          archiveDocument(payload.id)
+        }
+      }
+    })
+
+    socket.on("doc:delete", (payload) => {
+      // Server emits { id, userId }
+      if (payload?.id) {
+        removeDocument(payload.id)
+      }
+    })
+
+    socket.on("doc:archive", (payload) => {
+      // Server emits { id, userId }
+      if (payload?.id) {
+        archiveDocument(payload.id)
+      }
     })
 
     return () => {
       socket.off("doc:create")
       socket.off("doc:update")
       socket.off("doc:delete")
+      socket.off("doc:archive")
     }
   }, [socket, addDocument, updateDocument, removeDocument, archiveDocument])
 

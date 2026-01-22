@@ -68,6 +68,17 @@ export function FormattingToolbar({ editor }: FormattingToolbarProps) {
             return
         }
 
+        // Check if the selection is within the BlockNote editor
+        const container = range.commonAncestorContainer
+        const editorElement = container.nodeType === Node.ELEMENT_NODE
+            ? (container as Element).closest('.bn-editor')
+            : (container.parentElement?.closest('.bn-editor'))
+
+        if (!editorElement) {
+            setIsVisible(false)
+            return
+        }
+
         const rect = range.getBoundingClientRect()
         const toolbarWidth = 400 // Approximate width
         const toolbarHeight = 40

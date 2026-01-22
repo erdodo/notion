@@ -29,12 +29,14 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
   useEffect(() => {
     if (!socket) return
 
-    const onUpdate = (data: any) => {
-      if (data.id === page.id) {
-        if (data.title !== undefined && !isEditingRef.current) setTitle(data.title)
-        if (data.icon !== undefined) setIcon(data.icon)
-        if (data.coverImage !== undefined) setCoverImage(data.coverImage)
-        if (data.coverImagePosition !== undefined) setCoverImagePosition(data.coverImagePosition)
+    const onUpdate = (payload: any) => {
+      // Server emits { id, updates, userId }
+      if (payload?.id === page.id && payload?.updates) {
+        const updates = payload.updates
+        if (updates.title !== undefined && !isEditingRef.current) setTitle(updates.title)
+        if (updates.icon !== undefined) setIcon(updates.icon)
+        if (updates.coverImage !== undefined) setCoverImage(updates.coverImage)
+        if (updates.coverImagePosition !== undefined) setCoverImagePosition(updates.coverImagePosition)
       }
     }
 

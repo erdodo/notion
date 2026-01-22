@@ -113,7 +113,7 @@ export const BlockNoteEditorComponent = ({
         })
 
         try {
-          // Save cursor? It's hard because indices change. 
+          // Save cursor? It's hard because indices change.
           // For now, simple replace.
           editor.replaceBlocks(editor.document, parsedContent)
         } catch (e) {
@@ -355,28 +355,41 @@ export const BlockNoteEditorComponent = ({
     editor.insertBlocks([{ type, props } as any], currentBlock, "after")
   }
 
+  // Helper to clean up slash command text
+  const cleanupSlashCommand = () => {
+    const currentBlock = editor.getTextCursorPosition().block
+    const content = currentBlock.content
+    const text = (Array.isArray(content) && content.length > 0) ? (content as any[]).map(c => c.text).join('') : ""
+    const command = `/${slashMenuQuery}`
+
+    if (text.endsWith(command)) {
+      const newText = text.slice(0, -command.length)
+      editor.updateBlock(currentBlock, {
+        content: [{ type: "text", text: newText, styles: {} }]
+      })
+    } else if (text === command || text === "/") {
+      editor.updateBlock(currentBlock, { content: "" })
+    }
+  }
+
   // Define custom slash menu items
   const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor) => {
     const defaultItems = getDefaultReactSlashMenuItems(editor)
+
+    // Wrap default items to clean up slash command
+    const wrappedDefaultItems = defaultItems.map(item => ({
+      ...item,
+      onItemClick: () => {
+        cleanupSlashCommand()
+        item.onItemClick()
+      }
+    }))
 
     const customItems = [
       {
         title: "Page Mention",
         onItemClick: () => {
-          const currentBlock = editor.getTextCursorPosition().block
-          const content = currentBlock.content
-          const text = (Array.isArray(content) && content.length > 0) ? (content as any[]).map(c => c.text).join('') : ""
-          const command = `/${slashMenuQuery}`
-
-          if (text.endsWith(command)) {
-            const newText = text.slice(0, -command.length)
-            editor.updateBlock(currentBlock, {
-              content: [{ type: "text", text: newText, styles: {} }]
-            })
-          } else if (text === command || text === "/") {
-            editor.updateBlock(currentBlock, { content: "" })
-          }
-
+          cleanupSlashCommand()
           setMentionOpen(true)
           setSlashMenuOpen(false)
           setMentionPosition({ top: slashMenuPosition.y, left: slashMenuPosition.x })
@@ -622,7 +635,7 @@ export const BlockNoteEditorComponent = ({
     ]
 
     const customTitles = new Set(customItems.map(i => i.title))
-    const filteredDefaultItems = defaultItems.filter(i => !customTitles.has(i.title) && i.title !== "Image")
+    const filteredDefaultItems = wrappedDefaultItems.filter(i => !customTitles.has(i.title) && i.title !== "Image")
     const combinedItems = [...filteredDefaultItems, ...customItems]
 
     // Deduplicate
@@ -744,7 +757,7 @@ export const BlockNoteEditorComponent = ({
       } else if (e.key === "Enter") {
         const item = filteredItems[slashMenuIndex]
         if (item) {
-          item.onItemClick(editor)
+          item.onItemClick()
           setSlashMenuOpen(false)
         }
       } else if (e.key === "Escape") {
@@ -887,28 +900,7 @@ export const BlockNoteEditorComponent = ({
           items={filteredItems}
           selectedIndex={slashMenuIndex}
           onItemClick={(item: any) => {
-            // Remove the slash trigger text first
-            const selection = window.getSelection()
-            if (selection && selection.rangeCount > 0) {
-              const range = selection.getRangeAt(0)
-              const text = range.startContainer.textContent || ""
-              const offset = range.startOffset
-              const textBefore = text.slice(0, offset)
-              const slashMatch = textBefore.match(/(?:^|\s)\/([a-zA-Z0-9]*)$/)
-
-              if (slashMatch) {
-                const slashIndex = textBefore.lastIndexOf('/')
-                const newText = text.slice(0, slashIndex) + text.slice(offset)
-                if (range.startContainer.nodeType === Node.TEXT_NODE) {
-                  range.startContainer.textContent = newText
-                  range.setStart(range.startContainer, slashIndex)
-                  range.collapse(true)
-                }
-              }
-            }
-
-
-            item.onItemClick(editor)
+            item.onItemClick()
             setSlashMenuOpen(false)
           }}
           onClose={() => setSlashMenuOpen(false)}
@@ -918,7 +910,28 @@ export const BlockNoteEditorComponent = ({
 
       <PageMentionPicker
         isOpen={mentionOpen}
-        onClose={() => setMentionOpen(false)}
+        onClose={() => {
+          const selection = window.getSelection()
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0)
+            const text = range.startContainer.textContent || ""
+            const offset = range.startOffset
+            const textBefore = text.slice(0, offset)
+            const slashMatch = textBefore.match(/(?:^|\s)\/([a-zA-Z0-9]*)$/)
+
+            if (slashMatch) {
+              const slashIndex = textBefore.lastIndexOf('/')
+              const newText = text.slice(0, slashIndex) + text.slice(offset)
+              if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                range.startContainer.textContent = newText
+                range.setStart(range.startContainer, slashIndex)
+                range.collapse(true)
+              }
+            }
+          }
+
+          setMentionOpen(false)
+        }}
         onSelect={handleMentionSelect}
         position={mentionPosition}
         currentPageId={documentId}
