@@ -225,7 +225,7 @@ model DatabaseView {
   database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
   
   name        String   @default("Untitled View")
-  type        ViewType @default(TABLE)
+  type        ViewType @default(table)
   
   // View-specific config
   filter      Json?    // Filter rules
@@ -250,12 +250,12 @@ model DatabaseView {
 }
 
 enum ViewType {
-  TABLE
-  BOARD
-  CALENDAR
-  GALLERY
-  LIST
-  TIMELINE
+  table
+  board
+  calendar
+  gallery
+  list
+  timeline
 }
 
 // Property (Column) - Sütun tanımları

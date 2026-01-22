@@ -2,11 +2,11 @@
 
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { PropertyType, Database, DatabaseRow, Property, LinkedDatabase, DatabaseTemplate } from "@prisma/client"
+import { PropertyType, Database, DatabaseRow, LinkedDatabase, DatabaseTemplate } from "@prisma/client"
 import { revalidatePath } from "next/cache"
-import { FormulaResult, evaluateFormula, FormulaContext } from "@/lib/formula-engine"
+import { FormulaResult, evaluateFormula } from "@/lib/formula-engine"
 import { RollupConfig, computeRollup } from "@/lib/rollup-service"
-import { RelationCellValue, RelationConfig } from "@/lib/relation-service"
+import { RelationCellValue } from "@/lib/relation-service"
 import { checkAndRunAutomations } from "@/lib/automation-service"
 
 async function getCurrentUser() {
@@ -56,7 +56,7 @@ export async function createDatabase(parentId?: string) {
             views: {
                 create: {
                     name: "Table",
-                    type: "TABLE",
+                    type: "table",
                     order: 0,
                     isDefault: true
                 }
@@ -295,7 +295,7 @@ export async function deleteRow(rowId: string) {
 
     if (!row) return
 
-    // Delete the page (should cascade delete row if setup correctly? 
+    // Delete the page (should cascade delete row if setup correctly?
     // Schema says: page Page? @relation("RowPage", fields: [pageId], references: [id])
     // But no onDelete: Cascade on the RowPage relation in DatabaseRow.
     // But Page has `databaseRow DatabaseRow?`

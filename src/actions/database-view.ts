@@ -30,7 +30,7 @@ export async function createDatabaseView(
 
     // For Kanban/Board view, we usually want to group by status
     let group = undefined
-    if (type === ViewType.BOARD) {
+    if (type === ViewType.board) {
         // Find status or select property
         const statusProperty = await db.property.findFirst({
             where: {

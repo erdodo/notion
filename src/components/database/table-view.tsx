@@ -16,13 +16,13 @@ import { PropertyHeader } from "./property-header"
 import { CellRenderer } from "./cell-renderer"
 import { AddRowButton } from "./add-row-button"
 import { AddPropertyButton } from "./add-property-button"
-import { updateCellByPosition, addRow, addProperty, updateProperty } from "@/app/(main)/_actions/database"
+import { updateCellByPosition, addRow, updateProperty } from "@/app/(main)/_actions/database"
 import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
 import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { cn } from "@/lib/utils"
 import { PropertyConfigDialog } from "./property-config-dialog"
 import { useDatabase } from "@/hooks/use-database"
-import { DndContext, closestCenter, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from "@dnd-kit/core"
+import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core"
 import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable"
 import { ChevronRight, ChevronDown } from "lucide-react"
 import { GroupSection } from "./shared/group-section"
@@ -168,7 +168,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
 
         const propertyColumns = database.properties.map((property, index) => ({
             accessorKey: property.id,
-            header: ({ column }) => (
+            header: ({ column }: { column: any }) => (
                 <PropertyHeader
                     property={property}
                     column={column}
@@ -178,7 +178,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                     onEditProperty={(id, type) => setConfigDialog({ propertyId: id, type })}
                 />
             ),
-            cell: ({ getValue, row, column, table, cell }) => {
+            cell: ({ getValue, row, column, table, cell }: { getValue: any; row: any; column: any; table: any; cell: any }) => {
                 // Stable update callback
                 const updateValue = (value: any) => {
                     // Optimistic update
@@ -207,7 +207,7 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
                     />
                 )
             },
-            footer: ({ table }) => (
+            footer: ({ table }: { table: any }) => (
                 <CalculationCell property={property} rows={table.getFilteredRowModel().rows} />
             ),
             meta: {
@@ -385,20 +385,20 @@ export function TableView({ database: initialDatabase }: TableViewProps) {
 
             if (oldIndex !== -1 && newIndex !== -1) {
                 // Optimistic update would be complex here as we need to reorder the properties array in the optimistic hook
-                // For now, let's just call the server action. 
+                // For now, let's just call the server action.
                 // Ideally, useOptimisticDatabase should expose a reorderProperty function.
                 // Assuming we can just update the property with a new order or use a specific reorder action.
-                // Since we don't have a reorderProperty in useOptimisticDatabase shown in the context, 
+                // Since we don't have a reorderProperty in useOptimisticDatabase shown in the context,
                 // we will rely on the server update and potential refresh, or implementing it if needed.
                 // Actually, the user requirement says "Veri Güncellemesi: Sütun sırası değiştiğinde sadece UI değil, veritabanı görünüm ayarları da güncellenmeli."
 
                 // We'll treat this as updating the "order" field if it exists, or just position in array?
                 // Typically Notion-like DBs have explicit order or list position.
-                // Let's assume we maintain order via an index or linked list. 
+                // Let's assume we maintain order via an index or linked list.
                 // But looking at the code, properties are just an array.
                 // We probably need a `reorderProperty` action.
                 // I will add a placeholder for reorderProperty call.
-                // And since we lack a clear reorder API in the visible code, I'll simulate it or assume `updateProperty` can handle it, 
+                // And since we lack a clear reorder API in the visible code, I'll simulate it or assume `updateProperty` can handle it,
                 // or just call `updateProperty` for the moved item to update its order/index.
 
                 // Strategy: Calculate new order values? Or just swap?
@@ -698,5 +698,3 @@ function CellWrapper({ getValue, rowId, propertyId, table, column, cell, updateV
 
     )
 }
-
-

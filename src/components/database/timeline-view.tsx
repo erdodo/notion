@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page, type DatabaseView } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { Timeline, TimelineOptions, DataItem, DataGroup } from "vis-timeline/standalone"
@@ -15,6 +15,7 @@ interface TimelineViewProps {
     database: Database & {
         properties: Property[]
         rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+        views: DatabaseView[]
     }
 }
 

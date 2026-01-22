@@ -12,7 +12,7 @@ import { RowDetailModal } from "./row-detail-modal"
 import { useDatabase } from "@/hooks/use-database"
 import { DatabaseToolbar } from "./toolbar/database-toolbar"
 import { RowDetailDrawer } from "./row-detail-drawer"
-import { useEffect, useRef, useState } from "react"
+import { useEffect } from "react"
 import { DocumentHeader } from "@/components/editor/document-header"
 
 interface DatabaseViewProps {
@@ -60,15 +60,15 @@ export function DatabaseView({ database, page }: DatabaseViewProps) {
 
     const renderView = () => {
         switch (currentView) {
-            case ViewType.BOARD:
+            case ViewType.board:
                 return <BoardView database={database} />
-            case ViewType.CALENDAR:
+            case ViewType.calendar:
                 return <CalendarView database={database} />
-            case ViewType.GALLERY:
+            case ViewType.gallery:
                 return <GalleryView database={database} />
-            case ViewType.LIST:
+            case ViewType.list:
                 return <ListView database={database} />
-            case ViewType.TIMELINE:
+            case ViewType.timeline:
                 return <TimelineView database={database} />
             default:
                 return <TableView database={database} />
@@ -86,18 +86,20 @@ export function DatabaseView({ database, page }: DatabaseViewProps) {
                 {renderView()}
             </div>
 
-            {selectedRow && openMode === 'modal' && (
+            {selectedRow && openMode === 'center' && (
                 <RowDetailModal
                     row={selectedRow}
-                    properties={database.properties}
+                    database={database}
+                    isOpen={!!selectedRow}
                     onClose={() => setSelectedRowId(null)}
                 />
             )}
 
-            {selectedRow && openMode === 'drawer' && (
+            {selectedRow && openMode === 'side' && (
                 <RowDetailDrawer
                     row={selectedRow}
-                    properties={database.properties}
+                    database={database}
+                    isOpen={!!selectedRow}
                     onClose={() => setSelectedRowId(null)}
                 />
             )}

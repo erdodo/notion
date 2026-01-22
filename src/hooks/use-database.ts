@@ -73,6 +73,11 @@ interface DatabaseState {
     // Sync from server view
     setFromView: (view: any) => void
 
+    updateView: (view: any) => void
+
+    hiddenProperties: string[]
+    setHiddenProperties: (propertyIds: string[]) => void
+
     // Board View Configuration
     boardGroupByProperty: string | null
     setBoardGroupByProperty: (propertyId: string | null) => void
@@ -141,6 +146,18 @@ export const useDatabase = create<DatabaseState>()(
             clearFilters: () => set({ filters: [] }),
 
             sorts: [],
+            updateView: (view: any) => set({
+                filters: view.filter || [],
+                sorts: view.sort || [],
+                groupByProperty: view.group?.propertyId || null,
+                visibleProperties: view.hiddenProperties && view.database?.properties ?
+                    view.database.properties.map((p: any) => p.id).filter((id: string) => !view.hiddenProperties.includes(id))
+                    : [],
+            }),
+
+            hiddenProperties: [],
+            setHiddenProperties: (propertyIds) => set({ hiddenProperties: propertyIds }),
+
             addSort: (sort) => set((state) => ({ sorts: [...state.sorts, sort] })),
             updateSort: (index, sort) => set((state) => {
                 const newSorts = [...state.sorts]
@@ -279,6 +296,7 @@ export const useDatabase = create<DatabaseState>()(
                 timelineDependencyProperty: state.timelineDependencyProperty,
                 openMode: state.openMode,
                 pageOpenMode: state.pageOpenMode
+
             }),
         }
     )

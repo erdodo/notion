@@ -8,18 +8,14 @@ import {
     DropdownMenuTrigger,
     DropdownMenuSub,
     DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
-    DropdownMenuItemIndicator,
-    DropdownMenuCheckboxItem,
+    DropdownMenuSubContent, DropdownMenuCheckboxItem,
     DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
+    DropdownMenuRadioItem
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import {
     MoreHorizontal,
-    Trash,
-    Type,
-    Copy,
+    Trash, Copy,
     Layout,
     Eye,
     Filter,
@@ -37,22 +33,18 @@ import {
     Calendar,
     List,
     GanttChartSquare,
-    LayoutGrid,
-    Plus,
-    X,
+    LayoutGrid, X,
     ArrowUp,
     ArrowDown,
     MousePointerClick
 } from "lucide-react"
 import { useDatabase } from "@/hooks/use-database"
-import { deleteDatabaseView, updateDatabaseView, createDatabaseView, setDatabaseDefaultView } from "@/actions/database-view"
+import { deleteDatabaseView, updateDatabaseView, createDatabaseView } from "@/actions/database-view"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Database, DatabaseView, ViewType, Property } from "@prisma/client"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
 import { DataSourceDialog } from "../data-source-dialog"
 
 interface ViewSettingsMenuProps {
@@ -62,21 +54,21 @@ interface ViewSettingsMenuProps {
 }
 
 const VIEW_ICONS = {
-    [ViewType.TABLE]: Table,
-    [ViewType.BOARD]: Columns,
-    [ViewType.CALENDAR]: Calendar,
-    [ViewType.GALLERY]: LayoutGrid,
-    [ViewType.LIST]: List,
-    [ViewType.TIMELINE]: GanttChartSquare,
+    [ViewType.table]: Table,
+    [ViewType.board]: Columns,
+    [ViewType.calendar]: Calendar,
+    [ViewType.gallery]: LayoutGrid,
+    [ViewType.list]: List,
+    [ViewType.timeline]: GanttChartSquare,
 }
 
 const VIEW_LABELS = {
-    [ViewType.TABLE]: "Table",
-    [ViewType.BOARD]: "Board",
-    [ViewType.CALENDAR]: "Calendar",
-    [ViewType.GALLERY]: "Gallery",
-    [ViewType.LIST]: "List",
-    [ViewType.TIMELINE]: "Timeline",
+    [ViewType.table]: "Table",
+    [ViewType.board]: "Board",
+    [ViewType.calendar]: "Calendar",
+    [ViewType.gallery]: "Gallery",
+    [ViewType.list]: "List",
+    [ViewType.timeline]: "Timeline",
 }
 
 export function ViewSettingsMenu({ databaseId, views, database }: ViewSettingsMenuProps) {

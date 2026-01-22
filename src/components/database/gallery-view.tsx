@@ -1,11 +1,10 @@
 "use client"
 
-import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page, DatabaseView } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { GalleryCard } from "./gallery-card"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
 import { addRow } from "@/app/(main)/_actions/database"
@@ -15,6 +14,7 @@ interface GalleryViewProps {
     database: Database & {
         properties: Property[]
         rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+        views: DatabaseView[]
     }
 }
 

@@ -14,7 +14,7 @@ import {
 import { arrayMove } from "@dnd-kit/sortable"
 import { useState, useMemo } from "react"
 import { createPortal } from "react-dom"
-import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page, DatabaseView } from "@prisma/client"
 import { useDatabase } from "@/hooks/use-database"
 import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { addRow, updateCellByPosition, updateProperty } from "@/app/(main)/_actions/database"
@@ -27,6 +27,7 @@ interface BoardViewProps {
     database: Database & {
         properties: Property[]
         rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+        views: DatabaseView[]
     }
 }
 
@@ -34,7 +35,7 @@ import { useOptimisticDatabase } from "@/hooks/use-optimistic-database"
 
 
 export function BoardView({ database: initialDatabase }: BoardViewProps) {
-    const { database, updateCell, addRow: addOptimisticRow, addProperty: addOptimisticProperty, updateProperty: optimisticUpdateProperty } = useOptimisticDatabase(initialDatabase as any)
+    const { database, updateCell, addRow: addOptimisticRow, addProperty: addOptimisticProperty, updateProperty: optimisticUpdateProperty } = useOptimisticDatabase(initialDatabase)
 
     const { boardGroupByProperty } = useDatabase()
     // Cast result to FilteredDataResult and use sortedRows

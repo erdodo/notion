@@ -1,11 +1,12 @@
 
 import { useState, useCallback, useEffect } from "react"
-import { Database, Property, DatabaseRow, Cell, PropertyType, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, PropertyType, Page, DatabaseView } from "@prisma/client"
 import { useRouter } from "next/navigation"
 
 export type DetailedDatabase = Database & {
     properties: Property[]
     rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+    views: DatabaseView[]
 }
 
 export function useOptimisticDatabase(initialDatabase: DetailedDatabase) {

@@ -2,8 +2,7 @@
 
 import { createReactBlockSpec } from "@blocknote/react"
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import { FileText, ExternalLink, MoreHorizontal, PanelRight, Maximize2, MousePointerClick } from "lucide-react"
+import { FileText, ExternalLink, PanelRight, Maximize2, MousePointerClick } from "lucide-react"
 import { getDocument } from "@/app/(main)/_actions/documents"
 import {
     DropdownMenu,
@@ -15,7 +14,7 @@ import {
 import { usePreview } from "@/hooks/use-preview"
 import { useRouter } from "next/navigation"
 
-// Helper function since we can't import server action directly inside useEffect sometimes if it's not marked 'use server' properly or if build issues. 
+// Helper function since we can't import server action directly inside useEffect sometimes if it's not marked 'use server' properly or if build issues.
 // But getDocumentById IS a server action.
 // Ideally we should use a client-side fetcher or the server action.
 // The prompt used getDocumentById.
@@ -99,11 +98,11 @@ export const PageMentionBlock = createReactBlockSpec(
                                 Open Page
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => onOpen(block.props.pageId, "drawer")}>
+                            <DropdownMenuItem onClick={() => onOpen(block.props.pageId, "side")}>
                                 <PanelRight className="h-4 w-4 mr-2" />
                                 Open in Side Peek
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onOpen(block.props.pageId, "modal")}>
+                            <DropdownMenuItem onClick={() => onOpen(block.props.pageId, "center")}>
                                 <Maximize2 className="h-4 w-4 mr-2" />
                                 Open in Center Peek
                             </DropdownMenuItem>

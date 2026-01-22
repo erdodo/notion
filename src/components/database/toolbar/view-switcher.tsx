@@ -34,21 +34,21 @@ interface ViewSwitcherProps {
 }
 
 const VIEW_ICONS = {
-    [ViewType.TABLE]: Table,
-    [ViewType.BOARD]: Columns,
-    [ViewType.CALENDAR]: Calendar,
-    [ViewType.GALLERY]: LayoutGrid,
-    [ViewType.LIST]: List,
-    [ViewType.TIMELINE]: GanttChartSquare,
+    [ViewType.table]: Table,
+    [ViewType.board]: Columns,
+    [ViewType.calendar]: Calendar,
+    [ViewType.gallery]: LayoutGrid,
+    [ViewType.list]: List,
+    [ViewType.timeline]: GanttChartSquare,
 }
 
 const VIEW_LABELS = {
-    [ViewType.TABLE]: "Table",
-    [ViewType.BOARD]: "Board",
-    [ViewType.CALENDAR]: "Calendar",
-    [ViewType.GALLERY]: "Gallery",
-    [ViewType.LIST]: "List",
-    [ViewType.TIMELINE]: "Timeline",
+    [ViewType.table]: "Table",
+    [ViewType.board]: "Board",
+    [ViewType.calendar]: "Calendar",
+    [ViewType.gallery]: "Gallery",
+    [ViewType.list]: "List",
+    [ViewType.timeline]: "Timeline",
 }
 
 export function ViewSwitcher({ className, database }: ViewSwitcherProps) {

@@ -6,8 +6,8 @@ import { getDocument } from "@/app/(main)/_actions/documents"
 import { getDatabase } from "@/app/(main)/_actions/database"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DatabaseView } from "./database-view"
-import { PageRenderer } from "@/components/editor/page-renderer"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { PageRenderer } from "../page/page-renderer"
 
 interface PageDialogProps {
     pageId: string | null

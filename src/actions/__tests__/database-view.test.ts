@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createDatabaseView, updateDatabaseView, deleteDatabaseView, getDatabaseViews } from '../database-view'
+import { createDatabaseView, updateDatabaseView } from '../database-view'
 import { db } from '@/lib/db'
 import { ViewType } from '@prisma/client'
 
@@ -42,7 +42,7 @@ describe('Database View Actions', () => {
     describe('createDatabaseView', () => {
         it('should create a view with correct defaults', async () => {
             const databaseId = 'db-1'
-            const type = ViewType.TABLE
+            const type = ViewType.table
             const name = 'New View'
 
             // Mock findFirst for order
@@ -74,7 +74,7 @@ describe('Database View Actions', () => {
             // Mock status property
             vi.mocked(db.property.findFirst).mockResolvedValueOnce({ id: 'prop-status', type: 'STATUS' } as any)
 
-            await createDatabaseView('db-1', ViewType.BOARD, 'Board')
+            await createDatabaseView('db-1', ViewType.board, 'Board')
 
             expect(db.databaseView.create).toHaveBeenCalledWith({
                 data: expect.objectContaining({

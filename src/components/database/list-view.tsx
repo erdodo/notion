@@ -1,6 +1,6 @@
 "use client"
 
-import { Database, Property, DatabaseRow, Cell, Page } from "@prisma/client"
+import { Database, Property, DatabaseRow, Cell, Page, type DatabaseView } from "@prisma/client"
 import { useFilteredSortedData, FilteredDataResult } from "@/hooks/use-filtered-sorted-data"
 import { ListItem } from "./list-item"
 import { Plus } from "lucide-react"
@@ -13,6 +13,7 @@ interface ListViewProps {
     database: Database & {
         properties: Property[]
         rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
+        views: DatabaseView[]
     }
 }
 
