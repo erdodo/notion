@@ -1,29 +1,25 @@
 # ======== Stage 1: Install Dependencies ========
-FROM node:18-alpine AS deps
+# Use Node.js 20.x to match dependency requirements
+FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Copy prisma schema before installing, so `prisma generate` postinstall script works
+COPY prisma ./prisma
 RUN npm install --frozen-lockfile
 
 # ======== Stage 2: Build App ========
-FROM node:18-alpine AS builder
+# Use Node.js 20.x
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Environment variables for build time
-# ARG DATABASE_URL
-# ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-# ARG CLERK_SECRET_KEY
-# ARG NEXT_PUBLIC_CLERK_SIGN_IN_URL
-# ARG NEXT_PUBLIC_CLERK_SIGN_UP_URL
-# ARG NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
-# ARG NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL
-# ARG EDGE_STORE_ACCESS_KEY
-# ARG EDGE_STORE_SECRET_KEY
+# prisma generate is already run via postinstall, but running it again is safe
 RUN npx prisma generate
 RUN npm run build
 
 # ======== Stage 3: Production Image ========
-FROM node:18-alpine AS runner
+# Use Node.js 20.x
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -43,6 +39,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-# The command to start the app will be in docker-compose.yml
-# It will run migrations and then start the server
 CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
