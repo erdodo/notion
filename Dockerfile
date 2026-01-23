@@ -12,23 +12,13 @@ FROM node:20-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+COPY .env .env.example
 
-# Declare ARGs for build-time secrets
-ARG DATABASE_URL
-ARG CLERK_SECRET_KEY
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-ARG EDGE_STORE_ACCESS_KEY
-ARG EDGE_STORE_SECRET_KEY
-
-# Expose ARGs as ENV for the build command
-ENV DATABASE_URL=$DATABASE_URL
-ENV CLERK_SECRET_KEY=$CLERK_SECRET_KEY
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-ENV EDGE_STORE_ACCESS_KEY=$EDGE_STORE_ACCESS_KEY
-ENV EDGE_STORE_SECRET_KEY=$EDGE_STORE_SECRET_KEY
 
 # prisma generate is already run via postinstall, but running it again is safe
 RUN npx prisma generate
+
+# Pass ARGs as environment variables directly to the build command
 RUN npm run build
 
 # ======== Stage 3: Production Image ========
@@ -38,19 +28,37 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Create a non-root user for security (Debian-based)
+RUN apt-get update && apt-get install -y openssl
+
+# Create user first
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --disabled-password --no-create-home --uid 1001 --ingroup nodejs nextjs
+
+# Copy package files, prisma schema, and source files for the custom server
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+
+# Install dependencies. `postinstall` will now work.
+RUN npm install
+
+# Copy the rest of the built app code and assets
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Change ownership of the entire app directory to the non-root user
+RUN chown -R nextjs:nodejs /app
+
+# Switch to the non-root user
 USER nextjs
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
+# Set a home directory for the user to avoid npm EACCES errors at runtime
+ENV HOME /app
 
 EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["npm", "run", "start:docker"]

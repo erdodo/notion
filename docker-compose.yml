@@ -3,15 +3,15 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: notion
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-notion}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d notion"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-notion}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -20,30 +20,39 @@ services:
     build: .
     restart: always
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
     environment:
-      # This URL should use the service name 'db' as the host
-      DATABASE_URL: "postgresql://user:password@db:5432/notion?schema=public"
-      
-      # === Clerk Environment Variables ===
-      # Find these in your Clerk Dashboard
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "your_clerk_publishable_key"
-      CLERK_SECRET_KEY: "your_clerk_secret_key"
-      NEXT_PUBLIC_CLERK_SIGN_IN_URL: "/sign-in"
-      NEXT_PUBLIC_CLERK_SIGN_UP_URL: "/sign-up"
-      NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "/documents"
-      NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: "/documents"
-      
-      # === Edge Store Environment Variables ===
-      # Find these in your Edge Store Dashboard
-      EDGE_STORE_ACCESS_KEY: "your_edge_store_access_key"
-      EDGE_STORE_SECRET_KEY: "your_edge_store_secret_key"
-      
-      # === Next.js Environment Variables ===
-      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      # These will be populated by Coolify at runtime
+      DATABASE_URL: ${DATABASE_URL}
+
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+
+      AUTH_URL: ${AUTH_URL}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_TRUST_HOST: ${AUTH_TRUST_HOST:-true}
+
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+      NEXT_PUBLIC_EDGE_STORE_ENABLED: ${NEXT_PUBLIC_EDGE_STORE_ENABLED:-false}
+      EDGE_STORE_ACCESS_KEY: ${EDGE_STORE_ACCESS_KEY}
+      EDGE_STORE_SECRET_KEY: ${EDGE_STORE_SECRET_KEY}
+
+      PUSHER_APP_ID: ${PUSHER_APP_ID}
+      PUSHER_KEY: ${PUSHER_KEY}
+      PUSHER_SECRET: ${PUSHER_SECRET}
+      PUSHER_CLUSTER: ${PUSHER_CLUSTER}
+
+      NEXT_PUBLIC_PUSHER_KEY: ${NEXT_PUBLIC_PUSHER_KEY}
+      NEXT_PUBLIC_PUSHER_CLUSTER: ${NEXT_PUBLIC_PUSHER_CLUSTER}
+
+      # Added hostname and port for the custom server
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
 
 volumes:
   postgres_data:

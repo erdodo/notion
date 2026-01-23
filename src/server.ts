@@ -5,8 +5,8 @@ import { Server, Socket } from "socket.io";
 import { WS_EVENTS, validateEvent, type WebSocketEvent } from "./lib/websocket-events";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
-const port = 3000;
+const hostname = process.env.HOSTNAME || "0.0.0.0";
+const port = parseInt(process.env.PORT || "3000", 10);
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
