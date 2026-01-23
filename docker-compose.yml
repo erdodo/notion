@@ -3,18 +3,18 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-notion}
-      POSTGRES_USER: ${POSTGRES_USER:-user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: notion
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-notion}" ]
+      test: [ "CMD-SHELL", "pg_isready -U user -d notion" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - notion-network
 
   app:
     build: .
@@ -25,14 +25,15 @@ services:
       db:
         condition: service_healthy
     environment:
-      # These will be populated by Coolify at runtime
-      DATABASE_URL: ${DATABASE_URL}
+      # Hardcoded internal URL to prevent local .env overrides
+      DATABASE_URL: postgresql://user:password@db:5432/notion?schema=public
 
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      # Others remain configurable for Coolify dashboard, but defaults added
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-your-secret}
 
-      AUTH_URL: ${AUTH_URL}
-      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_URL: ${AUTH_URL:-http://localhost:3000}
+      AUTH_SECRET: ${AUTH_SECRET:-your-secret}
       AUTH_TRUST_HOST: ${AUTH_TRUST_HOST:-true}
 
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
@@ -50,9 +51,14 @@ services:
       NEXT_PUBLIC_PUSHER_KEY: ${NEXT_PUBLIC_PUSHER_KEY}
       NEXT_PUBLIC_PUSHER_CLUSTER: ${NEXT_PUBLIC_PUSHER_CLUSTER}
 
-      # Added hostname and port for the custom server
       HOSTNAME: 0.0.0.0
       PORT: 3000
+    networks:
+      - notion-network
+
+networks:
+  notion-network:
+    driver: bridge
 
 volumes:
   postgres_data:
