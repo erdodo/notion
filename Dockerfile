@@ -12,7 +12,6 @@ FROM node:20-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY .env .env.example
 
 
 # prisma generate is already run via postinstall, but running it again is safe
