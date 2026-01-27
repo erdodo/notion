@@ -5,6 +5,7 @@ Comprehensive end-to-end test coverage for all editor components and block types
 ## 📋 Overview
 
 This test suite provides 900+ test cases covering:
+
 - Main editor components
 - 15 different block types
 - Editor menus and pickers
@@ -16,9 +17,11 @@ This test suite provides 900+ test cases covering:
 ## 🧩 Main Editor Components (3 files, 127 cases)
 
 ### editor.test.tsx (46 cases)
+
 Main TipTap Editor component testing
 
 **Coverage:**
+
 - ✅ Rendering with min-h-screen container
 - ✅ Initial content handling (HTML strings)
 - ✅ onChange callback on text input
@@ -33,9 +36,11 @@ Main TipTap Editor component testing
 - ✅ Cleanup on unmount
 
 ### formatting-toolbar.test.tsx (35 cases)
+
 FormattingToolbar component for text formatting
 
 **Coverage:**
+
 - ✅ Toolbar rendering with formatting buttons
 - ✅ Format buttons (bold, italic, underline, strikethrough, code)
 - ✅ Color picker and highlight picker
@@ -51,9 +56,11 @@ FormattingToolbar component for text formatting
 - ✅ Disabled editor handling
 
 ### document-editor.test.tsx (46 cases)
+
 Complete document editor integration
 
 **Coverage:**
+
 - ✅ Editor initialization
 - ✅ Content management
 - ✅ Title management
@@ -80,6 +87,7 @@ Complete document editor integration
 ### Text & Content Blocks
 
 **toggle-block.test.tsx (43 cases)**
+
 - ✅ Toggle open/closed state
 - ✅ Content visibility control
 - ✅ Nested content support
@@ -88,6 +96,7 @@ Complete document editor integration
 - ✅ Rapid toggle clicks
 
 **quote-block.test.tsx (35 cases)**
+
 - ✅ Color styling (6 variants)
 - ✅ Left border styling
 - ✅ Italic text styling
@@ -97,6 +106,7 @@ Complete document editor integration
 - ✅ Long quote handling
 
 **callout-block.test.tsx (51 cases)**
+
 - ✅ Icon selection (💡, ⚠️, ❌, ✅, ❓)
 - ✅ Color variants (6 colors)
 - ✅ Nested content
@@ -107,6 +117,7 @@ Complete document editor integration
 - ✅ Type indication by icon/color
 
 **divider-block.test.tsx (30 cases)**
+
 - ✅ Horizontal line rendering
 - ✅ Full-width layout
 - ✅ Gray styling
@@ -119,6 +130,7 @@ Complete document editor integration
 ### Media Blocks
 
 **image-block.test.tsx (48 cases)**
+
 - ✅ URL handling and updating
 - ✅ Caption management
 - ✅ Alt text support
@@ -132,6 +144,7 @@ Complete document editor integration
 - ✅ Download support
 
 **video-block.test.tsx (56 cases)**
+
 - ✅ URL handling
 - ✅ Caption management
 - ✅ Format support (MP4, WebM, MOV, YouTube)
@@ -150,6 +163,7 @@ Complete document editor integration
 - ✅ Loop functionality
 
 **audio-block.test.tsx (43 cases)**
+
 - ✅ URL handling
 - ✅ Title management
 - ✅ Format support (MP3, WAV, OGG)
@@ -162,6 +176,7 @@ Complete document editor integration
 - ✅ Metadata storage
 
 **embed-block.test.tsx (44 cases)**
+
 - ✅ URL management
 - ✅ Caption support
 - ✅ Platform support (YouTube, Vimeo, Twitter, Figma, Google Maps)
@@ -174,6 +189,7 @@ Complete document editor integration
 - ✅ Loading/error states
 
 **file-block.test.tsx (45 cases)**
+
 - ✅ File URL handling
 - ✅ File name storage
 - ✅ File size tracking
@@ -185,6 +201,7 @@ Complete document editor integration
 - ✅ Metadata storage
 
 **bookmark-block.test.tsx (40 cases)**
+
 - ✅ URL handling
 - ✅ Title and description
 - ✅ Thumbnail URL support
@@ -199,6 +216,7 @@ Complete document editor integration
 ### Database & Reference Blocks
 
 **page-mention-block.test.tsx (44 cases)**
+
 - ✅ Page ID storage
 - ✅ Page name display
 - ✅ Page icon support
@@ -210,6 +228,7 @@ Complete document editor integration
 - ✅ Tooltip display
 
 **inline-database-block.test.tsx (47 cases)**
+
 - ✅ Database ID and name
 - ✅ View ID management
 - ✅ Data loading and display
@@ -226,6 +245,7 @@ Complete document editor integration
 - ✅ Real-time updates
 
 **synced-block.test.tsx (45 cases)**
+
 - ✅ Synced from ID tracking
 - ✅ Content synchronization
 - ✅ Sync status indication
@@ -241,6 +261,7 @@ Complete document editor integration
 - ✅ Sync settings
 
 **toc-block.test.tsx (46 cases)**
+
 - ✅ Heading extraction (H1, H2, H3)
 - ✅ Hierarchical structure maintenance
 - ✅ Heading text and IDs
@@ -257,9 +278,11 @@ Complete document editor integration
 ## 🎛️ Editor Menus & Components (2 files, 73 cases)
 
 ### block-menu.test.tsx (37 cases)
+
 Block insertion menu
 
 **Coverage:**
+
 - ✅ Menu rendering and display
 - ✅ Open/close functionality
 - ✅ Block selection
@@ -274,9 +297,11 @@ Block insertion menu
 - ✅ Accessibility roles
 
 ### slash-menu.test.tsx (36 cases)
+
 Slash command menu
 
 **Coverage:**
+
 - ✅ Menu open on slash
 - ✅ Search query tracking
 - ✅ Command filtering
@@ -293,9 +318,11 @@ Slash command menu
 ## 📑 Header Component (1 file, 50 cases)
 
 ### document-header.test.tsx (50 cases)
+
 Document metadata and settings header
 
 **Coverage:**
+
 - ✅ Title display and editing
 - ✅ Icon selection
 - ✅ Cover image upload/removal
@@ -317,55 +344,61 @@ Document metadata and settings header
 ## 🧪 Testing Patterns Used
 
 ### Setup & Teardown
+
 ```typescript
 beforeEach(() => {
-  vi.clearAllMocks()
-})
+  vi.clearAllMocks();
+});
 ```
 
 ### Mock Creation
+
 ```typescript
 const createMock = (props = {}) => ({
   id: 'unique-id',
   type: 'component-type',
   props: { defaultProp: 'value', ...props },
-})
+});
 ```
 
 ### Event Handler Testing
+
 ```typescript
-const handleAction = vi.fn()
-handleAction(block.id)
-expect(handleAction).toHaveBeenCalledWith(block.id)
+const handleAction = vi.fn();
+handleAction(block.id);
+expect(handleAction).toHaveBeenCalledWith(block.id);
 ```
 
 ### State Management
+
 ```typescript
-let state = false
-expect(state).toBe(false)
-state = true
-expect(state).toBe(true)
+let state = false;
+expect(state).toBe(false);
+state = true;
+expect(state).toBe(true);
 ```
 
 ### Collections Testing
+
 ```typescript
-const items = array.filter(item => condition)
-expect(items.length).toBeGreaterThan(0)
+const items = array.filter((item) => condition);
+expect(items.length).toBeGreaterThan(0);
 ```
 
 ## 📊 Test Statistics
 
-| Category | Files | Test Cases |
-|----------|-------|-----------|
-| Main Components | 3 | 127 |
-| Block Components | 15 | 650+ |
-| Menus | 2 | 73 |
-| Header | 1 | 50 |
-| **TOTAL** | **21** | **900+** |
+| Category         | Files  | Test Cases |
+| ---------------- | ------ | ---------- |
+| Main Components  | 3      | 127        |
+| Block Components | 15     | 650+       |
+| Menus            | 2      | 73         |
+| Header           | 1      | 50         |
+| **TOTAL**        | **21** | **900+**   |
 
 ## 🎯 Coverage Areas
 
 ### Functionality
+
 ✅ Component rendering
 ✅ State management
 ✅ Event handling
@@ -374,6 +407,7 @@ expect(items.length).toBeGreaterThan(0)
 ✅ Prop combinations
 
 ### Accessibility
+
 ✅ ARIA attributes
 ✅ Keyboard navigation
 ✅ Focus management
@@ -381,6 +415,7 @@ expect(items.length).toBeGreaterThan(0)
 ✅ Screen reader support
 
 ### Edge Cases
+
 ✅ Empty states
 ✅ Large datasets
 ✅ Long content
@@ -389,6 +424,7 @@ expect(items.length).toBeGreaterThan(0)
 ✅ Loading states
 
 ### Performance
+
 ✅ Large collections
 ✅ Rapid interactions
 ✅ Multiple instances
@@ -413,6 +449,7 @@ npm run test:coverage src/components/editor/__tests__
 ## 📝 Test Execution
 
 All tests are written using Vitest with comprehensive mocking:
+
 - **Framework**: Vitest
 - **UI Testing**: @testing-library/react
 - **Mocking**: vi.fn(), vi.mock()
@@ -421,6 +458,7 @@ All tests are written using Vitest with comprehensive mocking:
 ## ✨ Features Tested
 
 ### Blocks
+
 - ✅ All 15 block types
 - ✅ Block creation and removal
 - ✅ Block props and variants
@@ -429,6 +467,7 @@ All tests are written using Vitest with comprehensive mocking:
 - ✅ Copy/paste
 
 ### Editor
+
 - ✅ Content editing
 - ✅ Text formatting
 - ✅ Keyboard shortcuts
@@ -437,12 +476,14 @@ All tests are written using Vitest with comprehensive mocking:
 - ✅ Collaboration
 
 ### Menus
+
 - ✅ Block insertion
 - ✅ Slash commands
 - ✅ Search/filter
 - ✅ Keyboard navigation
 
 ### Header
+
 - ✅ Metadata editing
 - ✅ Icon selection
 - ✅ Cover images

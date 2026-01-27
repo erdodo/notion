@@ -1,23 +1,24 @@
-import type { Metadata } from "next"
-import "./globals.css"
-import { AuthProvider } from "@/components/providers/auth-provider"
-import { ThemeProvider } from "@/components/providers/theme-provider"
-import { EdgeStoreProviderWrapper } from "@/components/providers/edgestore-provider"
-import { QueryProvider } from "@/components/providers/query-provider"
-import { ModalProvider } from "@/components/providers/modal-provider"
-import { DocumentPreviewProvider } from "@/components/providers/document-preview-provider"
-import { SocketProvider } from "@/components/providers/socket-provider"
-import { Toaster } from "sonner"
+import type { Metadata } from 'next';
+import './globals.css';
+import { Toaster } from 'sonner';
+
+import { AuthProvider } from '@/components/providers/auth-provider';
+import { DocumentPreviewProvider } from '@/components/providers/document-preview-provider';
+import { EdgeStoreProviderWrapper } from '@/components/providers/edgestore-provider';
+import { ModalProvider } from '@/components/providers/modal-provider';
+import { QueryProvider } from '@/components/providers/query-provider';
+import { SocketProvider } from '@/components/providers/socket-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export const metadata: Metadata = {
-  title: "Notion Clone",
-  description: "A Notion clone built with Next.js 14",
-}
+  title: 'Notion Clone',
+  description: 'A Notion clone built with Next.js 14',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -44,5 +45,5 @@ export default function RootLayout({
         </AuthProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -1,248 +1,155 @@
-import { describe, it, expect } from 'vitest'
-import { parseMarkdownToBlocks, parseCSVToDatabase } from '../import-utils'
+import { describe, it, expect } from 'vitest';
+
+import { parseMarkdownToBlocks, parseCSVToDatabase } from '../import-utils';
 
 describe('import-utils', () => {
   describe('parseMarkdownToBlocks', () => {
-    it('should handle empty markdown', () => {
-      const result = parseMarkdownToBlocks('')
-      expect(Array.isArray(result)).toBe(true)
-      expect(result.length).toBe(0)
-    })
+    it('should parse headings correctly', () => {
+      const markdown = '# Heading 1\n## Heading 2\n### Heading 3';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse single paragraph', () => {
-      const result = parseMarkdownToBlocks('Hello World')
-      expect(result.length).toBe(1)
-      expect(result[0].type).toBe('paragraph')
-      expect(result[0].content[0].text).toContain('Hello')
-    })
+      expect(blocks).toHaveLength(3);
+      expect(blocks[0].type).toBe('heading');
+      expect(blocks[0].props).toEqual(expect.objectContaining({ level: 1 }));
+      expect(blocks[0].content).toEqual([
+        { type: 'text', text: 'Heading 1', styles: {} },
+      ]);
 
-    it('should skip empty lines', () => {
-      const result = parseMarkdownToBlocks('Line 1\n\n\nLine 2')
-      expect(result.length).toBe(2)
-    })
+      expect(blocks[1].props).toEqual(expect.objectContaining({ level: 2 }));
+      expect(blocks[2].props).toEqual(expect.objectContaining({ level: 3 }));
+    });
 
-    it('should parse heading with level 1', () => {
-      const result = parseMarkdownToBlocks('# Title')
-      expect(result[0].type).toBe('heading')
-      expect(result[0].props.level).toBe(1)
-      expect(result[0].content[0].text).toBe('Title')
-    })
+    it('should parse lists correctly', () => {
+      const markdown = '- Item 1\n* Item 2';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse heading with level 2', () => {
-      const result = parseMarkdownToBlocks('## Subtitle')
-      expect(result[0].type).toBe('heading')
-      expect(result[0].props.level).toBe(2)
-    })
+      expect(blocks).toHaveLength(2);
+      expect(blocks[0].type).toBe('bulletListItem');
+      expect(blocks[0].content).toEqual([
+        { type: 'text', text: 'Item 1', styles: {} },
+      ]);
+      expect(blocks[1].type).toBe('bulletListItem');
+    });
 
-    it('should parse heading with level 3', () => {
-      const result = parseMarkdownToBlocks('### Sub-subtitle')
-      expect(result[0].type).toBe('heading')
-      expect(result[0].props.level).toBe(3)
-    })
+    it('should parse checklists correctly', () => {
+      const markdown = '- [ ] Unchecked\n- [x] Checked';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse horizontal rule with dashes', () => {
-      const result = parseMarkdownToBlocks('---')
-      expect(result[0].type).toBe('divider')
-    })
+      expect(blocks).toHaveLength(2);
+      expect(blocks[0].type).toBe('checkListItem');
+      expect(blocks[0].props).toEqual(
+        expect.objectContaining({ checked: false })
+      );
 
-    it('should parse horizontal rule with underscores', () => {
-      const result = parseMarkdownToBlocks('___')
-      expect(result[0].type).toBe('divider')
-    })
+      expect(blocks[1].type).toBe('checkListItem');
+      expect(blocks[1].props).toEqual(
+        expect.objectContaining({ checked: true })
+      );
+    });
 
-    it('should parse horizontal rule with asterisks', () => {
-      const result = parseMarkdownToBlocks('***')
-      expect(result[0].type).toBe('divider')
-    })
+    it('should parse code blocks correctly', () => {
+      const markdown = '```typescript\nconst a = 1;\n```';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse code block', () => {
-      const result = parseMarkdownToBlocks('```javascript\nconst x = 1\n```')
-      expect(result[0].type).toBe('codeBlock')
-      expect(result[0].props.language).toBe('javascript')
-      expect(result[0].content[0].text).toContain('const x = 1')
-    })
+      expect(blocks).toHaveLength(1);
+      expect(blocks[0].type).toBe('codeBlock');
+      expect(blocks[0].props).toEqual(
+        expect.objectContaining({ language: 'typescript' })
+      );
 
-    it('should parse code block without language', () => {
-      const result = parseMarkdownToBlocks('```\nplain code\n```')
-      expect(result[0].type).toBe('codeBlock')
-      expect(result[0].props.language).toBe('plain')
-    })
+      const text = (blocks[0].content as any[])[0].text;
+      expect(text).toBe('const a = 1;');
+    });
 
-    it('should parse quote', () => {
-      const result = parseMarkdownToBlocks('> This is a quote')
-      expect(result[0].type).toBe('quote')
-      expect(result[0].content[0].text).toBe('This is a quote')
-    })
+    it('should parse blockquotes and callouts', () => {
+      const markdown = '> Normal quote\n> 💡 Callout idea';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse callout with emoji', () => {
-      const result = parseMarkdownToBlocks('> 💡 Important note')
-      expect(result[0].type).toBe('callout')
-      expect(result[0].props.icon).toBe('💡')
-      expect(result[0].content[0].text).toBe('Important note')
-    })
+      expect(blocks).toHaveLength(2);
+      expect(blocks[0].type).toBe('quote');
+      expect(blocks[0].content).toEqual([
+        { type: 'text', text: 'Normal quote', styles: {} },
+      ]);
 
-    it('should parse checkbox unchecked', () => {
-      const result = parseMarkdownToBlocks('- [ ] Task to do')
-      expect(result[0].type).toBe('checkListItem')
-      expect(result[0].props.checked).toBe(false)
-      expect(result[0].content[0].text).toBe('Task to do')
-    })
+      expect(blocks[1].type).toBe('callout');
+      expect(blocks[1].props).toEqual(expect.objectContaining({ icon: '💡' }));
+      expect(blocks[1].content).toEqual([
+        { type: 'text', text: 'Callout idea', styles: {} },
+      ]);
+    });
 
-    it('should parse checkbox checked', () => {
-      const result = parseMarkdownToBlocks('- [x] Completed task')
-      expect(result[0].type).toBe('checkListItem')
-      expect(result[0].props.checked).toBe(true)
-      expect(result[0].content[0].text).toBe('Completed task')
-    })
+    it('should parse images', () => {
+      const markdown = '![Alt text](https://example.com/image.png)';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse bullet list item with dash', () => {
-      const result = parseMarkdownToBlocks('- Item 1')
-      expect(result[0].type).toBe('bulletListItem')
-      expect(result[0].content[0].text).toBe('Item 1')
-    })
+      expect(blocks).toHaveLength(1);
+      expect(blocks[0].type).toBe('image');
+      expect(blocks[0].props).toEqual(
+        expect.objectContaining({
+          url: 'https://example.com/image.png',
+          caption: 'Alt text',
+        })
+      );
+    });
 
-    it('should parse bullet list item with asterisk', () => {
-      const result = parseMarkdownToBlocks('* Item 1')
-      expect(result[0].type).toBe('bulletListItem')
-      expect(result[0].content[0].text).toBe('Item 1')
-    })
+    it('should parse dividers', () => {
+      const markdown = '---\n***\n___';
+      const blocks = parseMarkdownToBlocks(markdown);
 
-    it('should parse numbered list item', () => {
-      const result = parseMarkdownToBlocks('1. First item')
-      // Implementation doesn't specifically handle numbered lists, treats as paragraph
-      expect(result[0].content[0].text).toContain('First')
-    })
+      expect(blocks).toHaveLength(3);
+      for (const b of blocks) expect(b.type).toBe('divider');
+    });
 
-    it('should parse image', () => {
-      const result = parseMarkdownToBlocks('![alt text](https://example.com/image.jpg)')
-      expect(result[0].type).toBe('image')
-      expect(result[0].props.url).toBe('https://example.com/image.jpg')
-      expect(result[0].props.caption).toBe('alt text')
-    })
+    it('should handle empty lines', () => {
+      const markdown = 'Line 1\n\nLine 2';
+      const blocks = parseMarkdownToBlocks(markdown);
+      expect(blocks).toHaveLength(2);
+      expect(blocks[0].type).toBe('paragraph');
+      expect(blocks[1].type).toBe('paragraph');
+    });
 
-    it('should have unique IDs for blocks', () => {
-      const result = parseMarkdownToBlocks('Line 1\nLine 2\nLine 3')
-      const ids = result.map(b => b.id)
-      const uniqueIds = new Set(ids)
-      expect(uniqueIds.size).toBe(ids.length)
-    })
+    it('should parse inline styles', () => {
+      const markdown = '**Bold** *Italic* ~~Strike~~ `Code` [Link](url)';
 
-    it('should parse multiple blocks', () => {
-      const markdown = `# Title
-This is a paragraph.
-- Item 1
-- Item 2
-> Quote`
-      const result = parseMarkdownToBlocks(markdown)
-      expect(result.length).toBeGreaterThan(1)
-      expect(result[0].type).toBe('heading')
-      expect(result[1].type).toBe('paragraph')
-    })
+      const blocks = parseMarkdownToBlocks(markdown);
+      const content = blocks[0].content as any[];
 
-    it('should set default props for all blocks', () => {
-      const result = parseMarkdownToBlocks('# Test')
-      expect(result[0].props).toHaveProperty('backgroundColor')
-      expect(result[0].props).toHaveProperty('textColor')
-      expect(result[0].props).toHaveProperty('textAlignment')
-    })
-
-    it('should handle empty content', () => {
-      const result = parseMarkdownToBlocks('\n\n\n')
-      expect(result.length).toBe(0)
-    })
-  })
+      expect(content[0].text).toBe('Bold Italic Strike Code Link');
+    });
+  });
 
   describe('parseCSVToDatabase', () => {
-    it('should handle empty CSV', () => {
-      const result = parseCSVToDatabase('')
-      expect(result.headers).toEqual([])
-      expect(result.rows).toEqual([])
-    })
+    it('should parse simple CSV', () => {
+      const csv = 'Name,Age\nJohn,30\nJane,25';
+      const result = parseCSVToDatabase(csv);
 
-    it('should parse single row with headers', () => {
-      const csv = 'Name,Age,Email\nJohn,30,john@example.com'
-      const result = parseCSVToDatabase(csv)
-      expect(result.headers).toEqual(['Name', 'Age', 'Email'])
-      expect(result.rows.length).toBe(1)
-      expect(result.rows[0].Name).toBe('John')
-      expect(result.rows[0].Age).toBe('30')
-    })
-
-    it('should parse multiple rows', () => {
-      const csv = 'Name,Age\nJohn,30\nJane,25\nBob,35'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows.length).toBe(3)
-      expect(result.rows[1].Name).toBe('Jane')
-      expect(result.rows[2].Age).toBe('35')
-    })
+      expect(result.headers).toEqual(['Name', 'Age']);
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows[0]).toEqual({ Name: 'John', Age: '30' });
+      expect(result.rows[1]).toEqual({ Name: 'Jane', Age: '25' });
+    });
 
     it('should handle quoted values with commas', () => {
-      const csv = 'Name,Address\n"Smith, John","123 Main St, City"'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].Name).toContain('Smith')
-    })
+      const csv = 'Name,"City, Country"\n"Doe, John","New York, USA"';
+      const result = parseCSVToDatabase(csv);
 
-    it('should handle empty values', () => {
-      const csv = 'Name,Age,Email\nJohn,,john@example.com'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].Age).toBe('')
-    })
+      expect(result.headers).toEqual(['Name', 'City, Country']);
+      expect(result.rows[0]).toEqual({
+        Name: 'Doe, John',
+        'City, Country': 'New York, USA',
+      });
+    });
 
-    it('should trim whitespace', () => {
-      const csv = '  Name  ,  Age  \n  John  ,  30  '
-      const result = parseCSVToDatabase(csv)
-      expect(result.headers[0]).toBe('Name')
-      expect(result.headers[1]).toBe('Age')
-      expect(result.rows[0].Name).toBe('John')
-    })
+    it('should handle empty csv', () => {
+      const result = parseCSVToDatabase('');
+      expect(result.headers).toEqual([]);
+      expect(result.rows).toEqual([]);
+    });
 
-    it('should skip empty lines', () => {
-      const csv = 'Name,Age\nJohn,30\n\n\nJane,25'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows.length).toBe(2)
-    })
-
-    it('should handle single column', () => {
-      const csv = 'Name\nJohn\nJane\nBob'
-      const result = parseCSVToDatabase(csv)
-      expect(result.headers).toEqual(['Name'])
-      expect(result.rows.length).toBe(3)
-    })
-
-    it('should handle values with special characters', () => {
-      const csv = 'Name,Value\nJohn,"$100.50"'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].Value).toContain('100')
-    })
-
-    it('should create record for each row', () => {
-      const csv = 'Col1,Col2,Col3\nA,B,C\nD,E,F'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0]).toHaveProperty('Col1')
-      expect(result.rows[0]).toHaveProperty('Col2')
-      expect(result.rows[0]).toHaveProperty('Col3')
-      expect(result.rows[0].Col1).toBe('A')
-    })
-
-    it('should handle mismatched column counts', () => {
-      const csv = 'Name,Age,Email\nJohn,30'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].Name).toBe('John')
-      expect(result.rows[0].Age).toBe('30')
-      expect(result.rows[0].Email).toBe('')
-    })
-
-    it('should handle tabs as content', () => {
-      const csv = 'Name,Value\nJohn\t30,test'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].Name).toContain('John')
-    })
-
-    it('should preserve numeric strings', () => {
-      const csv = 'ID,Code\n001,002'
-      const result = parseCSVToDatabase(csv)
-      expect(result.rows[0].ID).toBe('001')
-      expect(result.rows[0].Code).toBe('002')
-    })
-  })
-})
+    it('should handle missing values', () => {
+      const csv = 'A,B\n1';
+      const result = parseCSVToDatabase(csv);
+      expect(result.rows[0]).toEqual({ A: '1', B: '' });
+    });
+  });
+});

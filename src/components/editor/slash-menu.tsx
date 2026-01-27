@@ -1,127 +1,137 @@
-"use client"
+'use client';
 
-import { useEffect, useRef, useState } from "react"
-import { cn } from "@/lib/utils"
+import { useEffect, useRef, useState } from 'react';
 
-interface SlashMenuProps {
-    items: any[]
-    selectedIndex: number
-    onItemClick: (item: any) => void
-    onClose: () => void
-    position: { x: number; y: number }
+import { cn } from '@/lib/utils';
+
+interface SlashMenuItem {
+  title: string;
+  onItemClick: () => void;
+  aliases?: string[];
+  group?: string;
+  icon?: React.ReactNode | string;
+  subtext?: string;
 }
 
-export const SlashMenu = ({ items, selectedIndex, onItemClick, onClose, position }: SlashMenuProps) => {
-    const menuRef = useRef<HTMLDivElement>(null)
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([])
-    const [placement, setPlacement] = useState<"top" | "bottom">("bottom")
-    const [adjustedStyle, setAdjustedStyle] = useState<React.CSSProperties>({
-        opacity: 0,
-        top: -9999,
-        left: -9999,
-    })
+interface SlashMenuProperties {
+  items: SlashMenuItem[];
+  selectedIndex: number;
+  onItemClick: (item: SlashMenuItem) => void;
+  onClose?: () => void;
+  position: { x: number; y: number };
+}
 
-    useEffect(() => {
-        // Calculate position
-        const calculatePosition = () => {
-            if (!menuRef.current) return
+export const SlashMenu = ({
+  items,
+  selectedIndex,
+  onItemClick,
+  position,
+}: SlashMenuProperties) => {
+  const menuReference = useRef<HTMLDivElement>(null);
+  const itemReferences = useRef<(HTMLDivElement | null)[]>([]);
+  const [adjustedStyle, setAdjustedStyle] = useState<React.CSSProperties>({
+    opacity: 0,
+    top: -9999,
+    left: -9999,
+  });
 
-            const menuHeight = menuRef.current.offsetHeight || 300 // Estimate if not rendered yet
-            const windowHeight = window.innerHeight
-            const spaceBelow = windowHeight - position.y
+  useEffect(() => {
+    const calculatePosition = () => {
+      if (!menuReference.current) return;
+      const windowHeight = window.innerHeight;
+      const shouldGoUp = position.y > windowHeight / 2;
+      let left = position.x;
 
-            // If we are in the bottom half of the screen (or close to bottom), open upwards
-            // Threshold: if space below is less than menu height (plus buffer), go up
-            // Or simply: if y > windowHeight / 2 -> go up. User request: "halfway" logic.
-            const shouldGoUp = position.y > windowHeight / 2
+      const menuWidth = 250;
+      if (left + menuWidth > window.innerWidth) {
+        left = window.innerWidth - menuWidth - 20;
+      }
 
-            let top = position.y
-            let left = position.x
+      if (shouldGoUp) {
+        setAdjustedStyle({
+          position: 'fixed',
+          left: left,
+          bottom: windowHeight - position.y,
+          top: 'auto',
+          maxHeight: '300px',
+          opacity: 1,
+        });
+      } else {
+        setAdjustedStyle({
+          position: 'fixed',
+          left: left,
+          top: position.y + 24,
+          bottom: 'auto',
+          maxHeight: '300px',
+          opacity: 1,
+        });
+      }
+    };
 
-            // Adjust generic position to not overflow width
-            const menuWidth = 250 // Approx width
-            if (left + menuWidth > window.innerWidth) {
-                left = window.innerWidth - menuWidth - 20
-            }
+    calculatePosition();
+  }, [position]);
 
-            if (shouldGoUp) {
-                setPlacement("top")
-                // Position invalidation: we need the real height to position "top" correctly (as bottom of menu at cursor)
-                // But initially we might not know height. 
-                // We can use `bottom: windowHeight - position.y` style instead of top?
-                // Let's rely on Flex or absolute positioning.
-                setAdjustedStyle({
-                    position: "fixed",
-                    left: left,
-                    bottom: windowHeight - position.y, // Anchor bottom to the cursor Y
-                    top: "auto",
-                    maxHeight: "300px",
-                    opacity: 1,
-                })
-            } else {
-                setPlacement("bottom")
-                setAdjustedStyle({
-                    position: "fixed",
-                    left: left,
-                    top: position.y + 24, // Shift down slightly
-                    bottom: "auto",
-                    maxHeight: "300px",
-                    opacity: 1,
-                })
-            }
-        }
+  useEffect(() => {
+    const selectedItem = itemReferences.current[selectedIndex];
+    if (selectedItem) {
+      selectedItem.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [selectedIndex]);
 
-        // We can run this in a layout effect or rAF, but useEffect is fine for now
-        calculatePosition()
-    }, [position])
-
-    // Scroll to selected item
-    useEffect(() => {
-        const selectedItem = itemRefs.current[selectedIndex]
-        if (selectedItem) {
-            selectedItem.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-            })
-        }
-    }, [selectedIndex])
-
-    return (
-        <div
-            ref={menuRef}
-            style={adjustedStyle}
-            // Prevent focus loss when clicking menu area
-            onMouseDown={(e) => e.preventDefault()}
-            className="z-50 w-64 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
-        >
-            <div className="flex flex-col overflow-y-auto max-h-[300px]">
-                {items.length === 0 ? (
-                    <div className="p-2 text-sm text-muted-foreground">No matches</div>
-                ) : (
-                    items.map((item, index) => (
-                        <div
-                            key={index}
-                            ref={(el) => { itemRefs.current[index] = el }}
-                            className={cn(
-                                "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 gap-2",
-                                index === selectedIndex ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                            )}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                onItemClick(item)
-                            }}
-                            onMouseDown={(e) => e.preventDefault()} // Prevent focus loss
-                        >
-                            {item.icon && <span className="w-5 h-5 flex items-center justify-center text-muted-foreground text-xs">{item.icon}</span>}
-                            <div className="flex flex-col">
-                                <span className="font-medium">{item.title}</span>
-                                {item.subtext && <span className="text-[10px] text-muted-foreground line-clamp-1">{item.subtext}</span>}
-                            </div>
-                        </div>
-                    ))
+  return (
+    <div
+      ref={menuReference}
+      style={adjustedStyle}
+      onMouseDown={(e) => {
+        e.preventDefault();
+      }}
+      className="z-50 w-64 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+    >
+      <div className="flex flex-col overflow-y-auto max-h-[300px]">
+        {items.length === 0 ? (
+          <div className="p-2 text-sm text-muted-foreground">No matches</div>
+        ) : (
+          items.map((item, index) => (
+            <div
+              key={index}
+              ref={(element) => {
+                itemReferences.current[index] = element;
+              }}
+              className={cn(
+                'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 gap-2',
+                index === selectedIndex
+                  ? 'bg-accent text-accent-foreground'
+                  : 'hover:bg-accent hover:text-accent-foreground'
+              )}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onItemClick(item);
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+              }}
+            >
+              {item.icon && (
+                <span className="w-5 h-5 flex items-center justify-center text-muted-foreground text-xs">
+                  {item.icon}
+                </span>
+              )}
+              <div className="flex flex-col">
+                <span className="font-medium">{item.title}</span>
+                {item.subtext && (
+                  <span className="text-[10px] text-muted-foreground line-clamp-1">
+                    {item.subtext}
+                  </span>
                 )}
+              </div>
             </div>
-        </div>
-    )
-}
+          ))
+        )}
+      </div>
+    </div>
+  );
+};

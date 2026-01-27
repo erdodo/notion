@@ -1,63 +1,64 @@
+import { render, screen, waitFor, act } from '@testing-library/react';
 
-import { render, screen, waitFor, act } from "@testing-library/react"
-import { SharedSection } from "../shared-section"
-import { getSharedDocuments } from "@/app/(main)/_actions/documents"
-import { useParams, useRouter } from "next/navigation"
+import { SharedSection } from '../shared-section';
 
-vi.mock("@/app/(main)/_actions/documents", () => ({
-  getSharedDocuments: vi.fn()
-}))
+import { getSharedDocuments } from '@/app/(main)/_actions/documents';
 
-vi.mock("next/navigation", () => ({
+vi.mock('@/app/(main)/_actions/documents', () => ({
+  getSharedDocuments: vi.fn(),
+}));
+
+vi.mock('next/navigation', () => ({
   useParams: vi.fn(() => ({})),
   useRouter: vi.fn(() => ({
-    push: vi.fn()
-  }))
-}))
+    push: vi.fn(),
+  })),
+}));
 
-describe("SharedSection", () => {
+describe('SharedSection', () => {
   const mockDocuments = [
-    { id: "1", title: "Doc 1", icon: "📄" },
-    { id: "2", title: "Doc 2", icon: "📝" }
-  ]
+    { id: '1', title: 'Doc 1', icon: '📄' },
+    { id: '2', title: 'Doc 2', icon: '📝' },
+  ];
 
   beforeEach(() => {
-    vi.clearAllMocks()
-      ; (getSharedDocuments as any).mockResolvedValue(mockDocuments)
-  })
+    vi.clearAllMocks();
+    (getSharedDocuments as any).mockResolvedValue(mockDocuments);
+  });
 
-  it("renders shared documents", async () => {
-    render(<SharedSection />)
+  it('renders shared documents', async () => {
+    render(<SharedSection />);
 
     await waitFor(() => {
-      expect(screen.getByText("Doc 1")).toBeInTheDocument()
-      expect(screen.getByText("Doc 2")).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText('Doc 1')).toBeInTheDocument();
+      expect(screen.getByText('Doc 2')).toBeInTheDocument();
+    });
+  });
 
   it("updates list when 'notion-document-update' event is dispatched", async () => {
-    // Start with one document
-    ; (getSharedDocuments as any).mockResolvedValueOnce([{ id: "1", title: "Doc 1" }])
+    (getSharedDocuments as any).mockResolvedValueOnce([
+      { id: '1', title: 'Doc 1' },
+    ]);
 
-    render(<SharedSection />)
+    render(<SharedSection />);
 
     await waitFor(() => {
-      expect(screen.getByText("Doc 1")).toBeInTheDocument()
-    })
+      expect(screen.getByText('Doc 1')).toBeInTheDocument();
+    });
+    (getSharedDocuments as any).mockResolvedValueOnce([]);
 
-      // Prepare next fetch to return updated list (simulating delete)
-      ; (getSharedDocuments as any).mockResolvedValueOnce([])
-
-    // Trigger update event
     await act(async () => {
-      const event = new CustomEvent("notion-document-update", { detail: { id: "1" } })
-      window.dispatchEvent(event)
-    })
+      const event = new CustomEvent('notion-document-update', {
+        detail: { id: '1' },
+      });
+      globalThis.dispatchEvent(event);
+    });
 
-    // Expect list to be empty (or re-fetched)
-    // If logic is missing, this will fail as it won't trigger re-fetch
-    await waitFor(() => {
-      expect(screen.queryByText("Doc 1")).not.toBeInTheDocument()
-    }, { timeout: 2000 })
-  })
-})
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Doc 1')).not.toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
+  });
+});

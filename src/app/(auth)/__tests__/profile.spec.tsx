@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest';
 
 describe('Profile Spec', () => {
-    it('sanity check', () => {
-        expect(true).toBe(true)
-    })
-})
+  it('sanity check', () => {
+    expect(true).toBe(true);
+  });
+});

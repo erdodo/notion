@@ -1,103 +1,113 @@
-"use client"
+'use client';
 
-import { DatabaseRow, Cell, Property, Page } from "@prisma/client"
+import { DatabaseRow, Cell, Property, Page } from '@prisma/client';
 import {
-    startOfMonth,
-    endOfMonth,
-    startOfWeek,
-    endOfWeek,
-    eachDayOfInterval,
-    format,
-    isSameDay,
-    isSameMonth
-} from "date-fns"
-import { CalendarDayCell } from "./calendar-day-cell"
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  format,
+  isSameDay,
+  isSameMonth,
+} from 'date-fns';
 
-interface MonthGridProps {
-    date: Date
-    rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[]
-    datePropertyId: string
-    properties: Property[]
-    onAddRow?: (date: Date) => void
-    onEventClick?: (rowId: string) => void
+import { CalendarDayCell } from './calendar-day-cell';
+
+interface MonthGridProperties {
+  date: Date;
+  rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[];
+  datePropertyId: string;
+  properties: Property[];
+  onAddRow?: (date: Date) => void;
+  onEventClick?: (rowId: string) => void;
 }
 
-export function MonthGrid({ date, rows, datePropertyId, properties, onAddRow, onEventClick }: MonthGridProps) {
-    const monthStart = startOfMonth(date)
-    const monthEnd = endOfMonth(date)
-    const startDate = startOfWeek(monthStart)
-    const endDate = endOfWeek(monthEnd)
+export function MonthGrid({
+  date,
+  rows,
+  datePropertyId,
+  properties,
+  onAddRow,
+  onEventClick,
+}: MonthGridProperties) {
+  const monthStart = startOfMonth(date);
+  const monthEnd = endOfMonth(date);
+  const startDate = startOfWeek(monthStart);
+  const endDate = endOfWeek(monthEnd);
 
-    const days = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
-    })
+  const days = eachDayOfInterval({
+    start: startDate,
+    end: endDate,
+  });
 
-    // Group events by date using dateProperty
-    const eventsByDate: Record<string, any[]> = {}
+  const eventsByDate: Record<string, (DatabaseRow & { cells: Cell[]; page: Page | null; title: string })[]> = {};
 
-    // Find title property
-    const titleProp = properties.find(p => p.type === 'TITLE')
+  const titleProperty = properties.find((p) => p.type === 'TITLE');
 
-    // Helper to unwrap value safely
-    const unwrapValue = (val: any): any => {
-        if (val && typeof val === 'object' && 'value' in val) {
-            return unwrapValue(val.value)
-        }
-        return val
+  const unwrapValue = (value: unknown): unknown => {
+    if (value && typeof value === 'object' && 'value' in value) {
+      return unwrapValue(value.value);
     }
+    return value;
+  };
 
-    rows.forEach(row => {
-        const dateCell = row.cells.find(c => c.propertyId === datePropertyId)
-        // Unwrap date value
-        const rawValue = unwrapValue(dateCell?.value)
+  for (const row of rows) {
+    const dateCell = row.cells.find((c) => c.propertyId === datePropertyId);
 
-        if (!rawValue) return
+    const rawValue = unwrapValue(dateCell?.value);
 
-        const dateStr = format(new Date(String(rawValue)), 'yyyy-MM-dd')
-        if (!eventsByDate[dateStr]) eventsByDate[dateStr] = []
+    if (!rawValue) continue;
 
-        // Resolve title
-        const titleCell = row.cells.find(c => c.propertyId === titleProp?.id)
-        const rawTitle = unwrapValue(titleCell?.value)
+    const dateString = format(new Date(String(rawValue)), 'yyyy-MM-dd');
+    if (!eventsByDate[dateString]) eventsByDate[dateString] = [];
 
-        const title = rawTitle ? String(rawTitle) : "Untitled"
+    const titleCell = row.cells.find((c) => c.propertyId === titleProperty?.id);
+    const rawTitle = unwrapValue(titleCell?.value);
 
-        eventsByDate[dateStr].push({ ...row, title })
-    })
+    const title = rawTitle ? String(rawTitle) : 'Untitled';
 
-    return (
-        <div className="border-t border-l rounded-t-none rounded-lg overflow-hidden">
-            {/* Weekday Headers */}
-            <div className="grid grid-cols-7 border-b">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="p-2 text-center text-xs font-medium text-muted-foreground border-r bg-muted/20">
-                        {day}
-                    </div>
-                ))}
+    eventsByDate[dateString].push({ ...row, title } as DatabaseRow & { cells: Cell[]; page: Page | null; title: string });
+  }
+
+  return (
+    <div className="border-t border-l rounded-t-none rounded-lg overflow-hidden">
+      {}
+      <div className="grid grid-cols-7 border-b">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+          <div
+            key={day}
+            className="p-2 text-center text-xs font-medium text-muted-foreground border-r bg-muted/20"
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {}
+      <div className="grid grid-cols-7">
+        {days.map((day) => {
+          const dayDate = day;
+          const dateKey = format(dayDate, 'yyyy-MM-dd');
+          const dayEvents = eventsByDate[dateKey] || [];
+          const isCurrentMonth = isSameMonth(dayDate, monthStart);
+
+          return (
+            <div
+              key={dateKey}
+              className={isCurrentMonth ? '' : 'bg-muted/10 opacity-60'}
+            >
+              <CalendarDayCell
+                date={dayDate}
+                events={dayEvents}
+                isToday={isSameDay(dayDate, new Date())}
+                onAddEvent={onAddRow}
+                onEventClick={onEventClick}
+              />
             </div>
-
-            {/* Days Grid */}
-            <div className="grid grid-cols-7">
-                {days.map((day, i) => {
-                    const dayDate = day
-                    const dateKey = format(dayDate, 'yyyy-MM-dd')
-                    const dayEvents = eventsByDate[dateKey] || []
-                    const isCurrentMonth = isSameMonth(dayDate, monthStart)
-
-                    return (
-                        <div key={dateKey} className={!isCurrentMonth ? "bg-muted/10 opacity-60" : ""}>
-                            <CalendarDayCell
-                                date={dayDate}
-                                events={dayEvents}
-                                isToday={isSameDay(dayDate, new Date())}
-                                onAddEvent={onAddRow}
-                                onEventClick={onEventClick}
-                            />
-                        </div>
-                    )
-                })}
-            </div>
-        </div>
-    )
+          );
+        })}
+      </div>
+    </div>
+  );
 }

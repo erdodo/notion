@@ -1,7 +1,8 @@
-"use client"
+'use client';
 
-import { signIn } from "next-auth/react"
-import { Button } from "@/components/ui/button"
+import { signIn } from 'next-auth/react';
+
+import { Button } from '@/components/ui/button';
 
 export default function SignInPage() {
   return (
@@ -16,7 +17,7 @@ export default function SignInPage() {
 
         <div className="space-y-4">
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/documents" })}
+            onClick={() => signIn('google', { callbackUrl: '/documents' })}
             className="w-full flex items-center justify-center gap-3"
             size="lg"
             variant="outline"
@@ -44,12 +45,12 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          Don't have an account?{' '}
           <a href="/sign-up" className="underline hover:text-primary">
             Sign up
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }

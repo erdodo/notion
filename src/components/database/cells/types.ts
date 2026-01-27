@@ -1,16 +1,22 @@
+import { Property } from '@prisma/client';
+import { Column, Row, Table, Cell } from '@tanstack/react-table';
 
-export interface CellProps {
-    getValue: () => any
-    rowId: string
-    propertyId: string
-    table: any // Tanstack table instance if needed
-    column: any // Column instance
-    cell: any // Cell instance
-    isEditing: boolean
-    startEditing: () => void
-    stopEditing: () => void
-    updateValue: (value: any) => void
-    row?: any // Optional row object for direct access
-    onPropertyUpdate?: (propertyId: string, data: any) => void // For updating property config
+export interface CustomCellMeta {
+  property: Property;
+  getPageId: (rowId: string) => string | null;
 }
 
+export interface CellProperties {
+  getValue: () => unknown;
+  rowId: string;
+  propertyId: string;
+  table: Table<unknown>;
+  column: Column<unknown, unknown> & { columnDef: { meta?: CustomCellMeta } };
+  cell: Cell<unknown, unknown>;
+  isEditing: boolean;
+  startEditing: () => void;
+  stopEditing: () => void;
+  updateValue: (value: unknown) => void;
+  row?: Row<unknown>;
+  onPropertyUpdate?: (propertyId: string, data: Partial<Property>) => void;
+}

@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import { useEffect } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 
-interface EditorProps {
-  initialContent?: string
-  onChange?: (content: string) => void
-  editable?: boolean
+interface EditorProperties {
+  initialContent?: string;
+  onChange?: (content: string) => void;
+  editable?: boolean;
 }
 
-export const Editor = ({ 
-  initialContent = "", 
+export const Editor = ({
+  initialContent = '',
   onChange,
-  editable = true 
-}: EditorProps) => {
+  editable = true,
+}: EditorProperties) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -26,28 +26,29 @@ export const Editor = ({
     content: initialContent,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
+        class:
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
       },
     },
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML())
+      onChange?.(editor.getHTML());
     },
     editable,
-  })
+  });
 
   useEffect(() => {
     if (editor && initialContent !== editor.getHTML()) {
-      editor.commands.setContent(initialContent)
+      editor.commands.setContent(initialContent);
     }
-  }, [editor, initialContent])
+  }, [editor, initialContent]);
 
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
     <div className="min-h-screen">
       <EditorContent editor={editor} />
     </div>
-  )
-}
+  );
+};

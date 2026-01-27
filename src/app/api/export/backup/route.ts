@@ -1,186 +1,227 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import JSZip from "jszip"
-import { blocksToMarkdown, blocksToHTML } from "@/lib/export-utils"
-import Papa from "papaparse"
-import { formatCellValueForCSV } from "@/lib/export-utils"
+import type { Database, DatabaseRow, Page, Property } from '@prisma/client';
+import JSZip from 'jszip';
+import { NextRequest, NextResponse } from 'next/server';
+import Papa from 'papaparse';
 
-export async function GET(req: NextRequest) {
-    try {
-        const session = await auth()
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        }
+import { auth } from '@/lib/auth';
+import { db } from '@/lib/db';
+import {
+  blocksToMarkdown,
+  blocksToHTML,
+  formatCellValueForCSV,
+} from '@/lib/export-utils';
 
-        const { searchParams } = new URL(req.url)
-        const format = searchParams.get("format") || "markdown" // markdown, html, json
-
-        // Tüm sayfaları al (hierarchical)
-        const pages = await db.page.findMany({
-            where: {
-                userId: session.user.id,
-                isArchived: false
-            },
-            include: {
-                // @ts-ignore
-                database: {
-                    include: {
-                        properties: { orderBy: { order: 'asc' } },
-                        rows: {
-                            include: { cells: true },
-                            orderBy: { order: 'asc' }
-                        }
-                    }
-                }
-            },
-            orderBy: { createdAt: 'asc' }
-        })
-
-        const zip = new JSZip()
-
-        // Metadata dosyası
-        const metadata = {
-            exportedAt: new Date().toISOString(),
-            userId: session.user.id,
-            pageCount: pages.length,
-            format
-        }
-        zip.file("_metadata.json", JSON.stringify(metadata, null, 2))
-
-        // Sayfa yapısı (hierarchy)
-        const structure = buildPageStructure(pages)
-        zip.file("_structure.json", JSON.stringify(structure, null, 2))
-
-        // Her sayfayı export et
-        for (const p of pages) {
-            const page = p as any
-            const folderPath = getPagePath(page, pages)
-            const filename = sanitizeFilename(page.title || "Untitled")
-
-            let content = ""
-            let extension = ""
-
-            if (page.isDatabase && page.database) {
-                // Database → CSV
-                const csv = databaseToCSV(page.database)
-                content = csv
-                extension = "csv"
-            } else {
-                // Normal sayfa
-                const blocks = page.content ? JSON.parse(page.content) : []
-
-                switch (format) {
-                    case "html":
-                        content = blocksToHTML(blocks, page.title)
-                        extension = "html"
-                        break
-                    case "json":
-                        content = JSON.stringify({
-                            title: page.title,
-                            icon: page.icon,
-                            cover: page.coverImage,
-                            content: blocks
-                        }, null, 2)
-                        extension = "json"
-                        break
-                    default: // markdown
-                        content = `# ${page.title}\n\n` + blocksToMarkdown(blocks)
-                        extension = "md"
-                }
-            }
-
-            // Ensure unique filenames by appending ID if needed or just use current structure
-            // Folder path + filename
-            // To handle duplicates in same folder, JSZip overwrites or we can append ID.
-            // Ideally we'd handle name collisions but for now simple path is ok.
-
-            const fullPath = folderPath ? `${folderPath}/${filename}.${extension}` : `${filename}.${extension}`
-            zip.file(fullPath, content)
-        }
-
-        // ZIP oluştur
-        const zipBuffer = await zip.generateAsync({
-            type: "nodebuffer",
-            compression: "DEFLATE",
-            compressionOptions: { level: 6 }
-        })
-
-        const timestamp = new Date().toISOString().split('T')[0]
-
-        return new Response(zipBuffer as any, {
-            headers: {
-                "Content-Type": "application/zip",
-                "Content-Disposition": `attachment; filename="notion-backup-${timestamp}.zip"`,
-            } as any,
-        })
-    } catch (error) {
-        console.error("Backup export error:", error)
-        return NextResponse.json({ error: "Backup failed" }, { status: 500 })
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-}
 
-function buildPageStructure(pages: any[]): any {
-    const map = new Map()
-    const roots: any[] = []
+    const { searchParams } = new URL(request.url);
+    const format = searchParams.get('format') || 'markdown';
 
-    pages.forEach(page => {
-        map.set(page.id, {
-            id: page.id,
-            title: page.title,
-            icon: page.icon,
-            isDatabase: page.isDatabase,
-            children: []
-        })
-    })
+    const pages = await db.page.findMany({
+      where: {
+        userId: session.user.id,
+        isArchived: false,
+      },
+      include: {
+        database: {
+          include: {
+            properties: { orderBy: { order: 'asc' } },
+            rows: {
+              include: { cells: true },
+              orderBy: { order: 'asc' },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
 
-    pages.forEach(page => {
-        const node = map.get(page.id)
-        if (page.parentId && map.has(page.parentId)) {
-            map.get(page.parentId).children.push(node)
-        } else {
-            roots.push(node)
-        }
-    })
+    const zip = new JSZip();
 
-    return roots
-}
+    const metadata = {
+      exportedAt: new Date().toISOString(),
+      userId: session.user.id,
+      pageCount: pages.length,
+      format,
+    };
+    zip.file('_metadata.json', JSON.stringify(metadata, null, 2));
 
-function getPagePath(page: any, allPages: any[]): string {
-    const path: string[] = []
-    let current = page
+    const structure = buildPageStructure(pages);
+    zip.file('_structure.json', JSON.stringify(structure, null, 2));
 
-    // Prevent infinite loop if cyclic (shouldn't happen in tree)
-    const visited = new Set();
+    for (const p of pages) {
+      const page = p as Page & {
+        database: (Database & {
+          properties: Property[];
+          rows: (DatabaseRow & { cells: { id: string; propertyId: string; value: unknown }[] })[];
+        }) | null;
+        content: string | null;
+        coverImage: string | null;
+      };
+      const folderPath = getPagePath(page, pages);
+      const filename = sanitizeFilename(page.title || 'Untitled');
 
-    while (current && current.parentId && !visited.has(current.id)) {
-        visited.add(current.id);
-        const parent = allPages.find(p => p.id === current.parentId)
-        if (parent) {
-            path.unshift(sanitizeFilename(parent.title || "Untitled"))
-            current = parent
-        } else {
+      let content = '';
+      let extension = '';
+
+      if (page.isDatabase && page.database) {
+        const csv = databaseToCSV(page.database);
+        content = csv;
+        extension = 'csv';
+      } else {
+        const blocks = page.content ? JSON.parse(page.content) : [];
+
+        switch (format) {
+          case 'html': {
+            content = blocksToHTML(blocks, page.title);
+            extension = 'html';
             break;
+          }
+          case 'json': {
+            content = JSON.stringify(
+              {
+                title: page.title,
+                icon: page.icon,
+                cover: page.coverImage,
+                content: blocks,
+              },
+              null,
+              2
+            );
+            extension = 'json';
+            break;
+          }
+          default: {
+            content = `# ${page.title}\n\n` + blocksToMarkdown(blocks);
+            extension = 'md';
+          }
         }
+      }
+
+      const fullPath = folderPath
+        ? `${folderPath}/${filename}.${extension}`
+        : `${filename}.${extension}`;
+      zip.file(fullPath, content);
     }
 
-    return path.join("/")
+    const zipBuffer = await zip.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+    });
+
+    const timestamp = new Date().toISOString().split('T')[0];
+
+    return new Response(zipBuffer, {
+      headers: new Headers({
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="notion-backup-${timestamp}.zip"`,
+      }),
+    });
+  } catch (error) {
+    console.error('Backup export error:', error);
+    return NextResponse.json({ error: 'Backup failed' }, { status: 500 });
+  }
 }
 
-function databaseToCSV(database: any): string {
-    const headers = database.properties.map((p: any) => p.name)
-    const data = database.rows.map((row: any) => {
-        const rowData: Record<string, string> = {}
-        database.properties.forEach((prop: any) => {
-            const cell = row.cells.find((c: any) => c.propertyId === prop.id)
-            rowData[prop.name] = formatCellValueForCSV(cell?.value, prop.type)
-        })
-        return rowData
-    })
+function buildPageStructure(
+  pages: (Page & { parentId: string | null })[]
+): Array<{
+  id: string;
+  title: string | null;
+  icon: string | null;
+  isDatabase: boolean;
+  children: unknown[];
+}> {
+  const map = new Map<string, {
+    id: string;
+    title: string | null;
+    icon: string | null;
+    isDatabase: boolean;
+    children: unknown[];
+  }>();
+  const roots: Array<{
+    id: string;
+    title: string | null;
+    icon: string | null;
+    isDatabase: boolean;
+    children: unknown[];
+  }> = [];
 
-    return Papa.unparse(data, { columns: headers, header: true })
+  for (const page of pages) {
+    map.set(page.id, {
+      id: page.id,
+      title: page.title,
+      icon: page.icon,
+      isDatabase: page.isDatabase,
+      children: [],
+    });
+  }
+
+  for (const page of pages) {
+    const node = map.get(page.id);
+    if (page.parentId && map.has(page.parentId)) {
+      map.get(page.parentId).children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+
+  return roots;
+}
+
+function getPagePath(
+  page: Page & { parentId: string | null },
+  allPages: (Page & { parentId: string | null })[]
+): string {
+  const path: string[] = [];
+  let current: (Page & { parentId: string | null }) | undefined = page;
+
+  const visited = new Set();
+
+  while (current?.parentId && !visited.has(current.id)) {
+    visited.add(current.id);
+    const parent = allPages.find((p) => p.id === current.parentId);
+    if (parent) {
+      path.unshift(sanitizeFilename(parent.title || 'Untitled'));
+      current = parent;
+    } else {
+      break;
+    }
+  }
+
+  return path.join('/');
+}
+
+function databaseToCSV(database: Database & {
+  properties: Property[];
+  rows: (DatabaseRow & { cells: { propertyId: string; value: unknown }[] })[];
+}): string {
+  const headers = database.properties.map((p) => p.name);
+  const data = database.rows.map((row) => {
+    const rowData: Record<string, string> = {};
+    database.properties.forEach((property) => {
+      const cell = row.cells.find((c) => c.propertyId === property.id);
+      rowData[property.name] = formatCellValueForCSV(
+        cell?.value,
+        property.type
+      );
+    });
+    return rowData;
+  });
+
+  return Papa.unparse(data, { columns: headers, header: true });
 }
 
 function sanitizeFilename(name: string): string {
-    return name.replace(/[<>:"/\\|?*]/g, "_").replace(/\s+/g, "_").substring(0, 100) || "untitled"
+  return (
+    name
+      .replaceAll(/[<>:"/\\|?*]/g, '_')
+      .replaceAll(/\s+/g, '_')
+      .slice(0, 100) || 'untitled'
+  );
 }

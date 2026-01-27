@@ -1,32 +1,36 @@
+import { useState, useEffect } from 'react';
 
-import { useState, useEffect } from "react"
-import { CellProps } from "./types"
-import { Checkbox } from "@/components/ui/checkbox"
+import { CellProps as CellProperties } from './types';
 
-export function CheckboxCell({ getValue, updateValue }: CellProps) {
-    const initialValue = getValue()
-    const val = typeof initialValue === 'object' ? initialValue?.value : (initialValue === true)
+import { Checkbox } from '@/components/ui/checkbox';
 
-    // Handle if value is stored as boolean natively or inside value object
+export function CheckboxCell({ getValue, updateValue }: CellProperties) {
+  const initialValue = getValue();
+  const value =
+    typeof initialValue === 'object'
+      ? initialValue?.value
+      : initialValue === true;
 
-    const [checked, setChecked] = useState(!!val)
+  const [checked, setChecked] = useState(!!value);
 
-    useEffect(() => {
-        const val = typeof initialValue === 'object' ? initialValue?.value : (initialValue === true)
-        setChecked(!!val)
-    }, [initialValue])
+  useEffect(() => {
+    const value =
+      typeof initialValue === 'object'
+        ? initialValue?.value
+        : initialValue === true;
+    queueMicrotask(() => {
+      setChecked(!!value);
+    });
+  }, [initialValue]);
 
-    const onChange = (v: boolean) => {
-        setChecked(v)
-        updateValue({ value: v })
-    }
+  const onChange = (v: boolean) => {
+    setChecked(v);
+    updateValue({ value: v });
+  };
 
-    return (
-        <div className="flex h-full w-full items-center justify-center py-1.5">
-            <Checkbox
-                checked={checked}
-                onCheckedChange={onChange}
-            />
-        </div>
-    )
+  return (
+    <div className="flex h-full w-full items-center justify-center py-1.5">
+      <Checkbox checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
 }

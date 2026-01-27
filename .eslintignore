@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+dist
+public
+*.config.js
+*.config.mjs
+eslint_report.txt
+.vscode
+playwright-report
+.clerk
+test-results
+*.html
+*.log
+*.json
+*.lock

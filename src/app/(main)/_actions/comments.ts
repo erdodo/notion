@@ -1,277 +1,274 @@
-"use server"
+'use server';
 
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { revalidatePath } from "next/cache"
-import { Comment, Comment as PrismaComment } from "@prisma/client" // Fix import if needed or just use type inference
-import { checkPageAccess } from "./sharing"
+import { revalidatePath } from 'next/cache';
 
-// ============ COMMENTS ============
+import { checkPageAccess } from './sharing';
 
-// Yorumları getir
+import { auth } from '@/lib/auth';
+import { db } from '@/lib/db';
+
 export async function getComments(pageId: string) {
-    const session = await auth()
-    if (!session?.user?.id) return []
+  const session = await auth();
+  if (!session?.user?.id) return [];
 
-    // Erişim kontrolü
-    const access = await checkPageAccess(pageId)
-    if (!access.hasAccess) {
-        return []
-    }
+  const access = await checkPageAccess(pageId);
+  if (!access.hasAccess) {
+    return [];
+  }
 
-    return db.comment.findMany({
-        where: {
-            pageId,
-            parentId: null // Sadece ana yorumları getir
-        },
+  return db.comment.findMany({
+    where: {
+      pageId,
+      parentId: null,
+    },
+    include: {
+      user: {
+        select: { id: true, name: true, image: true },
+      },
+      replies: {
         include: {
-            user: {
-                select: { id: true, name: true, image: true }
-            },
-            replies: {
-                include: {
-                    user: {
-                        select: { id: true, name: true, image: true }
-                    }
-                },
-                orderBy: { createdAt: 'asc' }
-            }
+          user: {
+            select: { id: true, name: true, image: true },
+          },
         },
-        orderBy: { createdAt: 'desc' }
-    })
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
 }
 
-// Yorum sayısını getir
 export async function getCommentCount(pageId: string): Promise<number> {
-    const session = await auth()
-    if (!session?.user?.id) return 0
+  const session = await auth();
+  if (!session?.user?.id) return 0;
 
-    const access = await checkPageAccess(pageId)
-    if (!access.hasAccess) return 0
+  const access = await checkPageAccess(pageId);
+  if (!access.hasAccess) return 0;
 
-    return db.comment.count({
-        where: { pageId }
-    })
+  return db.comment.count({
+    where: { pageId },
+  });
 }
 
-// Yorum ekle
 export async function addComment(
-    pageId: string,
-    data: {
-        content: string
-        parentId?: string
-        blockId?: string
-        mentionedUserIds?: string[]
-    }
+  pageId: string,
+  data: {
+    content: string;
+    parentId?: string;
+    blockId?: string;
+    mentionedUserIds?: string[];
+  }
 ) {
-    const session = await auth()
-    if (!session?.user?.id) throw new Error("Unauthorized")
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
 
-    // Erişim kontrolü
-    const access = await checkPageAccess(pageId)
-    if (!access.hasAccess) {
-        throw new Error("You don't have permission to comment")
-    }
+  const access = await checkPageAccess(pageId);
+  if (!access.hasAccess) {
+    throw new Error("You don't have permission to comment");
+  }
 
-    // Yorum oluştur
-    const comment = await db.comment.create({
-        data: {
-            content: data.content,
-            pageId,
-            userId: session.user.id,
-            parentId: data.parentId,
-            blockId: data.blockId
-        },
-        include: {
-            user: { select: { id: true, name: true, image: true } },
-            replies: true
-        }
-    })
+  const comment = await db.comment.create({
+    data: {
+      content: data.content,
+      pageId,
+      userId: session.user.id,
+      parentId: data.parentId,
+      blockId: data.blockId,
+    },
+    include: {
+      user: { select: { id: true, name: true, image: true } },
+      replies: true,
+    },
+  });
 
-    // Mention'ları kaydet
-    if (data.mentionedUserIds?.length) {
-        await db.userMention.createMany({
-            data: data.mentionedUserIds.map(userId => ({
-                commentId: comment.id,
-                userId,
-                mentionedBy: session.user.id
-            }))
-        })
+  if (data.mentionedUserIds?.length) {
+    await db.userMention.createMany({
+      data: data.mentionedUserIds.map((userId) => ({
+        commentId: comment.id,
+        userId,
+        mentionedBy: session.user.id,
+      })),
+    });
 
-        // Mention bildirimleri
-        for (const userId of data.mentionedUserIds) {
-            if (userId !== session.user.id) {
-                await db.notification.create({
-                    data: {
-                        userId,
-                        type: "MENTION",
-                        title: "You were mentioned",
-                        message: `${session.user.name} mentioned you in a comment`,
-                        pageId,
-                        commentId: comment.id,
-                        actorId: session.user.id
-                    }
-                })
-
-                // Real-time
-                // Real-time notification handled below via socket
-            }
-        }
-    }
-
-    // Parent yoruma yanıt ise, sahibine bildir
-    if (data.parentId) {
-        const parentComment = await db.comment.findUnique({
-            where: { id: data.parentId }
-        })
-
-        if (parentComment && parentComment.userId !== session.user.id) {
-            await db.notification.create({
-                data: {
-                    userId: parentComment.userId,
-                    type: "COMMENT_REPLY",
-                    title: "New reply to your comment",
-                    message: `${session.user.name} replied to your comment`,
-                    pageId,
-                    commentId: comment.id,
-                    actorId: session.user.id
-                }
-            })
-        }
-    }
-
-    // Sayfa sahibine yeni yorum bildirimi
-    const page = await db.page.findUnique({ where: { id: pageId } })
-    if (page && page.userId !== session.user.id && !data.parentId) {
+    for (const userId of data.mentionedUserIds) {
+      if (userId !== session.user.id) {
         await db.notification.create({
-            data: {
-                userId: page.userId,
-                type: "COMMENT_ADDED",
-                title: "New comment",
-                message: `${session.user.name} commented on "${page.title}"`,
-                pageId,
-                commentId: comment.id,
-                actorId: session.user.id
-            }
-        })
+          data: {
+            userId,
+            type: 'MENTION',
+            title: 'You were mentioned',
+            message: `${session.user.name} mentioned you in a comment`,
+            pageId,
+            commentId: comment.id,
+            actorId: session.user.id,
+          },
+        });
+      }
     }
+  }
 
+  if (data.parentId) {
+    const parentComment = await db.comment.findUnique({
+      where: { id: data.parentId },
+    });
 
-    // Real-time güncelleme
-    // @ts-ignore
-    const io = global.io
-    if (io) {
-        io.to(`page-${pageId}`).emit("comment-added", {
-            comment: {
-                ...comment,
-                user: { id: session.user.id, name: session.user.name, image: session.user.image }
-            }
-        })
-
-        // Notify mentioned users (direct socket to user room)
-        if (data.mentionedUserIds?.length) {
-            for (const userId of data.mentionedUserIds) {
-                io.to(`user-${userId}`).emit("notification", {
-                    type: "MENTION",
-                    commentId: comment.id
-                })
-            }
-        }
+    if (parentComment && parentComment.userId !== session.user.id) {
+      await db.notification.create({
+        data: {
+          userId: parentComment.userId,
+          type: 'COMMENT_REPLY',
+          title: 'New reply to your comment',
+          message: `${session.user.name} replied to your comment`,
+          pageId,
+          commentId: comment.id,
+          actorId: session.user.id,
+        },
+      });
     }
+  }
 
-    revalidatePath(`/documents/${pageId}`)
-    return comment
+  const page = await db.page.findUnique({ where: { id: pageId } });
+  if (page && page.userId !== session.user.id && !data.parentId) {
+    await db.notification.create({
+      data: {
+        userId: page.userId,
+        type: 'COMMENT_ADDED',
+        title: 'New comment',
+        message: `${session.user.name} commented on "${page.title}"`,
+        pageId,
+        commentId: comment.id,
+        actorId: session.user.id,
+      },
+    });
+  }
+
+  const io = (
+    globalThis as {
+      io?: {
+        to: (room: string) => { emit: (event: string, data: any) => void };
+      };
+    }
+  ).io;
+  if (io) {
+    io.to(`page-${pageId}`).emit('comment-added', {
+      comment: {
+        ...comment,
+        user: {
+          id: session.user.id,
+          name: session.user.name,
+          image: session.user.image,
+        },
+      },
+    });
+
+    if (data.mentionedUserIds?.length) {
+      for (const userId of data.mentionedUserIds) {
+        io.to(`user-${userId}`).emit('notification', {
+          type: 'MENTION',
+          commentId: comment.id,
+        });
+      }
+    }
+  }
+
+  revalidatePath(`/documents/${pageId}`);
+  return comment;
 }
 
-// ... existing code ...
-
-// Yorum düzenle
 export async function updateComment(
-    commentId: string,
-    content: string
+  commentId: string,
+  content: string
 ): Promise<void> {
-    const session = await auth()
-    if (!session?.user?.id) throw new Error("Unauthorized")
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
 
-    const comment = await db.comment.findUnique({
-        where: { id: commentId }
-    })
+  const comment = await db.comment.findUnique({
+    where: { id: commentId },
+  });
 
-    if (!comment || comment.userId !== session.user.id) {
-        throw new Error("Unauthorized")
+  if (comment?.userId !== session.user.id) {
+    throw new Error('Unauthorized');
+  }
+
+  await db.comment.update({
+    where: { id: commentId },
+    data: {
+      content,
+      editedAt: new Date(),
+    },
+  });
+
+  const io = (
+    globalThis as {
+      io?: {
+        to: (room: string) => { emit: (event: string, data: any) => void };
+      };
     }
+  ).io;
+  if (io) {
+    io.to(`page-${comment.pageId}`).emit('comment-updated', {
+      commentId,
+      content,
+    });
+  }
 
-    await db.comment.update({
-        where: { id: commentId },
-        data: {
-            content,
-            editedAt: new Date()
-        }
-    })
-
-    // Real-time güncelleme
-    // @ts-ignore
-    const io = global.io
-    if (io) {
-        io.to(`page-${comment.pageId}`).emit("comment-updated", {
-            commentId,
-            content
-        })
-    }
-
-    revalidatePath(`/documents/${comment.pageId}`)
+  revalidatePath(`/documents/${comment.pageId}`);
 }
 
-// Yorum sil
 export async function deleteComment(commentId: string): Promise<void> {
-    const session = await auth()
-    if (!session?.user?.id) throw new Error("Unauthorized")
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
 
-    const comment = await db.comment.findUnique({
-        where: { id: commentId },
-        include: { page: true }
-    })
+  const comment = await db.comment.findUnique({
+    where: { id: commentId },
+    include: { page: true },
+  });
 
-    if (!comment) throw new Error("Comment not found")
+  if (!comment) throw new Error('Comment not found');
 
-    // Sadece yorum sahibi veya sayfa sahibi silebilir
-    if (comment.userId !== session.user.id && comment.page.userId !== session.user.id) {
-        throw new Error("Unauthorized")
+  if (
+    comment.userId !== session.user.id &&
+    comment.page.userId !== session.user.id
+  ) {
+    throw new Error('Unauthorized');
+  }
+
+  await db.comment.delete({ where: { id: commentId } });
+
+  const io = (
+    globalThis as {
+      io?: {
+        to: (room: string) => { emit: (event: string, data: any) => void };
+      };
     }
+  ).io;
+  if (io) {
+    io.to(`page-${comment.pageId}`).emit('comment-deleted', {
+      commentId,
+    });
+  }
 
-    await db.comment.delete({ where: { id: commentId } })
-
-    // Real-time güncelleme
-    // @ts-ignore
-    const io = global.io
-    if (io) {
-        io.to(`page-${comment.pageId}`).emit("comment-deleted", {
-            commentId
-        })
-    }
-
-    revalidatePath(`/documents/${comment.pageId}`)
+  revalidatePath(`/documents/${comment.pageId}`);
 }
 
-// Yorumu çözümlenmiş olarak işaretle
 export async function resolveComment(commentId: string): Promise<void> {
-    const session = await auth()
-    if (!session?.user?.id) throw new Error("Unauthorized")
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
 
-    const comment = await db.comment.findUnique({
-        where: { id: commentId }
-    })
+  const comment = await db.comment.findUnique({
+    where: { id: commentId },
+  });
 
-    if (!comment) throw new Error("Comment not found")
+  if (!comment) throw new Error('Comment not found');
 
-    await db.comment.update({
-        where: { id: commentId },
-        data: {
-            resolved: true,
-            resolvedBy: session.user.id,
-            resolvedAt: new Date()
-        }
-    })
+  await db.comment.update({
+    where: { id: commentId },
+    data: {
+      resolved: true,
+      resolvedBy: session.user.id,
+      resolvedAt: new Date(),
+    },
+  });
 
-    revalidatePath(`/documents/${comment.pageId}`)
+  revalidatePath(`/documents/${comment.pageId}`);
 }

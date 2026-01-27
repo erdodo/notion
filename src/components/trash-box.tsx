@@ -1,88 +1,87 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Search, Trash, Undo, FileText } from "lucide-react"
-import { toast } from "sonner"
-import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
-import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/spinner"
-import { ConfirmModal } from "@/components/modals/confirm-modal"
-import { useDocumentsStore, Document } from "@/store/use-documents-store"
+import { Search, Trash, Undo, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
+import { restoreDocument } from '@/app/(main)/_actions/documents';
+import { ConfirmModal } from '@/components/modals/confirm-modal';
+import { Spinner } from '@/components/spinner';
+import { Input } from '@/components/ui/input';
+import { useDocumentsStore, Document } from '@/store/use-documents-store';
 
-
-interface TrashBoxProps {
-  documents: Document[]
+interface TrashBoxProperties {
+  documents: Document[];
 }
 
-export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
-  const router = useRouter()
-  const { trashPages, setTrashPages, removeDocument } = useDocumentsStore()
-  const [search, setSearch] = useState("")
+export const TrashBox = ({
+  documents: initialDocuments,
+}: TrashBoxProperties) => {
+  const router = useRouter();
+  const { trashPages, setTrashPages, removeDocument } = useDocumentsStore();
+  const [search, setSearch] = useState('');
 
-  // Sync initialDocuments to store on mount or when it changes
   useEffect(() => {
     if (initialDocuments && initialDocuments.length > 0) {
-      setTrashPages(initialDocuments)
+      setTrashPages(initialDocuments);
     }
-  }, [initialDocuments, setTrashPages])
+  }, [initialDocuments, setTrashPages]);
 
-  const documents = trashPages; // Use store data
+  const documents = trashPages;
 
   const filteredDocuments = documents.filter((document) => {
-    return document.title.toLowerCase().includes(search.toLowerCase())
-  })
+    return document.title.toLowerCase().includes(search.toLowerCase());
+  });
 
   const onClick = (documentId: string) => {
-    router.push(`/documents/${documentId}`)
-  }
+    router.push(`/documents/${documentId}`);
+  };
 
   const onRestore = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    documentId: string,
+    event: React.MouseEvent<HTMLButtonElement>,
+    documentId: string
   ) => {
-    event.stopPropagation()
+    event.stopPropagation();
 
     const promise = restoreDocument(documentId).then(() => {
-      // Store update handled by logic or explicit removal
-      setTrashPages(trashPages.filter(doc => doc.id !== documentId))
-      // Also, we might want to add it back to `documents` list? 
-      // The store's `documents` list is usually fetched. If we want immediate update:
-      // We can't easily add it because we don't have the full object structure maybe?
-      // But `restoreDocument` returns success.
-      // For now, removing from Trash is key.
-      router.refresh()
-    })
+      setTrashPages(
+        trashPages.filter((document_) => document_.id !== documentId)
+      );
+
+      router.refresh();
+    });
 
     toast.promise(promise, {
-      loading: "Restoring page...",
-      success: "Page restored!",
-      error: "Failed to restore page."
-    })
-  }
+      loading: 'Restoring page...',
+      success: 'Page restored!',
+      error: 'Failed to restore page.',
+    });
+  };
 
   const onRemove = async (documentId: string) => {
     const promise = (async () => {
-      await removeDocument(documentId)
-      // Remove from local state and store
-      setTrashPages(trashPages.filter(doc => doc.id !== documentId))
-      router.push("/documents")
-    })()
+      await removeDocument(documentId);
+
+      setTrashPages(
+        trashPages.filter((document_) => document_.id !== documentId)
+      );
+      router.push('/documents');
+    })();
 
     toast.promise(promise, {
-      loading: "Deleting page...",
-      success: "Page deleted permanently!",
-      error: "Failed to delete page."
-    })
-  }
+      loading: 'Deleting page...',
+      success: 'Page deleted permanently!',
+      error: 'Failed to delete page.',
+    });
+  };
 
   if (documents === undefined) {
     return (
       <div className="h-full flex items-center justify-center p-4">
         <Spinner size="lg" />
       </div>
-    )
+    );
   }
 
   return (
@@ -91,7 +90,9 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
         <Search className="h-4 w-4" />
         <Input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
           className="h-7 px-2 focus-visible:ring-transparent bg-secondary"
           placeholder="Filter by page title..."
         />
@@ -103,7 +104,9 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
         {filteredDocuments?.map((document) => (
           <div
             key={document.id}
-            onClick={() => onClick(document.id)}
+            onClick={() => {
+              onClick(document.id);
+            }}
             className="text-sm rounded-sm w-full hover:bg-primary/5 flex items-center text-primary justify-between cursor-pointer"
           >
             <div className="flex items-center gap-x-2 pl-2">
@@ -112,9 +115,7 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
               ) : (
                 <FileText className="h-4 w-4 text-muted-foreground" />
               )}
-              <span className="truncate">
-                {document.title}
-              </span>
+              <span className="truncate">{document.title}</span>
             </div>
             <div className="flex items-center">
               <button
@@ -137,5 +138,5 @@ export const TrashBox = ({ documents: initialDocuments }: TrashBoxProps) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

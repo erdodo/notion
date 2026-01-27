@@ -1,37 +1,42 @@
-"use client"
+'use client';
 
-import { createReactBlockSpec } from "@blocknote/react"
-import dynamic from "next/dynamic"
+import { createReactBlockSpec } from '@blocknote/react';
+import dynamic from 'next/dynamic';
 
-// Dynamic import to break circular dependency
 const SyncedBlockView = dynamic(
-    () => import("./synced-block-view").then((mod) => mod.SyncedBlockView),
-    {
-        ssr: false,
-        loading: () => <div className="p-2 border border-red-200 rounded text-xs text-red-500">Loading Synced Block...</div>
-    }
-)
+  () =>
+    import('./synced-block-view').then((module_) => module_.SyncedBlockView),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="p-2 border border-red-200 rounded text-xs text-red-500">
+        Loading Synced Block...
+      </div>
+    ),
+  }
+);
 
 export const SyncedBlock = createReactBlockSpec(
-    {
-        type: "syncedBlock",
-        propSchema: {
-            sourcePageId: {
-                default: "",
-            },
-            sourceBlockId: {
-                default: "",
-            },
-            childrenJSON: {
-                default: "[]",
-            }
-        },
-        content: "none",
+  {
+    type: 'syncedBlock',
+    propSchema: {
+      sourcePageId: {
+        default: '',
+      },
+      sourceBlockId: {
+        default: '',
+      },
+      childrenJSON: {
+        default: '[]',
+      },
     },
-    {
-        render: (props) => {
-            // Pass props properly to the dynamic component
-            return <SyncedBlockView block={props.block} editor={props.editor} />
-        },
-    }
-)
+    content: 'none',
+  },
+  {
+    render: (properties) => {
+      return (
+        <SyncedBlockView block={properties.block} editor={properties.editor} />
+      );
+    },
+  }
+);

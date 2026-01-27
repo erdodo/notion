@@ -1,9 +1,9 @@
-import Link from "next/link"
+import Link from 'next/link';
 
 export default function PublicLayout({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="h-full bg-background flex flex-col">
@@ -17,22 +17,17 @@ export default function PublicLayout({
           </div>
         </div>
       </header>
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
       <footer className="w-full border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-12 max-w-screen-2xl items-center justify-center">
           <p className="text-xs text-muted-foreground">
-            Powered by{" "}
-            <Link
-              href="/"
-              className="font-medium hover:underline"
-            >
+            Powered by{' '}
+            <Link href="/" className="font-medium hover:underline">
               Notion Clone
             </Link>
           </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }

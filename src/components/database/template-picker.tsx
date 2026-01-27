@@ -1,95 +1,101 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
+import { DatabaseTemplate } from '@prisma/client';
+import { Plus, FileText, Star, Settings } from 'lucide-react';
+
+import { createRowFromTemplate, addRow } from '@/app/(main)/_actions/database';
+import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { Plus, FileText, Star, Settings } from "lucide-react"
-import { createRowFromTemplate, addRow } from "@/app/(main)/_actions/database"
-import { DatabaseTemplate } from "@prisma/client"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-interface TemplatePickerProps {
-    databaseId: string
-    templates: DatabaseTemplate[]
-    onManageTemplates: () => void
+interface TemplatePickerProperties {
+  databaseId: string;
+  templates: DatabaseTemplate[];
+  onManageTemplates: () => void;
 }
 
 export function TemplatePicker({
-    databaseId,
-    templates,
-    onManageTemplates
-}: TemplatePickerProps) {
-    const defaultTemplate = templates.find(t => t.isDefault)
-    const otherTemplates = templates.filter(t => !t.isDefault)
+  databaseId,
+  templates,
+  onManageTemplates,
+}: TemplatePickerProperties) {
+  const defaultTemplate = templates.find((t) => t.isDefault);
+  const otherTemplates = templates.filter((t) => !t.isDefault);
 
-    const handleNewBlank = async () => {
-        await addRow(databaseId)
-    }
+  const handleNewBlank = async () => {
+    await addRow(databaseId);
+  };
 
-    const handleUseTemplate = async (templateId: string) => {
-        await createRowFromTemplate(databaseId, templateId)
-    }
+  const handleUseTemplate = async (templateId: string) => {
+    await createRowFromTemplate(databaseId, templateId);
+  };
 
-    // Eğer template yoksa direkt new row
-    if (templates.length === 0) {
-        return (
-            <Button onClick={handleNewBlank} variant="ghost" className="w-full justify-start">
-                <Plus className="h-4 w-4 mr-2" />
-                New
-            </Button>
-        )
-    }
-
+  if (templates.length === 0) {
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start">
-                    <Plus className="h-4 w-4 mr-2" />
-                    New
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-                {/* Blank row */}
-                <DropdownMenuItem onClick={handleNewBlank}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Blank page
-                </DropdownMenuItem>
+      <Button
+        onClick={handleNewBlank}
+        variant="ghost"
+        className="w-full justify-start"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        New
+      </Button>
+    );
+  }
 
-                {/* Default template */}
-                {defaultTemplate && (
-                    <DropdownMenuItem onClick={() => handleUseTemplate(defaultTemplate.id)}>
-                        <Star className="h-4 w-4 mr-2 text-yellow-500" />
-                        {defaultTemplate.icon} {defaultTemplate.name}
-                    </DropdownMenuItem>
-                )}
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="w-full justify-start">
+          <Plus className="h-4 w-4 mr-2" />
+          New
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        {}
+        <DropdownMenuItem onClick={handleNewBlank}>
+          <FileText className="h-4 w-4 mr-2" />
+          Blank page
+        </DropdownMenuItem>
 
-                {/* Other templates */}
-                {otherTemplates.length > 0 && (
-                    <>
-                        <DropdownMenuSeparator />
-                        {otherTemplates.map(template => (
-                            <DropdownMenuItem
-                                key={template.id}
-                                onClick={() => handleUseTemplate(template.id)}
-                            >
-                                <span className="mr-2">{template.icon || '📄'}</span>
-                                {template.name}
-                            </DropdownMenuItem>
-                        ))}
-                    </>
-                )}
+        {}
+        {defaultTemplate && (
+          <DropdownMenuItem
+            onClick={() => handleUseTemplate(defaultTemplate.id)}
+          >
+            <Star className="h-4 w-4 mr-2 text-yellow-500" />
+            {defaultTemplate.icon} {defaultTemplate.name}
+          </DropdownMenuItem>
+        )}
 
-                {/* Manage templates */}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onManageTemplates}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Manage templates
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+        {}
+        {otherTemplates.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            {otherTemplates.map((template) => (
+              <DropdownMenuItem
+                key={template.id}
+                onClick={() => handleUseTemplate(template.id)}
+              >
+                <span className="mr-2">{template.icon || '📄'}</span>
+                {template.name}
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
+
+        {}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onManageTemplates}>
+          <Settings className="h-4 w-4 mr-2" />
+          Manage templates
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

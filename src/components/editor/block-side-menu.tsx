@@ -1,54 +1,56 @@
-"use client"
+'use client';
+import { useCallback } from 'react';
 
-import { useCallback } from "react"
-import { useComponentsContext } from "@blocknote/react"
-import { BlockMenu } from "./block-menu"
+import { BlockMenu } from './block-menu';
+
 import {
-    convertBlockType,
-    duplicateBlock,
-    BlockColor,
-    getBlockColorStyle
-} from "@/lib/block-utils"
-import { useTheme } from "next-themes"
+  convertBlockType,
+  duplicateBlock,
+  BlockColor,
+} from '@/lib/block-utils';
 
-interface BlockSideMenuProps {
-    block: any
-    editor: any
+interface BlockSideMenuProperties {
+  // BlockNote editor ve block tipleri karmaşık generic yapıya sahip
+  block: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  editor: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export function BlockSideMenu({ block, editor }: BlockSideMenuProps) {
-    const { resolvedTheme } = useTheme()
-    const isDark = resolvedTheme === "dark"
+export function BlockSideMenu({ block, editor }: BlockSideMenuProperties) {
+  const handleConvert = useCallback(
+    (newType: string) => {
+      const converted = convertBlockType(block, newType);
+      editor.updateBlock(block.id, converted);
+    },
+    [block, editor]
+  );
 
-    const handleConvert = useCallback((newType: string) => {
-        const converted = convertBlockType(block, newType)
-        editor.updateBlock(block.id, converted)
-    }, [block, editor])
+  const handleDuplicate = useCallback(() => {
+    const duplicate = duplicateBlock(block);
+    editor.insertBlocks([duplicate], block.id, 'after');
+  }, [block, editor]);
 
-    const handleDuplicate = useCallback(() => {
-        const duplicate = duplicateBlock(block)
-        editor.insertBlocks([duplicate], block.id, "after")
-    }, [block, editor])
+  const handleDelete = useCallback(() => {
+    editor.removeBlocks([block.id]);
+  }, [block, editor]);
 
-    const handleDelete = useCallback(() => {
-        editor.removeBlocks([block.id])
-    }, [block, editor])
+  const handleColorChange = useCallback(
+    (color: BlockColor) => {
+      editor.updateBlock(block.id, {
+        props: { ...block.props, backgroundColor: color },
+      });
+    },
+    [block, editor]
+  );
 
-    const handleColorChange = useCallback((color: BlockColor) => {
-        editor.updateBlock(block.id, {
-            props: { ...block.props, backgroundColor: color }
-        })
-    }, [block, editor])
-
-    return (
-        <BlockMenu
-            blockId={block.id}
-            blockType={block.type}
-            backgroundColor={block.props?.backgroundColor || "default"}
-            onConvert={handleConvert}
-            onDuplicate={handleDuplicate}
-            onDelete={handleDelete}
-            onColorChange={handleColorChange}
-        />
-    )
+  return (
+    <BlockMenu
+      blockId={block.id}
+      blockType={block.type}
+      backgroundColor={block.props?.backgroundColor || 'default'}
+      onConvert={handleConvert}
+      onDuplicate={handleDuplicate}
+      onDelete={handleDelete}
+      onColorChange={handleColorChange}
+    />
+  );
 }

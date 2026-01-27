@@ -1,54 +1,56 @@
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { getDocument } from "@/app/(main)/_actions/documents"
-import { getDatabase, getRowDetails } from "@/app/(main)/_actions/database"
-import { DatabaseView } from "@/components/database/database-view"
-import { Breadcrumbs } from "@/components/breadcrumbs"
-import { BacklinksPanel } from "@/components/backlinks-panel"
-import { FavoriteButton } from "@/components/favorite-button"
-import { DocumentNavbarActions } from "@/components/document-navbar-actions"
-import { PageMenu } from "@/components/page-menu"
-import { ExportMenu } from "@/components/export-menu"
-import { recordPageView } from "@/app/(main)/_actions/navigation"
-import { PageRenderer } from "@/components/page/page-renderer"
-import { Banner } from "@/components/banner"
-import { CollaborationProvider } from "@/components/providers/collaboration-provider"
-import { PresenceIndicators } from "@/components/presence-indicators"
+import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic'
+import { getDatabase, getRowDetails } from '@/app/(main)/_actions/database';
+import { getDocument } from '@/app/(main)/_actions/documents';
+import { recordPageView } from '@/app/(main)/_actions/navigation';
+import { BacklinksPanel } from '@/components/backlinks-panel';
+import { Banner } from '@/components/banner';
+import { Breadcrumbs } from '@/components/breadcrumbs';
+import { DatabaseView } from '@/components/database/database-view';
+import { DocumentNavbarActions } from '@/components/document-navbar-actions';
+import { ExportMenu } from '@/components/export-menu';
+import { FavoriteButton } from '@/components/favorite-button';
+import { PageRenderer } from '@/components/page/page-renderer';
+import { PageMenu } from '@/components/page-menu';
+import { PresenceIndicators } from '@/components/presence-indicators';
+import { CollaborationProvider } from '@/components/providers/collaboration-provider';
+import { auth } from '@/lib/auth';
 
-interface DocumentPageProps {
+export const dynamic = 'force-dynamic';
+
+interface DocumentPageProperties {
   params: Promise<{
-    documentId: string
-  }>
+    documentId: string;
+  }>;
 }
 
-export default async function DocumentPage({ params }: DocumentPageProps) {
-  const { documentId } = await params
-  const session = await auth()
+export default async function DocumentPage({ params }: DocumentPageProperties) {
+  const { documentId } = await params;
+  const session = await auth();
 
-  if (!session?.user && process.env.TEST_MODE !== "true") {
-    redirect("/sign-in")
+  if (!session?.user && process.env.TEST_MODE !== 'true') {
+    redirect('/sign-in');
   }
 
-  const page = await getDocument(documentId)
+  const page = await getDocument(documentId);
 
   if (!page) {
-    redirect("/documents")
+    redirect('/documents');
   }
 
-  const database = page.isDatabase ? await getDatabase(page.id) : null
-  const row = page.databaseRow ? await getRowDetails(page.databaseRow.id) : undefined
+  const database = page.isDatabase ? await getDatabase(page.id) : null;
+  const row = page.databaseRow
+    ? await getRowDetails(page.databaseRow.id)
+    : undefined;
 
-  // Record view
   if (session?.user) {
-    recordPageView(documentId)
+    recordPageView(documentId);
   }
 
   return (
     <CollaborationProvider documentId={documentId} key={documentId}>
       <div className="h-full flex flex-col">
-        {/* Top Navigation */}
+        {}
         <nav className="flex items-center justify-between px-3 py-2 w-full border-b bg-background z-50">
           <Breadcrumbs pageId={page.id} />
           <div className="flex items-center gap-2">
@@ -65,24 +67,21 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
               isDatabase={page.isDatabase}
               databaseId={database?.id}
             />
-            {!page.isArchived && (
-              <FavoriteButton pageId={page.id} />
-            )}
-            <PageMenu documentId={page.id} isArchived={page.isArchived} document={page} />
+            {!page.isArchived && <FavoriteButton pageId={page.id} />}
+            <PageMenu
+              documentId={page.id}
+              isArchived={page.isArchived}
+              document={page}
+            />
           </div>
-        </nav >
+        </nav>
 
-        {page.isArchived && (
-          <Banner documentId={documentId} />
-        )}
+        {page.isArchived && <Banner documentId={documentId} />}
 
         {page.isDatabase && database ? (
-          <DatabaseView database={database as any} page={page} />
+          <DatabaseView database={database} page={page} />
         ) : (
-          <PageRenderer
-            page={page}
-            row={row as any}
-          />
+          <PageRenderer page={page} row={row} />
         )}
 
         <div className="pb-40">
@@ -90,5 +89,5 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
         </div>
       </div>
     </CollaborationProvider>
-  )
+  );
 }

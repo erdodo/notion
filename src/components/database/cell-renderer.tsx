@@ -1,63 +1,109 @@
+import { CheckboxCell } from './cells/checkbox-cell';
+import { DateCell } from './cells/date-cell';
+import { FormulaCell } from './cells/formula-cell';
+import { MultiSelectCell } from './cells/multi-select-cell';
+import { NumberCell } from './cells/number-cell';
+import { RelationCell } from './cells/relation-cell';
+import { RollupCell } from './cells/rollup-cell';
+import { SelectCell } from './cells/select-cell';
+import { StatusCell } from './cells/status-cell';
+import { TextCell } from './cells/text-cell';
+import { CreatedTimeCell, UpdatedTimeCell } from './cells/time-cells';
+import { TitleCell } from './cells/title-cell';
+import { CellProps as CellProperties } from './cells/types';
+import { UrlCell } from './cells/url-cell';
 
-import { PropertyType } from "@prisma/client"
-import { TitleCell } from "./cells/title-cell"
-import { TextCell } from "./cells/text-cell"
-import { NumberCell } from "./cells/number-cell"
-import { SelectCell } from "./cells/select-cell"
-import { DateCell } from "./cells/date-cell"
-import { CheckboxCell } from "./cells/checkbox-cell"
-import { UrlCell } from "./cells/url-cell"
-import { CreatedTimeCell, UpdatedTimeCell } from "./cells/time-cells"
-import { RelationCell } from "./cells/relation-cell"
-import { RollupCell } from "./cells/rollup-cell"
-import { FormulaCell } from "./cells/formula-cell"
-import { CellProps } from "./cells/types"
-import { RelationConfig } from "@/lib/relation-service"
-import { RollupConfig } from "@/lib/rollup-service"
-import { MultiSelectCell } from "./cells/multi-select-cell"
-import { StatusCell } from "./cells/status-cell"
+import { RelationConfig } from '@/lib/relation-service';
+import { RollupConfig } from '@/lib/rollup-service';
 
-// Map other types to TextCell for now if implementation missing
-const PlaceholderCell = TextCell
+export interface FormulaConfig {
+  expression: string;
+}
 
-export function CellRenderer(props: CellProps) {
-    // We need to know the type.
-    // We can get it from column meta.
-    const type = (props.column.columnDef.meta as any)?.property?.type as PropertyType
+const PlaceholderCell = TextCell;
 
-    switch (type) {
-        case 'TITLE': return <TitleCell {...props} />
-        case 'TEXT': return <TextCell {...props} />
-        case 'NUMBER': return <NumberCell {...props} />
-        case 'SELECT': return <SelectCell {...props} />
-        case 'MULTI_SELECT': return <MultiSelectCell {...props} />
-        case 'STATUS': return <StatusCell {...props} />
-        case 'DATE': return <DateCell {...props} />
-        case 'CHECKBOX': return <CheckboxCell {...props} />
-        case 'URL': return <UrlCell {...props} />
-        case 'EMAIL': return <PlaceholderCell {...props} /> // Use text for now
-        case 'PHONE': return <PlaceholderCell {...props} />
-        case 'CREATED_TIME': return <CreatedTimeCell {...props} />
-        case 'UPDATED_TIME': return <UpdatedTimeCell {...props} />
-        case 'RELATION':
-            return <RelationCell
-                propertyId={props.propertyId}
-                rowId={props.rowId}
-                value={props.cell?.value}
-                config={(props.column.columnDef.meta as any)?.property?.relationConfig as unknown as RelationConfig}
-            />
-        case 'ROLLUP':
-            return <RollupCell
-                propertyId={props.propertyId}
-                rowId={props.rowId}
-                config={(props.column.columnDef.meta as any)?.property?.rollupConfig as unknown as RollupConfig}
-            />
-        case 'FORMULA':
-            return <FormulaCell
-                propertyId={props.propertyId}
-                rowId={props.rowId}
-                config={(props.column.columnDef.meta as any)?.property?.formulaConfig}
-            />
-        default: return <TextCell {...props} />
+export function CellRenderer(properties: CellProperties) {
+  const type = properties.column.columnDef.meta?.property?.type;
+
+  switch (type) {
+    case 'TITLE': {
+      return <TitleCell {...properties} />;
     }
+    case 'TEXT': {
+      return <TextCell {...properties} />;
+    }
+    case 'NUMBER': {
+      return <NumberCell {...properties} />;
+    }
+    case 'SELECT': {
+      return <SelectCell {...properties} />;
+    }
+    case 'MULTI_SELECT': {
+      return <MultiSelectCell {...properties} />;
+    }
+    case 'STATUS': {
+      return <StatusCell {...properties} />;
+    }
+    case 'DATE': {
+      return <DateCell {...properties} />;
+    }
+    case 'CHECKBOX': {
+      return <CheckboxCell {...properties} />;
+    }
+    case 'URL': {
+      return <UrlCell {...properties} />;
+    }
+    case 'EMAIL': {
+      return <PlaceholderCell {...properties} />;
+    }
+    case 'PHONE': {
+      return <PlaceholderCell {...properties} />;
+    }
+    case 'CREATED_TIME': {
+      return <CreatedTimeCell {...properties} />;
+    }
+    case 'UPDATED_TIME': {
+      return <UpdatedTimeCell {...properties} />;
+    }
+    case 'RELATION': {
+      return (
+        <RelationCell
+          propertyId={properties.propertyId}
+          rowId={properties.rowId}
+          value={properties.cell?.value}
+          config={
+            properties.column.columnDef.meta?.property
+              ?.relationConfig as unknown as RelationConfig
+          }
+        />
+      );
+    }
+    case 'ROLLUP': {
+      return (
+        <RollupCell
+          propertyId={properties.propertyId}
+          rowId={properties.rowId}
+          config={
+            properties.column.columnDef.meta?.property
+              ?.rollupConfig as unknown as RollupConfig
+          }
+        />
+      );
+    }
+    case 'FORMULA': {
+      return (
+        <FormulaCell
+          propertyId={properties.propertyId}
+          rowId={properties.rowId}
+          config={
+            properties.column.columnDef.meta?.property
+              ?.formulaConfig as unknown as FormulaConfig
+          }
+        />
+      );
+    }
+    default: {
+      return <TextCell {...properties} />;
+    }
+  }
 }

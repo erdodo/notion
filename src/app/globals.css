@@ -34,7 +34,7 @@
 
   .dark {
     --background: 0 0% 10%;
-    /* #191919 */
+
     --foreground: 0 0% 98%;
     --card: 0 0% 10%;
     --card-foreground: 0 0% 98%;
@@ -43,17 +43,17 @@
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
     --secondary: 0 0% 12.5%;
-    /* #202020 - Sidebar */
+
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 18%;
-    /* Slightly lighter than bg */
+
     --muted-foreground: 0 0% 63.9%;
     --accent: 0 0% 18%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 18%;
-    /* #2e2e2e */
+
     --input: 0 0% 18%;
     --ring: 0 0% 83.1%;
     --chart-1: 220 70% 50%;
@@ -81,7 +81,6 @@
   }
 }
 
-/* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -108,32 +107,31 @@
   background: hsl(var(--muted-foreground) / 0.4);
 }
 
-/* Smooth transitions for theme changes */
 * {
   transition-property: color, background-color, border-color;
   transition-duration: 200ms;
   transition-timing-function: ease-in-out;
 }
 
-/* Exclude specific elements from transition */
 button,
 a,
 input,
 textarea,
 select,
 .no-transition,
-[role="button"] {
+[role='button'] {
   transition-property: none;
 }
 
-/* Re-add hover transitions for interactive elements */
 button,
 a,
-[role="button"] {
-  transition: background-color 150ms ease, color 150ms ease, transform 100ms ease;
+[role='button'] {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 100ms ease;
 }
 
-/* BlockNote Editor Styles */
 .blocknote-editor {
   min-height: 50vh;
   height: 100%;
@@ -147,23 +145,22 @@ a,
   margin: 4px 0;
 }
 
-/* Toggle Block - Hide children when closed */
-.toggle-block-wrapper[data-toggle-open="false"]~.bn-block-group {
+.toggle-block-wrapper[data-toggle-open='false'] ~ .bn-block-group {
   display: none;
 }
 
-/* Toggle Block - Show children when open with animation */
-.toggle-block-wrapper[data-toggle-open="true"]~.bn-block-group {
+.toggle-block-wrapper[data-toggle-open='true'] ~ .bn-block-group {
   display: block;
   animation: toggleSlideDown 200ms ease-out;
 }
 
-/* Fallback: Use parent block's data attribute if wrapper doesn't work */
-.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open="false"])>.bn-block-group {
+.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open='false'])
+  > .bn-block-group {
   display: none;
 }
 
-.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open="true"])>.bn-block-group {
+.bn-block-outer:has(.toggle-block-wrapper[data-toggle-open='true'])
+  > .bn-block-group {
   display: block;
   animation: toggleSlideDown 200ms ease-out;
 }
@@ -182,11 +179,6 @@ a,
   }
 }
 
-
-
-
-
-/* Micro-interactions */
 .hover-lift {
   transition: transform 150ms ease;
 }
@@ -195,18 +187,15 @@ a,
   transform: translateY(-1px);
 }
 
-/* Focus rings for accessibility */
 :focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
 
-/* Remove default focus outline but keep for keyboard navigation */
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Database Table */
 .database-table {
   border-collapse: collapse;
   width: 100%;
@@ -230,7 +219,6 @@ a,
   padding: 6px 8px;
 }
 
-/* Property colors (Notion style) */
 .property-color-gray {
   background: #f1f1f0;
   color: #787774;
@@ -276,7 +264,6 @@ a,
   color: #c4554d;
 }
 
-/* Dark mode variants */
 .dark .property-color-gray {
   background: #373737;
   color: #979a9b;
@@ -322,9 +309,10 @@ a,
   color: #e16b64;
 }
 
-/* BlockNote Inline Code */
 .bn-inline-code {
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-family:
+    'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New',
+    monospace;
   font-size: 0.85em;
   background: rgba(135, 131, 120, 0.15);
   color: #eb5757;
@@ -338,131 +326,128 @@ a,
   color: #ff7b72;
 }
 
-/* Text Colors */
-[data-text-color="gray"] {
+[data-text-color='gray'] {
   color: rgb(120, 119, 116);
 }
 
-[data-text-color="brown"] {
+[data-text-color='brown'] {
   color: rgb(159, 107, 83);
 }
 
-[data-text-color="orange"] {
+[data-text-color='orange'] {
   color: rgb(217, 115, 13);
 }
 
-[data-text-color="yellow"] {
+[data-text-color='yellow'] {
   color: rgb(203, 145, 47);
 }
 
-[data-text-color="green"] {
+[data-text-color='green'] {
   color: rgb(68, 131, 97);
 }
 
-[data-text-color="blue"] {
+[data-text-color='blue'] {
   color: rgb(51, 126, 169);
 }
 
-[data-text-color="purple"] {
+[data-text-color='purple'] {
   color: rgb(144, 101, 176);
 }
 
-[data-text-color="pink"] {
+[data-text-color='pink'] {
   color: rgb(193, 76, 138);
 }
 
-[data-text-color="red"] {
+[data-text-color='red'] {
   color: rgb(212, 76, 71);
 }
 
-/* Background/Highlight Colors - Light Mode */
-[data-background-color="gray"] {
+[data-background-color='gray'] {
   background-color: rgb(241, 241, 239);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="brown"] {
+[data-background-color='brown'] {
   background-color: rgb(244, 238, 234);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="orange"] {
+[data-background-color='orange'] {
   background-color: rgb(251, 236, 221);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="yellow"] {
+[data-background-color='yellow'] {
   background-color: rgb(251, 243, 219);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="green"] {
+[data-background-color='green'] {
   background-color: rgb(237, 243, 236);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="blue"] {
+[data-background-color='blue'] {
   background-color: rgb(231, 243, 248);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="purple"] {
+[data-background-color='purple'] {
   background-color: rgb(244, 240, 247);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="pink"] {
+[data-background-color='pink'] {
   background-color: rgb(249, 238, 243);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-[data-background-color="red"] {
+[data-background-color='red'] {
   background-color: rgb(253, 235, 236);
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
 
-/* Background/Highlight Colors - Dark Mode */
-.dark [data-background-color="gray"] {
+.dark [data-background-color='gray'] {
   background-color: rgb(71, 76, 80);
 }
 
-.dark [data-background-color="brown"] {
+.dark [data-background-color='brown'] {
   background-color: rgb(67, 64, 64);
 }
 
-.dark [data-background-color="orange"] {
+.dark [data-background-color='orange'] {
   background-color: rgb(89, 74, 58);
 }
 
-.dark [data-background-color="yellow"] {
+.dark [data-background-color='yellow'] {
   background-color: rgb(89, 86, 59);
 }
 
-.dark [data-background-color="green"] {
+.dark [data-background-color='green'] {
   background-color: rgb(53, 76, 75);
 }
 
-.dark [data-background-color="blue"] {
+.dark [data-background-color='blue'] {
   background-color: rgb(45, 66, 86);
 }
 
-.dark [data-background-color="purple"] {
+.dark [data-background-color='purple'] {
   background-color: rgb(73, 47, 100);
 }
 
-.dark [data-background-color="pink"] {
+.dark [data-background-color='pink'] {
   background-color: rgb(83, 59, 76);
 }
 
-.dark [data-background-color="red"] {
+.dark [data-background-color='red'] {
   background-color: rgb(89, 65, 65);
 }

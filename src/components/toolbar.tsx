@@ -1,72 +1,59 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { ImageIcon, Smile, X, LayoutTemplate } from "lucide-react"
-import { updateDocument } from "@/app/(main)/_actions/documents"
-import { IconPicker } from "./icon-picker"
-import { useContextMenu } from "@/hooks/use-context-menu"
-import { useTemplateModal } from "@/hooks/use-template-modal"
-import { CoverImageModal } from "./modals/cover-image-modal"
+import { ImageIcon, Smile, X, LayoutTemplate } from 'lucide-react';
+import { useState } from 'react';
+
+import { IconPicker } from './icon-picker';
+import { CoverImageModal } from './modals/cover-image-modal';
+
+import { updateDocument } from '@/app/(main)/_actions/documents';
+import { useContextMenu } from '@/hooks/use-context-menu';
+import { useTemplateModal } from '@/hooks/use-template-modal';
 
 interface Page {
-  id: string
-  title: string
-  icon?: string | null
-  coverImage?: string | null
-  isPublished: boolean
+  id: string;
+  title: string;
+  icon?: string | null;
+  coverImage?: string | null;
+  isPublished: boolean;
 }
 
-interface ToolbarProps {
-  page: Page
-  preview?: boolean
+interface ToolbarProperties {
+  page: Page;
+  preview?: boolean;
 }
 
-export const Toolbar = ({ page, preview }: ToolbarProps) => {
-  const [coverModalOpen, setCoverModalOpen] = useState(false)
-  const templateModal = useTemplateModal()
+export const Toolbar = ({ page, preview }: ToolbarProperties) => {
+  const [coverModalOpen, setCoverModalOpen] = useState(false);
+  const templateModal = useTemplateModal();
 
   const { onContextMenu } = useContextMenu({
-    type: "icon",
+    type: 'icon',
     data: {
       id: page.id,
       icon: page.icon,
       onRemoveIcon: () => handleIconRemove(),
-      onChangeIcon: () => {
-        // Trigger the IconPicker popover
-        // This is tricky because IconPicker wraps the icon p element.
-        // We need to simulate click or open state?
-        // IconPicker controls its own state via Popover triggers. 
-        // We can expose an open state or utilize the fact that single click opens it.
-        // So 'Change' button in context menu could just be informative or we need ref?
-        // Let's use a ref or an informative message if complex.
-        // A better approach: The context menu 'Change' could just close context menu
-        // and let user click left click.
-        // OR we pass a method to open it if we refactor IconPicker to controlled.
-        // For MVP: keep "Use left click" or try to find a way to trigger.
-        // Actually, let's keep it simple -> User left click is the main way.
-        // But the requirement says "sağ tık menüsündeki change çalışmıyor".
-        // So we MUST make it work.
-        // We can make IconPicker controlled or expose a trigger ref.
-      }
-    }
-  })
+      onChangeIcon: () => {},
+    },
+  });
 
   const handleIconSelect = async (icon: string) => {
-    // Optimistic update
-    window.dispatchEvent(new CustomEvent("notion-document-update", {
-      detail: { id: page.id, icon }
-    }))
-    await updateDocument(page.id, { icon })
-  }
+    globalThis.dispatchEvent(
+      new CustomEvent('notion-document-update', {
+        detail: { id: page.id, icon },
+      })
+    );
+    await updateDocument(page.id, { icon });
+  };
 
   const handleIconRemove = async () => {
-    window.dispatchEvent(new CustomEvent("notion-document-update", {
-      detail: { id: page.id, icon: null }
-    }))
-    await updateDocument(page.id, { icon: "" })
-  }
-
-
+    globalThis.dispatchEvent(
+      new CustomEvent('notion-document-update', {
+        detail: { id: page.id, icon: null },
+      })
+    );
+    await updateDocument(page.id, { icon: '' });
+  };
 
   return (
     <>
@@ -74,7 +61,7 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
         {!!page.icon && !preview && (
           <div
             onContextMenu={onContextMenu}
-            className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? "absolute -top-[1rem] left-0 z-10" : ""}`}
+            className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? 'absolute -top-[1rem] left-0 z-10' : ''}`}
           >
             <IconPicker onChange={handleIconSelect}>
               <p className="text-6xl hover:opacity-75 transition">
@@ -90,7 +77,9 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
           </div>
         )}
         {!!page.icon && preview && (
-          <p className={`text-6xl pt-6 ${page.coverImage ? "absolute -top-[2.5rem] left-0 z-10" : ""}`}>
+          <p
+            className={`text-6xl pt-6 ${page.coverImage ? 'absolute -top-[2.5rem] left-0 z-10' : ''}`}
+          >
             {page.icon}
           </p>
         )}
@@ -105,7 +94,9 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
           )}
           {!page.coverImage && !preview && (
             <button
-              onClick={() => setCoverModalOpen(true)}
+              onClick={() => {
+                setCoverModalOpen(true);
+              }}
               className="text-muted-foreground text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 py-1 rounded-md"
             >
               <ImageIcon className="h-4 w-4 mr-2 inline" />
@@ -126,9 +117,11 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
 
         <CoverImageModal
           isOpen={coverModalOpen}
-          onClose={() => setCoverModalOpen(false)}
+          onClose={() => {
+            setCoverModalOpen(false);
+          }}
         />
       </div>
     </>
-  )
-}
+  );
+};

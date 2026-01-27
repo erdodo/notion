@@ -1,34 +1,45 @@
-"use client"
+'use client';
 
-import { ChevronDown, ChevronRight, Plus, FileText, MoreHorizontal, Trash, Copy, LucideIcon } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { archiveDocument, duplicateDocument } from "../_actions/documents"
-import { useMovePage } from "@/hooks/use-move-page"
-import { useContextMenu } from "@/hooks/use-context-menu"
-import { toast } from "sonner"
+import {
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  FileText,
+  MoreHorizontal,
+  Trash,
+  Copy,
+  LucideIcon,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { archiveDocument, duplicateDocument } from '../_actions/documents';
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/dropdown-menu';
+import { useContextMenu } from '@/hooks/use-context-menu';
+import { useMovePage } from '@/hooks/use-move-page';
+import { cn } from '@/lib/utils';
 
-interface ItemProps {
-  id: string
-  title: string
-  icon?: string
-  parentId?: string | null
-  level?: number
-  expanded?: boolean
-  onExpand?: () => void
-  onClick?: () => void
-  onCreate?: () => void
-  hasChildren?: boolean
-  isCreating?: boolean
-  fallbackIcon?: LucideIcon
-  active?: boolean
+interface ItemProperties {
+  id: string;
+  title: string;
+  icon?: string | null;
+  parentId?: string | null;
+  level?: number;
+  expanded?: boolean;
+  onExpand?: () => void;
+  onClick?: () => void;
+  onCreate?: () => void;
+  hasChildren?: boolean;
+  isCreating?: boolean;
+  fallbackIcon?: LucideIcon;
+  active?: boolean;
 }
 
 export const Item = ({
@@ -44,56 +55,56 @@ export const Item = ({
   hasChildren = false,
   isCreating = false,
   fallbackIcon: FallbackIcon = FileText,
-  active
-}: ItemProps) => {
-  const router = useRouter()
-  const { onOpen } = useMovePage()
+  active,
+}: ItemProperties) => {
+  const router = useRouter();
+  const { onOpen } = useMovePage();
 
   const handleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (onExpand) {
-      onExpand()
+      onExpand();
     }
-  }
+  };
 
   const handleCreate = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (onCreate) {
-      onCreate()
+      onCreate();
     }
-  }
+  };
 
   const handleClick = () => {
     if (onClick) {
-      onClick()
+      onClick();
     } else {
-      router.push(`/documents/${id}`)
+      router.push(`/documents/${id}`);
     }
-  }
+  };
 
   const handleArchive = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    await archiveDocument(id)
-    router.push("/documents")
-  }
+    e.stopPropagation();
+    await archiveDocument(id);
+    router.push('/documents');
+  };
 
-  const ChevronIcon = expanded ? ChevronDown : ChevronRight
+  const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
   const { onContextMenu } = useContextMenu({
-    type: "sidebar-page",
-    data: { id, title, icon, parentId }
-  })
+    type: 'sidebar-page',
+    data: { id, title, icon, parentId },
+  });
 
   return (
     <div
       onClick={handleClick}
       onContextMenu={onContextMenu}
       className={cn(
-        "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out",
-        active && "bg-primary/10 text-primary font-semibold"
+        'group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out',
+        active && 'bg-primary/10 text-primary font-semibold'
       )}
       style={{
-        paddingLeft: level > 0 ? `${(level * 12) + 12}px` : "12px"
+        paddingLeft: level > 0 ? `${level * 12 + 12}px` : '12px',
       }}
     >
       {hasChildren && (
@@ -106,9 +117,7 @@ export const Item = ({
         </button>
       )}
 
-      {!hasChildren && (
-        <div className="h-4 w-4 mr-1" />
-      )}
+      {!hasChildren && <div className="h-4 w-4 mr-1" />}
 
       <div className="flex items-center gap-x-2 flex-1 truncate">
         {icon ? (
@@ -132,7 +141,9 @@ export const Item = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-0.5"
             asChild
           >
@@ -151,22 +162,26 @@ export const Item = ({
               Delete
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={async (e) => {
-              e.stopPropagation()
-              const promise = duplicateDocument(id)
-              toast.promise(promise, {
-                loading: "Duplicating...",
-                success: "Page duplicated!",
-                error: "Failed to duplicate."
-              })
-            }}>
+            <DropdownMenuItem
+              onClick={async (e) => {
+                e.stopPropagation();
+                const promise = duplicateDocument(id);
+                toast.promise(promise, {
+                  loading: 'Duplicating...',
+                  success: 'Page duplicated!',
+                  error: 'Failed to duplicate.',
+                });
+              }}
+            >
               <Copy className="h-4 w-4 mr-2" />
               Duplicate
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => {
-              e.stopPropagation()
-              onOpen(id, parentId || null)
-            }}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen(id, parentId || null);
+              }}
+            >
               <MoreHorizontal className="h-4 w-4 mr-2" />
               Move to...
             </DropdownMenuItem>
@@ -178,5 +193,5 @@ export const Item = ({
         </DropdownMenu>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,81 +1,81 @@
-"use client"
+'use client';
 
-import { useState, useCallback, useEffect } from "react"
-import dynamic from "next/dynamic"
-import { useDebouncedCallback } from "use-debounce"
-import { updateDocument } from "@/app/(main)/_actions/documents"
-import { useSocket } from "@/components/providers/socket-provider"
+import dynamic from 'next/dynamic';
+import { useState, useCallback, useEffect } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
-// Import BlockNote editor dynamically to prevent SSR issues
+import { updateDocument } from '@/app/(main)/_actions/documents';
+import { useSocket } from '@/components/providers/socket-provider';
+
 const BlockNoteEditorComponent = dynamic(
-  () => import("./blocknote-editor").then((mod) => mod.BlockNoteEditorComponent),
+  () =>
+    import('./blocknote-editor').then(
+      (module_) => module_.BlockNoteEditorComponent
+    ),
   { ssr: false }
-)
+);
 
-interface DocumentEditorProps {
-  documentId: string
-  initialContent?: string | null
-  editable?: boolean
+interface DocumentEditorProperties {
+  documentId: string;
+  initialContent?: string | null;
+  editable?: boolean;
 }
 
-export default function DocumentEditor({ documentId, initialContent, editable = true }: DocumentEditorProps) {
-  const [content, setContent] = useState(initialContent || "")
-  const [isSaving, setIsSaving] = useState(false)
-  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+export default function DocumentEditor({
+  documentId,
+  initialContent,
+  editable = true,
+}: DocumentEditorProperties) {
+  const [content, setContent] = useState(initialContent || '');
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-
-  const { socket } = useSocket()
+  const { socket } = useSocket();
 
   useEffect(() => {
-    if (!socket) return
+    if (!socket) return;
 
-    // Join the room for this document
-    socket.emit("join-room", `document-${documentId}`)
+    socket.emit('join-room', `document-${documentId}`);
 
-    // Listen for updates
-    socket.on("doc:update", (payload: any) => {
-      // Server emits { id, updates, userId }
-      // If we receive content update and it's different, update state
-      // We should be careful about overwriting user's own typing
+    socket.on('doc:update', (payload: { updates?: { content?: string } }) => {
       if (payload?.updates?.content && payload.updates.content !== content) {
-        setContent(payload.updates.content)
+        setContent(payload.updates.content);
       }
-    })
+    });
 
     return () => {
-      socket.emit("leave-room", `document-${documentId}`)
-      socket.off("doc:update")
+      socket.emit('leave-room', `document-${documentId}`);
+      socket.off('doc:update');
+    };
+  }, [documentId, content, socket]);
+
+  const debouncedSave = useDebouncedCallback(async (newContent: string) => {
+    if (!editable) return;
+
+    setIsSaving(true);
+    try {
+      await updateDocument(documentId, { content: newContent });
+      setLastSaved(new Date());
+    } catch (error) {
+      console.error('Error saving content:', error);
+    } finally {
+      setIsSaving(false);
     }
-  }, [documentId, content, socket])
+  }, 2000);
 
-  // Debounced save function - waits 2 seconds after user stops typing
-  const debouncedSave = useDebouncedCallback(
-    async (newContent: string) => {
-      if (!editable) return
-
-      setIsSaving(true)
-      try {
-        await updateDocument(documentId, { content: newContent })
-        setLastSaved(new Date())
-      } catch (error) {
-        console.error("Error saving content:", error)
-      } finally {
-        setIsSaving(false)
-      }
+  const handleContentChange = useCallback(
+    (newContent: string) => {
+      if (!editable) return;
+      // Do not update local state immediately to avoid editor re-render/cursor reset
+      // setContent(newContent)
+      debouncedSave(newContent);
     },
-    2000 // 2 second delay
-  )
-
-  const handleContentChange = useCallback((newContent: string) => {
-    if (!editable) return
-    setContent(newContent)
-    debouncedSave(newContent)
-  }, [debouncedSave, editable])
+    [debouncedSave, editable]
+  );
 
   return (
-
     <div className="relative">
-      {/* Save indicator */}
+      {}
       {editable && (
         <div className="absolute top-0 right-0 text-xs text-muted-foreground">
           {isSaving && <span>Saving...</span>}
@@ -90,6 +90,5 @@ export default function DocumentEditor({ documentId, initialContent, editable = 
         documentId={documentId}
       />
     </div>
-
-  )
+  );
 }

@@ -1,24 +1,24 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const PageSkeleton = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="h-full flex flex-col max-w-4xl mx-auto px-12 pt-12">
-        {/* Title Area Skeleton */}
+        {}
         <div className="space-y-4 mb-8">
-          {/* Icon */}
+          {}
           <Skeleton className="h-16 w-16 rounded-md group" />
-          {/* Title */}
+          {}
           <Skeleton className="h-12 w-3/4 font-bold" />
         </div>
 
-        {/* Toolbar / Divider */}
+        {}
         <div className="flex items-center gap-4 mb-8">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-20" />
         </div>
 
-        {/* Editor Content Skeleton */}
+        {}
         <div className="space-y-4">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-[90%]" />

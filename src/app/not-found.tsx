@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'
+import { Button } from '@/components/ui/button';
+
+export const dynamic = 'force-dynamic';
 
 export default function NotFound() {
   return (
@@ -19,5 +20,5 @@ export default function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

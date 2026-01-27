@@ -1,96 +1,94 @@
-"use client"
+'use client';
 
-import {
-    DropdownMenuItem,
-    DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu"
-import {
-    Smile,
-    Shuffle,
-    Trash
-} from "lucide-react"
-import { useMutation } from "@tanstack/react-query"
-import { updateDocument } from "@/app/(main)/_actions/documents"
-import { useContextMenuStore } from "@/store/use-context-menu-store"
-import { toast } from "sonner"
-import randomColor from "randomcolor"
+import { useMutation } from '@tanstack/react-query';
+import { Smile, Shuffle, Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
-interface IconMenuProps {
-    data: {
-        id: string
-        [key: string]: any
-    }
+import { updateDocument } from '@/app/(main)/_actions/documents';
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useContextMenuStore } from '@/store/use-context-menu-store';
+
+interface IconMenuProperties {
+  data: {
+    id: string;
+    onRemoveIcon?: () => void;
+  };
 }
 
-export const IconMenu = ({ data }: IconMenuProps) => {
-    const { closeContextMenu } = useContextMenuStore()
+export const IconMenu = ({ data }: IconMenuProperties) => {
+  const { closeContextMenu } = useContextMenuStore();
 
-    const { mutate: update } = useMutation({
-        mutationFn: (icon: string | null) => updateDocument(data.id, { icon: icon || undefined }), // fix undefined/null mismatch
-        onSuccess: () => {
-            toast.success("Icon updated")
-            closeContextMenu()
-        },
-        onError: () => {
-            toast.error("Failed to update icon")
-            closeContextMenu()
-        }
-    })
+  const { mutate: update } = useMutation({
+    mutationFn: (icon: string | null) =>
+      updateDocument(data.id, { icon: icon || undefined }),
+    onSuccess: () => {
+      toast.success('Icon updated');
+      closeContextMenu();
+    },
+    onError: () => {
+      toast.error('Failed to update icon');
+      closeContextMenu();
+    },
+  });
 
-    const onRandom = () => {
-        const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🚀", "💻", "🎨", "🎉", "🔥", "✨"]
-        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)]
-        update(randomEmoji)
-    }
+  const onRandom = () => {
+    const emojis = [
+      '😀',
+      '😃',
+      '😄',
+      '😁',
+      '😆',
+      '😅',
+      '😂',
+      '🤣',
+      '😊',
+      '😇',
+      '🚀',
+      '💻',
+      '🎨',
+      '🎉',
+      '🔥',
+      '✨',
+    ];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    update(randomEmoji);
+  };
 
-    const onRemove = () => {
-        // We pass null or empty string depending on API. Previous code used "".
-        // updateDocument expects string | undefined. 
-        // Let's rely on what Toolbar does: it sends `icon: ""`.
-        // But updateDocument type (viewed in file) is `icon?: string`.
-        // So passing "" removes it?
-        // Let's try ""
-        // Actually the mutationFn wrapper handles it.
-        // I will call `updateDocument(data.id, { icon: null })` but let's check exact signature.
-        // It was `icon?: string`.
-        // I will pass "".
-        // Wait, useMutation above calls updateDocument.
-        update("")
-    }
+  return (
+    <>
+      <DropdownMenuItem
+        onClick={() => {
+          toast.info('Please click the icon directly to change it');
+          closeContextMenu();
+        }}
+      >
+        <Smile className="h-4 w-4 mr-2" />
+        Change
+      </DropdownMenuItem>
 
-    return (
-        <>
-            <DropdownMenuItem onClick={() => {
-                // If we can't programmatically open Popover easily without large refactor,
-                // we'll instruct user. 
-                // However, user specifically asked to fix it.
-                // Assuming "Change" should open the picker.
-                toast.info("Please click the icon directly to change it")
-                closeContextMenu()
-            }}>
-                <Smile className="h-4 w-4 mr-2" />
-                Change
-            </DropdownMenuItem>
+      <DropdownMenuItem onClick={onRandom}>
+        <Shuffle className="h-4 w-4 mr-2" />
+        Random
+      </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={onRandom}>
-                <Shuffle className="h-4 w-4 mr-2" />
-                Random
-            </DropdownMenuItem>
+      <DropdownMenuSeparator />
 
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem onClick={() => {
-                if (data.onRemoveIcon) {
-                    data.onRemoveIcon()
-                } else {
-                    // Fallback
-                    update("")
-                }
-                closeContextMenu()
-            }}>
-                <Trash className="h-4 w-4 mr-2" />
-                Remove
-            </DropdownMenuItem>
-        </>
-    )
-}
+      <DropdownMenuItem
+        onClick={() => {
+          if (data.onRemoveIcon) {
+            data.onRemoveIcon();
+          } else {
+            update('');
+          }
+          closeContextMenu();
+        }}
+      >
+        <Trash className="h-4 w-4 mr-2" />
+        Remove
+      </DropdownMenuItem>
+    </>
+  );
+};

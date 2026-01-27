@@ -1,130 +1,146 @@
-import { useState, useEffect, useRef, useCallback } from "react"
-import { updateDocument } from "@/app/(main)/_actions/documents"
-import { Cover } from "@/components/cover"
-import { Toolbar } from "@/components/toolbar"
-import { useSocket } from "@/components/providers/socket-provider" // Import socket
-import { useDebounce } from "@/hooks/use-debounce" // Assuming this hook exists, or I will implement simple debounce
+import { useState, useEffect, useRef } from 'react';
 
-import TextareaAutosize from "react-textarea-autosize"
+import { updateDocument } from '@/app/(main)/_actions/documents';
+import { Cover } from '@/components/cover';
+import { useSocket } from '@/components/providers/socket-provider';
+import { Toolbar } from '@/components/toolbar';
 
-interface DocumentHeaderProps {
-  page: any
-  preview?: boolean
+interface DocumentHeaderProperties {
+  page: {
+    id: string;
+    title: string;
+    icon?: string | null;
+    coverImage?: string | null;
+    coverImagePosition?: number;
+  };
+  preview?: boolean;
 }
 
-export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
-  // Local state for real-time updates
-  const [title, setTitle] = useState(page.title)
-  const [icon, setIcon] = useState(page.icon)
-  const [coverImage, setCoverImage] = useState(page.coverImage)
-  const [coverImagePosition, setCoverImagePosition] = useState(page.coverImagePosition)
+export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
+  const [title, setTitle] = useState(page.title);
+  const [icon, setIcon] = useState(page.icon);
+  const [coverImage, setCoverImage] = useState(page.coverImage);
+  const [coverImagePosition, setCoverImagePosition] = useState(
+    page.coverImagePosition
+  );
 
-  const { socket } = useSocket()
+  const { socket } = useSocket();
 
-  // Use a ref to track if we are the one updating (to avoid loop/jitter on own edits)
-  const isEditingRef = useRef(false)
-  const previousTitleRef = useRef(page.title)
+  const isEditingReference = useRef(false);
+  const previousTitleReference = useRef(page.title);
 
-  // Socket Listener for Remote Updates
   useEffect(() => {
-    if (!socket) return
+    if (!socket) return;
 
-    const onUpdate = (payload: any) => {
-      // Server emits { id, updates, userId }
+    const onUpdate = (payload: {
+      id?: string;
+      updates?: Partial<DocumentHeaderProperties['page']>;
+    }) => {
       if (payload?.id === page.id && payload?.updates) {
-        const updates = payload.updates
-        if (updates.title !== undefined && !isEditingRef.current) setTitle(updates.title)
-        if (updates.icon !== undefined) setIcon(updates.icon)
-        if (updates.coverImage !== undefined) setCoverImage(updates.coverImage)
-        if (updates.coverImagePosition !== undefined) setCoverImagePosition(updates.coverImagePosition)
+        const updates = payload.updates;
+        if (updates.title !== undefined && !isEditingReference.current)
+          setTitle(updates.title);
+        if (updates.icon !== undefined) setIcon(updates.icon);
+        if (updates.coverImage !== undefined) setCoverImage(updates.coverImage);
+        if (updates.coverImagePosition !== undefined)
+          setCoverImagePosition(updates.coverImagePosition);
       }
-    }
+    };
 
-    socket.on("doc:update", onUpdate)
+    socket.on('doc:update', onUpdate);
     return () => {
-      socket.off("doc:update", onUpdate)
-    }
-  }, [socket, page.id])
+      socket.off('doc:update', onUpdate);
+    };
+  }, [socket, page.id]);
 
-
-  // Debounced Save Logic
-  // We don't have useDebounce hook guaranteed, so let's use a simple timeout ref
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const debounceTimerReference = useRef<NodeJS.Timeout | null>(null);
 
   const saveTitle = async (newTitle: string) => {
-    if (newTitle === previousTitleRef.current) return
-    previousTitleRef.current = newTitle
+    if (newTitle === previousTitleReference.current) return;
+    previousTitleReference.current = newTitle;
 
-    // Optimistic sidebar/breadcrumb update
-    window.dispatchEvent(new CustomEvent("notion-document-update", {
-      detail: { id: page.id, title: newTitle }
-    }))
+    globalThis.dispatchEvent(
+      new CustomEvent('notion-document-update', {
+        detail: { id: page.id, title: newTitle },
+      })
+    );
 
-    await updateDocument(page.id, { title: newTitle })
-  }
+    await updateDocument(page.id, { title: newTitle });
+  };
 
   const handleInput = (value: string) => {
-    setTitle(value)
-    isEditingRef.current = true
+    setTitle(value);
+    isEditingReference.current = true;
 
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current)
+    if (debounceTimerReference.current) {
+      clearTimeout(debounceTimerReference.current);
     }
 
-    debounceTimerRef.current = setTimeout(() => {
-      saveTitle(value)
-      isEditingRef.current = false
-    }, 500) // 500ms debounce
-  }
+    debounceTimerReference.current = setTimeout(() => {
+      saveTitle(value);
+      isEditingReference.current = false;
+    }, 500);
+  };
 
   const handleTitleBlur = () => {
-    // Force save immediately on blur
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current)
-      saveTitle(title)
-      isEditingRef.current = false
+    if (debounceTimerReference.current) {
+      clearTimeout(debounceTimerReference.current);
+      saveTitle(title);
+      isEditingReference.current = false;
     }
-  }
+  };
 
-  // Update state only when navigating to a different page (page.id changes)
-  // Don't override local edits when page prop updates
-  const pageIdRef = useRef(page.id)
+  const pageIdReference = useRef(page.id);
 
   useEffect(() => {
-    // Only reset state if we navigated to a different page
-    if (pageIdRef.current !== page.id) {
-      setTitle(page.title)
-      setIcon(page.icon)
-      setCoverImage(page.coverImage)
-      setCoverImagePosition(page.coverImagePosition)
-      previousTitleRef.current = page.title
-      pageIdRef.current = page.id
+    if (pageIdReference.current !== page.id) {
+      // Props değişikliğine tepki olarak state güncelliyoruz
+      queueMicrotask(() => {
+        setTitle(page.title);
+        setIcon(page.icon);
+        setCoverImage(page.coverImage);
+        setCoverImagePosition(page.coverImagePosition);
+        previousTitleReference.current = page.title;
+        pageIdReference.current = page.id;
+      });
     }
-  }, [page.id, page.title, page.icon, page.coverImage, page.coverImagePosition])
+  }, [
+    page.id,
+    page.title,
+    page.icon,
+    page.coverImage,
+    page.coverImagePosition,
+  ]);
 
-
-  const pageData = { ...page, title, icon, coverImage, coverImagePosition }
+  const pageData = { ...page, title, icon, coverImage, coverImagePosition };
 
   return (
     <div className="pb-10 group/header relative">
-      <Cover url={coverImage} pageId={page.id} preview={preview} position={coverImagePosition} />
+      <Cover
+        url={coverImage}
+        pageId={page.id}
+        preview={preview}
+        position={coverImagePosition}
+      />
 
       <div className="px-12 pt-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
-        <div className={coverImage ? "-mt-24" : ""}>
+        <div className={coverImage ? '-mt-24' : ''}>
           <Toolbar page={pageData} preview={preview} />
         </div>
 
         <div className="mt-8">
           <textarea
             value={title}
-            onChange={(e) => handleInput(e.target.value)}
+            onChange={(e) => {
+              handleInput(e.target.value);
+            }}
             onBlur={handleTitleBlur}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault()
-                const editor = document.querySelector(".bn-editor") as HTMLElement
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                const editor = document.querySelector('.bn-editor')!;
                 if (editor) {
-                  editor.focus()
+                  editor.focus();
                 }
               }
             }}
@@ -133,7 +149,6 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
             disabled={preview}
             rows={1}
             style={{ height: 'auto' }}
-            // Simple auto-resize logic or use library if installed
             ref={(textarea) => {
               if (textarea) {
                 textarea.style.height = 'auto';
@@ -144,5 +159,5 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,16 +1,22 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react';
 
 export const useOrigin = () => {
-    const [mounted, setMounted] = useState(false)
-    const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : ""
+  const [mounted, setMounted] = useState(false);
+  const origin =
+    globalThis.window !== undefined && globalThis.location.origin
+      ? globalThis.location.origin
+      : '';
 
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
-    if (!mounted) {
-        return ""
-    }
+  if (!mounted) {
+    return '';
+  }
 
-    return origin
-}
+  return origin;
+};

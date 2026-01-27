@@ -1,63 +1,71 @@
-"use client"
+'use client';
 
-import { ChevronDown, ChevronRight, Plus, FileText } from "lucide-react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { createPage } from "@/actions/page"
-import { cn } from "@/lib/utils"
+import { ChevronDown, ChevronRight, Plus, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-interface PageItemProps {
-  page: any
-  level?: number
-  onRefresh: () => void
+import { createPage } from '@/actions/page';
+import { cn } from '@/lib/utils';
+
+interface Page {
+  id: string;
+  icon?: string | null;
+  title: string;
+  children?: Page[];
 }
 
-export const PageItem = ({ 
-  page, 
+interface PageItemProperties {
+  page: Page;
+  level?: number;
+  onRefresh: () => void;
+}
+
+export const PageItem = ({
+  page,
   level = 0,
-  onRefresh 
-}: PageItemProps) => {
-  const router = useRouter()
-  const [expanded, setExpanded] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
+  onRefresh,
+}: PageItemProperties) => {
+  const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setExpanded(!expanded)
-  }
+    e.stopPropagation();
+    setExpanded(!expanded);
+  };
 
   const handleCreateChild = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsCreating(true)
-    
+    e.stopPropagation();
+    setIsCreating(true);
+
     try {
-      const childPage = await createPage(page.id)
-      setExpanded(true)
-      onRefresh()
-      router.push(`/documents/${childPage.id}`)
+      const childPage = await createPage(page.id);
+      setExpanded(true);
+      onRefresh();
+      router.push(`/documents/${childPage.id}`);
     } catch (error) {
-      console.error("Error creating child page:", error)
+      console.error('Error creating child page:', error);
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
   const handleClick = () => {
-    router.push(`/documents/${page.id}`)
-  }
+    router.push(`/documents/${page.id}`);
+  };
 
-  const ChevronIcon = expanded ? ChevronDown : ChevronRight
+  const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
   return (
     <div>
       <div
         onClick={handleClick}
         className={cn(
-          "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer",
-          level > 0 && "pl-9"
+          'group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer',
+          level > 0 && 'pl-9'
         )}
         style={{
-          paddingLeft: level > 0 ? `${(level * 12) + 12}px` : "12px"
+          paddingLeft: level > 0 ? `${level * 12 + 12}px` : '12px',
         }}
       >
         {page.children?.length > 0 && (
@@ -69,7 +77,7 @@ export const PageItem = ({
             <ChevronIcon className="h-4 w-4 shrink-0" />
           </div>
         )}
-        
+
         <div className="flex items-center gap-x-2 flex-1 truncate">
           {page.icon ? (
             <span className="shrink-0 text-[18px]">{page.icon}</span>
@@ -92,7 +100,7 @@ export const PageItem = ({
 
       {expanded && page.children?.length > 0 && (
         <div>
-          {page.children.map((child: any) => (
+          {page.children.map((child: Page) => (
             <PageItem
               key={child.id}
               page={child}
@@ -103,5 +111,5 @@ export const PageItem = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

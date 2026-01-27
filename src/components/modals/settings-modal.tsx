@@ -1,24 +1,27 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useSession, signOut } from "next-auth/react"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useSettings } from "@/hooks/use-settings"
-import { BackupSettings } from "@/components/backup-settings"
+import { useSession, signOut } from 'next-auth/react';
+import { useState } from 'react';
+
+import { BackupSettings } from '@/components/backup-settings';
+import { ModeToggle } from '@/components/mode-toggle';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { useSettings } from '@/hooks/use-settings';
 
 export const SettingsModal = () => {
-  const settings = useSettings()
-  const { data: session } = useSession()
-  const [activeTab, setActiveTab] = useState<"account" | "appearance" | "data" | "shortcuts">("account")
+  const settings = useSettings();
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<
+    'account' | 'appearance' | 'data' | 'shortcuts'
+  >('account');
 
   return (
     <Dialog open={settings.isOpen} onOpenChange={settings.onClose}>
@@ -28,49 +31,61 @@ export const SettingsModal = () => {
         </DialogHeader>
 
         <div className="flex gap-6">
-          {/* Sidebar */}
+          {}
           <div className="flex flex-col gap-2 w-48">
             <button
-              onClick={() => setActiveTab("account")}
-              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${activeTab === "account"
-                ? "bg-secondary text-secondary-foreground"
-                : "hover:bg-secondary/50"
-                }`}
+              onClick={() => {
+                setActiveTab('account');
+              }}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === 'account'
+                  ? 'bg-secondary text-secondary-foreground'
+                  : 'hover:bg-secondary/50'
+              }`}
             >
               Account
             </button>
             <button
-              onClick={() => setActiveTab("appearance")}
-              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${activeTab === "appearance"
-                ? "bg-secondary text-secondary-foreground"
-                : "hover:bg-secondary/50"
-                }`}
+              onClick={() => {
+                setActiveTab('appearance');
+              }}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === 'appearance'
+                  ? 'bg-secondary text-secondary-foreground'
+                  : 'hover:bg-secondary/50'
+              }`}
             >
               Appearance
             </button>
             <button
-              onClick={() => setActiveTab("data")}
-              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${activeTab === "data"
-                ? "bg-secondary text-secondary-foreground"
-                : "hover:bg-secondary/50"
-                }`}
+              onClick={() => {
+                setActiveTab('data');
+              }}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === 'data'
+                  ? 'bg-secondary text-secondary-foreground'
+                  : 'hover:bg-secondary/50'
+              }`}
             >
               Data
             </button>
             <button
-              onClick={() => setActiveTab("shortcuts")}
-              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${activeTab === "shortcuts"
-                ? "bg-secondary text-secondary-foreground"
-                : "hover:bg-secondary/50"
-                }`}
+              onClick={() => {
+                setActiveTab('shortcuts');
+              }}
+              className={`px-3 py-2 text-sm text-left rounded-md transition-colors ${
+                activeTab === 'shortcuts'
+                  ? 'bg-secondary text-secondary-foreground'
+                  : 'hover:bg-secondary/50'
+              }`}
             >
               Shortcuts
             </button>
           </div>
 
-          {/* Content */}
+          {}
           <div className="flex-1">
-            {activeTab === "account" && (
+            {activeTab === 'account' && (
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium">Account</h3>
@@ -83,19 +98,19 @@ export const SettingsModal = () => {
                   <div className="space-y-2">
                     <Label>Name</Label>
                     <div className="text-sm text-muted-foreground">
-                      {session?.user?.name || "Not set"}
+                      {session?.user?.name || 'Not set'}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
                     <div className="text-sm text-muted-foreground">
-                      {session?.user?.email || "Not set"}
+                      {session?.user?.email || 'Not set'}
                     </div>
                   </div>
                   <div className="pt-4">
                     <Button
                       variant="outline"
-                      onClick={() => signOut({ callbackUrl: "/" })}
+                      onClick={() => signOut({ callbackUrl: '/' })}
                     >
                       Sign out
                     </Button>
@@ -104,7 +119,7 @@ export const SettingsModal = () => {
               </div>
             )}
 
-            {activeTab === "appearance" && (
+            {activeTab === 'appearance' && (
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium">Appearance</h3>
@@ -127,7 +142,7 @@ export const SettingsModal = () => {
               </div>
             )}
 
-            {activeTab === "data" && (
+            {activeTab === 'data' && (
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium">Data Management</h3>
@@ -142,7 +157,7 @@ export const SettingsModal = () => {
               </div>
             )}
 
-            {activeTab === "shortcuts" && (
+            {activeTab === 'shortcuts' && (
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium">Keyboard Shortcuts</h3>
@@ -152,10 +167,11 @@ export const SettingsModal = () => {
                 </div>
                 <Separator />
                 <div className="space-y-6">
-
-                  {/* General */}
+                  {}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">General</h4>
+                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      General
+                    </h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex justify-between items-center">
                         <span>Toggle Sidebar</span>
@@ -186,9 +202,11 @@ export const SettingsModal = () => {
 
                   <Separator />
 
-                  {/* Navigation */}
+                  {}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Navigation</h4>
+                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      Navigation
+                    </h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex justify-between items-center">
                         <span>Go Back</span>
@@ -207,9 +225,11 @@ export const SettingsModal = () => {
 
                   <Separator />
 
-                  {/* Editor */}
+                  {}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Editor</h4>
+                    <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      Editor
+                    </h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex justify-between items-center">
                         <span>Duplicate Block</span>
@@ -225,7 +245,6 @@ export const SettingsModal = () => {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             )}
@@ -233,5 +252,5 @@ export const SettingsModal = () => {
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

@@ -1,81 +1,77 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Check, Copy, Globe } from "lucide-react"
-import { toast } from "sonner"
+import { Check, Copy, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
+import { togglePublish } from '@/app/(main)/_actions/documents';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { togglePublish } from "@/app/(main)/_actions/documents"
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
-interface PublishProps {
+interface PublishProperties {
   initialData: {
-    id: string
-    isPublished: boolean
-  }
+    id: string;
+    isPublished: boolean;
+  };
 }
 
-import { cn } from "@/lib/utils"
-
-export const Publish = ({ initialData }: PublishProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [isPublished, setIsPublished] = useState(initialData.isPublished)
-  const [url, setUrl] = useState("")
+export const Publish = ({ initialData }: PublishProperties) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isPublished, setIsPublished] = useState(initialData.isPublished);
+  const [url, setUrl] = useState('');
 
   useEffect(() => {
-    setUrl(`${window.location.origin}/preview/${initialData.id}`)
-  }, [initialData.id, initialData.isPublished]) // Added initialData.isPublished to dep array if needed, logically only id matters for URL but isPublished for state
+    setUrl(`${globalThis.location.origin}/preview/${initialData.id}`);
+  }, [initialData.id, initialData.isPublished]);
 
   const onPublish = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      const result = await togglePublish(initialData.id)
-      setIsPublished(result.isPublished)
+      const result = await togglePublish(initialData.id);
+      setIsPublished(result.isPublished);
 
       if (result.isPublished) {
-        toast.success("Page published")
+        toast.success('Page published');
       } else {
-        toast.success("Page unpublished")
+        toast.success('Page unpublished');
       }
-    } catch (error) {
-      toast.error("Failed to publish")
+    } catch {
+      toast.error('Failed to publish');
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const onCopy = () => {
-    navigator.clipboard.writeText(url)
-    setCopied(true)
-    toast.success("Link copied")
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    toast.success('Link copied');
 
     setTimeout(() => {
-      setCopied(false)
-    }, 1000)
-  }
+      setCopied(false);
+    }, 1000);
+  };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size="icon" variant="ghost">
-          <Globe className={cn(
-            "h-4 w-4 text-muted-foreground",
-            isPublished && "text-sky-500 animate-pulse"
-          )} />
+          <Globe
+            className={cn(
+              'h-4 w-4 text-muted-foreground',
+              isPublished && 'text-sky-500 animate-pulse'
+            )}
+          />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-72"
-        align="end"
-        alignOffset={8}
-        forceMount
-      >
+      <PopoverContent className="w-72" align="end" alignOffset={8} forceMount>
         {isPublished ? (
           <div className="space-y-4">
             <div className="flex items-center gap-x-2">
@@ -114,9 +110,7 @@ export const Publish = ({ initialData }: PublishProps) => {
         ) : (
           <div className="flex flex-col items-center justify-center">
             <Globe className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium mb-2">
-              Publish this note
-            </p>
+            <p className="text-sm font-medium mb-2">Publish this note</p>
             <span className="text-xs text-muted-foreground mb-4">
               Share your work with others.
             </span>
@@ -132,5 +126,5 @@ export const Publish = ({ initialData }: PublishProps) => {
         )}
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};

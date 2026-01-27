@@ -1,98 +1,88 @@
-import { vi } from 'vitest'
-import type { Socket } from 'socket.io-client'
+import type { Socket } from 'socket.io-client';
+import { vi } from 'vitest';
 
-/**
- * Mock Socket.IO client for testing
- */
+type EventHandler = (...arguments_: any[]) => void;
+
 export function createMockSocket(): Socket {
-    const eventHandlers = new Map<string, Function[]>()
+  const eventHandlers = new Map<string, EventHandler[]>();
 
-    const mockSocket = {
-        id: 'mock-socket-id',
-        connected: true,
-        disconnected: false,
+  const mockSocket = {
+    id: 'mock-socket-id',
+    connected: true,
+    disconnected: false,
 
-        on: vi.fn((event: string, handler: Function) => {
-            if (!eventHandlers.has(event)) {
-                eventHandlers.set(event, [])
-            }
-            eventHandlers.get(event)!.push(handler)
-            return mockSocket
-        }),
+    on: vi.fn((event: string, handler: EventHandler) => {
+      if (!eventHandlers.has(event)) {
+        eventHandlers.set(event, []);
+      }
+      eventHandlers.get(event)!.push(handler);
+      return mockSocket;
+    }),
 
-        off: vi.fn((event: string, handler?: Function) => {
-            if (handler) {
-                const handlers = eventHandlers.get(event) || []
-                const index = handlers.indexOf(handler)
-                if (index > -1) {
-                    handlers.splice(index, 1)
-                }
-            } else {
-                eventHandlers.delete(event)
-            }
-            return mockSocket
-        }),
-
-        emit: vi.fn((event: string, ...args: any[]) => {
-            return mockSocket
-        }),
-
-        once: vi.fn((event: string, handler: Function) => {
-            const wrappedHandler = (...args: any[]) => {
-                handler(...args)
-                mockSocket.off(event, wrappedHandler)
-            }
-            return mockSocket.on(event, wrappedHandler)
-        }),
-
-        connect: vi.fn(() => {
-            mockSocket.connected = true
-            mockSocket.disconnected = false
-            return mockSocket
-        }),
-
-        disconnect: vi.fn(() => {
-            mockSocket.connected = false
-            mockSocket.disconnected = true
-            return mockSocket
-        }),
-
-        // Helper method to trigger events in tests
-        _trigger: (event: string, ...args: any[]) => {
-            const handlers = eventHandlers.get(event) || []
-            handlers.forEach(handler => handler(...args))
-        },
-
-        // Helper to clear all handlers
-        _clearHandlers: () => {
-            eventHandlers.clear()
-        },
-
-        // Helper to get registered handlers
-        _getHandlers: (event: string) => {
-            return eventHandlers.get(event) || []
+    off: vi.fn((event: string, handler?: EventHandler) => {
+      if (handler) {
+        const handlers = eventHandlers.get(event) || [];
+        const index = handlers.indexOf(handler);
+        if (index !== -1) {
+          handlers.splice(index, 1);
         }
-    } as any
+      } else {
+        eventHandlers.delete(event);
+      }
+      return mockSocket;
+    }),
 
-    return mockSocket
+    emit: vi.fn((_event: string, ..._arguments: any[]) => {
+      return mockSocket;
+    }),
+
+    once: vi.fn((event: string, handler: EventHandler) => {
+      const wrappedHandler = (...arguments_: any[]) => {
+        handler(...arguments_);
+        mockSocket.off(event, wrappedHandler);
+      };
+      return mockSocket.on(event, wrappedHandler);
+    }),
+
+    connect: vi.fn(() => {
+      mockSocket.connected = true;
+      mockSocket.disconnected = false;
+      return mockSocket;
+    }),
+
+    disconnect: vi.fn(() => {
+      mockSocket.connected = false;
+      mockSocket.disconnected = true;
+      return mockSocket;
+    }),
+
+    _trigger: (event: string, ...arguments_: any[]) => {
+      const handlers = eventHandlers.get(event) || [];
+      for (const handler of handlers) handler(...arguments_);
+    },
+
+    _clearHandlers: () => {
+      eventHandlers.clear();
+    },
+
+    _getHandlers: (event: string) => {
+      return eventHandlers.get(event) || [];
+    },
+  } as unknown as Socket;
+
+  return mockSocket;
 }
 
-/**
- * Mock SocketProvider context value
- */
 export function createMockSocketContext() {
-    const mockSocket = createMockSocket()
+  const mockSocket = createMockSocket();
 
-    return {
-        socket: mockSocket,
-        isConnected: true,
-        _mockSocket: mockSocket // Expose for test manipulation
-    }
+  return {
+    socket: mockSocket,
+    isConnected: true,
+    _mockSocket: mockSocket,
+  };
 }
 
-/**
- * Helper to wait for async updates in tests
- */
 export async function waitForSocketUpdate() {
-    return new Promise(resolve => setTimeout(resolve, 0))
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }

@@ -1,36 +1,47 @@
+import { useState, useEffect } from 'react';
 
-import { useState, useEffect } from "react"
-import { CellProps } from "./types"
+import { CellProps as CellProperties } from './types';
 
-export function NumberCell({ getValue, updateValue, startEditing, stopEditing }: CellProps) {
-    const initialValue = getValue()
-    const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
-    const [value, setValue] = useState(val || "")
+export function NumberCell({
+  getValue,
+  updateValue,
+  startEditing,
+  stopEditing,
+}: CellProperties) {
+  const initialValue = getValue();
+  const value_ =
+    typeof initialValue === 'object' ? initialValue?.value : initialValue;
+  const [value, setValue] = useState(value_ || '');
 
-    useEffect(() => {
-        const val = typeof initialValue === 'object' ? initialValue?.value : initialValue
-        setValue(val || "")
-    }, [initialValue])
+  useEffect(() => {
+    const value__ =
+      typeof initialValue === 'object' ? initialValue?.value : initialValue;
+    queueMicrotask(() => {
+      setValue(value__ || '');
+    });
+  }, [initialValue]);
 
-    const onBlur = () => {
-        stopEditing()
-        // Parse number?
-        if (value !== val) {
-            updateValue({ value: value === "" ? null : Number(value) })
-        }
+  const onBlur = () => {
+    stopEditing();
+
+    if (value !== value_) {
+      updateValue({ value: value === '' ? null : Number(value) });
     }
+  };
 
-    return (
-        <div className="h-full w-full py-1.5 px-2">
-            <input
-                type="number"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onBlur={onBlur}
-                onFocus={startEditing}
-                className="w-full bg-transparent outline-none text-sm"
-                placeholder="Empty"
-            />
-        </div>
-    )
+  return (
+    <div className="h-full w-full py-1.5 px-2">
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
+        onBlur={onBlur}
+        onFocus={startEditing}
+        className="w-full bg-transparent outline-none text-sm"
+        placeholder="Empty"
+      />
+    </div>
+  );
 }

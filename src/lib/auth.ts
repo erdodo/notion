@@ -1,10 +1,16 @@
-import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import { db } from "@/lib/db"
+import NextAuth from 'next-auth';
+import Google from 'next-auth/providers/google';
 
-export const testUserEmail = "test@example.com"
+import { db } from '@/lib/db';
 
-const { handlers, auth: internalAuth, signIn, signOut } = NextAuth({
+export const testUserEmail = 'test@example.com';
+
+const {
+  handlers,
+  auth: internalAuth,
+  signIn,
+  signOut,
+} = NextAuth({
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -12,19 +18,17 @@ const { handlers, auth: internalAuth, signIn, signOut } = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      // On initial sign in
+    async jwt({ token, user: _user, account, profile }) {
       if (account && profile?.email) {
-        token.email = profile.email
-        token.name = profile.name
-        token.picture = profile.picture
+        token.email = profile.email;
+        token.name = profile.name;
+        token.picture = profile.picture;
 
-        // Try to sync with database
         try {
-          const dbUser = await db.user.upsert({
+          const databaseUser = await db.user.upsert({
             where: { email: profile.email },
             update: {
               name: profile.name,
@@ -35,59 +39,64 @@ const { handlers, auth: internalAuth, signIn, signOut } = NextAuth({
               name: profile.name,
               image: profile.picture as string,
             },
-          })
-          token.id = dbUser.id
-        } catch (error) {
-          // Database not available, generate a temporary ID
-          console.log("Database not available, using email as ID")
-          token.id = profile.email
+          });
+          token.id = databaseUser.id;
+        } catch {
+          console.log('Database not available, using email as ID');
+          token.id = profile.email;
         }
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
-        session.user.email = token.email as string
-        session.user.name = token.name as string
-        session.user.image = token.picture as string
+        session.user.id = token.id as string;
+        session.user.email = token.email!;
+        session.user.name = token.name!;
+        session.user.image = token.picture!;
       }
-      return session
+      return session;
     },
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isOnDashboard = nextUrl.pathname.startsWith('/documents')
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith('/documents');
       if (isOnDashboard) {
-        console.log("Middleware check. Path:", nextUrl.pathname, "TEST_MODE:", process.env.TEST_MODE, "IsLoggedIn:", isLoggedIn)
-        const isGuestTest = nextUrl.searchParams.get("guest") === "true"
-        if (isGuestTest) return false
-        if (process.env.TEST_MODE === "true") return true // Bypass for testing
-        if (isLoggedIn) return true
-        return false // Redirect unauthenticated users to login page
+        console.log(
+          'Middleware check. Path:',
+          nextUrl.pathname,
+          'TEST_MODE:',
+          process.env.TEST_MODE,
+          'IsLoggedIn:',
+          isLoggedIn
+        );
+        const isGuestTest = nextUrl.searchParams.get('guest') === 'true';
+        if (isGuestTest) return false;
+        if (process.env.TEST_MODE === 'true') return true;
+        if (isLoggedIn) return true;
+        return false;
       }
-      return true
+      return true;
     },
   },
   pages: {
-    signIn: "/sign-in",
-    error: "/sign-in",
+    signIn: '/sign-in',
+    error: '/sign-in',
   },
-  debug: process.env.NODE_ENV === "development",
-})
+  debug: process.env.NODE_ENV === 'development',
+});
 
 export const auth = async () => {
-  if (process.env.TEST_MODE === "true") {
-    // Ensure test user exists in DB
+  if (process.env.TEST_MODE === 'true') {
     try {
       const user = await db.user.upsert({
         where: { email: testUserEmail },
         update: {},
         create: {
-          id: "test-user-id",
+          id: 'test-user-id',
           email: testUserEmail,
-          name: "Test User",
-        }
-      })
+          name: 'Test User',
+        },
+      });
 
       return {
         user: {
@@ -96,23 +105,23 @@ export const auth = async () => {
           email: user.email,
           image: user.image,
         },
-        expires: new Date(Date.now() + 3600 * 1000).toISOString()
-      }
-    } catch (e) {
-      console.error("Failed to upsert test user:", e)
-      // Fallback
+        expires: new Date(Date.now() + 3600 * 1000).toISOString(),
+      };
+    } catch (error) {
+      console.error('Failed to upsert test user:', error);
+
       return {
         user: {
-          id: "test-user-id",
-          name: "Test User",
+          id: 'test-user-id',
+          name: 'Test User',
           email: testUserEmail,
           image: null,
         },
-        expires: new Date(Date.now() + 3600 * 1000).toISOString()
-      }
+        expires: new Date(Date.now() + 3600 * 1000).toISOString(),
+      };
     }
   }
-  return internalAuth()
-}
+  return internalAuth();
+};
 
-export { handlers, signIn, signOut, internalAuth as middleware }
+export { handlers, signIn, signOut, internalAuth as middleware };

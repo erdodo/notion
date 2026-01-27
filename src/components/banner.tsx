@@ -1,45 +1,47 @@
-"use client"
+'use client';
 
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { restoreDocument, removeDocument } from "@/app/(main)/_actions/documents"
-import { Button } from "@/components/ui/button"
-import { ConfirmModal } from "@/components/modals/confirm-modal"
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
-interface BannerProps {
-  documentId: string
+import {
+  restoreDocument,
+  removeDocument,
+} from '@/app/(main)/_actions/documents';
+import { ConfirmModal } from '@/components/modals/confirm-modal';
+import { Button } from '@/components/ui/button';
+
+interface BannerProperties {
+  documentId: string;
 }
 
-export const Banner = ({ documentId }: BannerProps) => {
-  const router = useRouter()
+export const Banner = ({ documentId }: BannerProperties) => {
+  const router = useRouter();
 
   const onRemove = async () => {
     const promise = removeDocument(documentId).then(() => {
-      router.push("/documents")
-    })
+      router.push('/documents');
+    });
 
     toast.promise(promise, {
-      loading: "Deleting page...",
-      success: "Page deleted permanently!",
-      error: "Failed to delete page."
-    })
-  }
+      loading: 'Deleting page...',
+      success: 'Page deleted permanently!',
+      error: 'Failed to delete page.',
+    });
+  };
 
   const onRestore = async () => {
-    const promise = restoreDocument(documentId)
+    const promise = restoreDocument(documentId);
 
     toast.promise(promise, {
-      loading: "Restoring page...",
-      success: "Page restored!",
-      error: "Failed to restore page."
-    })
-  }
+      loading: 'Restoring page...',
+      success: 'Page restored!',
+      error: 'Failed to restore page.',
+    });
+  };
 
   return (
     <div className="w-full bg-rose-500 text-center text-sm p-2 text-white flex items-center gap-x-2 justify-center">
-      <p>
-        This page is in the Trash.
-      </p>
+      <p>This page is in the Trash.</p>
       <Button
         size="sm"
         onClick={onRestore}
@@ -58,5 +60,5 @@ export const Banner = ({ documentId }: BannerProps) => {
         </Button>
       </ConfirmModal>
     </div>
-  )
-}
+  );
+};

@@ -1,90 +1,92 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { FileText } from "lucide-react"
-import { getSidebarDocuments, createDocument } from "../_actions/documents"
-import { Item } from "./item"
-import { ItemSkeleton } from "./item-skeleton"
-import { cn } from "@/lib/utils"
+import { FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { getSidebarDocuments, createDocument } from '../_actions/documents';
+
+import { Item } from './item';
+import { ItemSkeleton } from './item-skeleton';
+
+import { cn } from '@/lib/utils';
 
 interface Document {
-  id: string
-  title: string
-  icon?: string | null
-  parentId?: string | null
+  id: string;
+  title: string;
+  icon?: string | null;
+  parentId?: string | null;
   _count: {
-    children: number
-  }
+    children: number;
+  };
 }
 
-interface DocumentListProps {
-  parentDocumentId?: string
-  level?: number
-  data?: Document[]
+interface DocumentListProperties {
+  parentDocumentId?: string;
+  level?: number;
+  data?: Document[];
 }
 
 export const DocumentList = ({
   parentDocumentId,
   level = 0,
-  data
-}: DocumentListProps) => {
-  const router = useRouter()
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const [children, setChildren] = useState<Record<string, Document[]>>({})
-  const [loading, setLoading] = useState<Record<string, boolean>>({})
-  const [creating, setCreating] = useState<Record<string, boolean>>({})
+  data,
+}: DocumentListProperties) => {
+  const _parentDocumentId = parentDocumentId;
+  const router = useRouter();
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [children, setChildren] = useState<Record<string, Document[]>>({});
+  const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const [creating, setCreating] = useState<Record<string, boolean>>({});
 
   const onExpand = async (documentId: string) => {
-    const isExpanded = expanded[documentId]
+    const isExpanded = expanded[documentId];
 
     if (!isExpanded) {
-      // Load children on-demand
-      setLoading(prev => ({ ...prev, [documentId]: true }))
+      setLoading((previous) => ({ ...previous, [documentId]: true }));
 
       try {
-        const docs = await getSidebarDocuments(documentId)
-        setChildren(prev => ({ ...prev, [documentId]: docs }))
+        const docs = await getSidebarDocuments(documentId);
+        setChildren((previous) => ({ ...previous, [documentId]: docs }));
       } catch (error) {
-        console.error("Error loading children:", error)
+        console.error('Error loading children:', error);
       } finally {
-        setLoading(prev => ({ ...prev, [documentId]: false }))
+        setLoading((previous) => ({ ...previous, [documentId]: false }));
       }
     }
 
-    setExpanded(prev => ({ ...prev, [documentId]: !isExpanded }))
-  }
+    setExpanded((previous) => ({ ...previous, [documentId]: !isExpanded }));
+  };
 
   const onCreate = async (parentId?: string) => {
-    setCreating(prev => ({ ...prev, [parentId || 'root']: true }))
+    setCreating((previous) => ({ ...previous, [parentId || 'root']: true }));
 
     try {
-      const document = await createDocument("Untitled", parentId)
+      const document = await createDocument('Untitled', parentId);
 
       if (parentId) {
-        // Refresh children for this parent
-        const docs = await getSidebarDocuments(parentId)
-        setChildren(prev => ({ ...prev, [parentId]: docs }))
-        setExpanded(prev => ({ ...prev, [parentId]: true }))
+        const docs = await getSidebarDocuments(parentId);
+        setChildren((previous) => ({ ...previous, [parentId]: docs }));
+        setExpanded((previous) => ({ ...previous, [parentId]: true }));
       }
 
-      router.push(`/documents/${document.id}`)
+      router.push(`/documents/${document.id}`);
     } catch (error) {
-      console.error("Error creating document:", error)
+      console.error('Error creating document:', error);
     } finally {
-      setCreating(prev => ({ ...prev, [parentId || 'root']: false }))
+      setCreating((previous) => ({ ...previous, [parentId || 'root']: false }));
     }
-  }
+  };
 
   if (!data || data.length === 0) {
     return (
       <div
         className={cn(
-          "text-xs text-muted-foreground/60 py-1 font-medium select-none",
-          level === 0 && "px-2"
+          'text-xs text-muted-foreground/60 py-1 font-medium select-none',
+          level === 0 && 'px-2'
         )}
         style={{
-          paddingLeft: level > 0 ? `${(level * 12) + 12 + 24}px` : undefined
+          paddingLeft: level > 0 ? `${level * 12 + 12 + 24}px` : undefined,
         }}
       >
         <p className="flex items-center gap-x-2">
@@ -92,16 +94,16 @@ export const DocumentList = ({
           <span>No pages inside</span>
         </p>
       </div>
-    )
+    );
   }
 
   return (
     <>
       {data.map((document) => {
-        const isExpanded = expanded[document.id]
-        const childDocs = children[document.id]
-        const isLoading = loading[document.id]
-        const isCreating = creating[document.id]
+        const isExpanded = expanded[document.id];
+        const childDocs = children[document.id];
+        const isLoading = loading[document.id];
+        const isCreating = creating[document.id];
 
         return (
           <div key={document.id}>
@@ -137,8 +139,8 @@ export const DocumentList = ({
               </>
             )}
           </div>
-        )
+        );
       })}
     </>
-  )
-}
+  );
+};

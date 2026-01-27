@@ -1,49 +1,62 @@
-"use client"
+'use client';
 
-import { useEffect, useRef, useState, useCallback } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import { Plus, Search, Settings, Trash, MenuIcon, ChevronsLeft, Upload, Star, Globe, Clock, Users } from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { useSearch } from "@/hooks/use-search"
-import { useSettings } from "@/hooks/use-settings"
-import { useSession } from "next-auth/react"
-import { getSidebarDocuments, createDocument, getArchivedDocuments, getSharedDocuments } from "../_actions/documents"
-import { getFavorites, getRecentPages, getPublishedPages } from "../_actions/navigation"
-import { createDatabase as createDatabaseAction } from "../_actions/database"
-import { useSidebar } from "@/hooks/use-sidebar"
-import { useDocumentsStore } from "@/store/use-documents-store"
-import { useSocket } from "@/components/providers/socket-provider"
-import { SortableDocumentList } from "./sortable-document-list"
-import { SidebarSection } from "./sidebar-section"
-import { ItemSkeleton } from "./item-skeleton"
-import { TrashBox } from "@/components/trash-box"
-import { ImportModal } from "@/components/modals/import-modal"
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { NotificationsDropdown } from "@/components/notifications-dropdown"
-import { cn } from "@/lib/utils"
+import {
+  Plus,
+  Search,
+  Settings,
+  Trash,
+  MenuIcon,
+  ChevronsLeft,
+  Upload,
+  Star,
+  Globe,
+  Clock,
+  Users,
+} from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
-interface Document {
-  id: string
-  title: string
-  icon?: string | null
-  parentDocument?: string | null
-  isArchived: boolean
-  isPublished: boolean
-  createdAt: Date
-  updatedAt: Date
-  _count: {
-    children: number
-  }
-}
+import {
+  getSidebarDocuments,
+  createDocument,
+  getArchivedDocuments,
+  getSharedDocuments,
+} from '../_actions/documents';
+import {
+  getFavorites,
+  getRecentPages,
+  getPublishedPages,
+} from '../_actions/navigation';
+
+import { ItemSkeleton } from './item-skeleton';
+import { SidebarSection } from './sidebar-section';
+import { SortableDocumentList } from './sortable-document-list';
+
+import { ImportModal } from '@/components/modals/import-modal';
+import { NotificationsDropdown } from '@/components/notifications-dropdown';
+import { useSocket } from '@/components/providers/socket-provider';
+import { TrashBox } from '@/components/trash-box';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useSearch } from '@/hooks/use-search';
+import { useSettings } from '@/hooks/use-settings';
+import { useSidebar } from '@/hooks/use-sidebar';
+import { cn } from '@/lib/utils';
+import { useDocumentsStore } from '@/store/use-documents-store';
 
 export const Navigation = () => {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const search = useSearch()
-  const settings = useSettings()
-  const { isCollapsed, toggle, collapse, expand } = useSidebar()
-  const isMobile = useMediaQuery("(max-width: 768px)")
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const search = useSearch();
+  const settings = useSettings();
+  const { isCollapsed, collapse, expand } = useSidebar();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const {
     documents,
     setDocuments,
@@ -60,210 +73,215 @@ export const Navigation = () => {
     publishedPages,
     setPublishedPages,
     sharedPages,
-    setSharedPages
-  } = useDocumentsStore()
-  const { socket } = useSocket()
+    setSharedPages,
+  } = useDocumentsStore();
+  const { socket } = useSocket();
 
-  const isResizingRef = useRef(false)
-  const sidebarRef = useRef<HTMLDivElement>(null)
-  const [isResetting, setIsResetting] = useState(false)
+  const isResizingReference = useRef(false);
+  const sidebarReference = useRef<HTMLDivElement>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [isCreating, setIsCreating] = useState(false)
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const resetWidth = useCallback(() => {
-    if (sidebarRef.current) {
-      expand()
-      setIsResetting(true)
+    if (sidebarReference.current) {
+      expand();
+      setIsResetting(true);
 
-      sidebarRef.current.style.width = isMobile ? "100%" : "240px"
+      sidebarReference.current.style.width = isMobile ? '100%' : '240px';
 
       setTimeout(() => {
-        setIsResetting(false)
-      }, 300)
+        setIsResetting(false);
+      }, 300);
     }
-  }, [isMobile, expand])
+  }, [isMobile, expand]);
 
   const handleCollapse = useCallback(() => {
-    if (sidebarRef.current) {
-      collapse()
-      setIsResetting(true)
+    if (sidebarReference.current) {
+      collapse();
+      setIsResetting(true);
 
-      sidebarRef.current.style.width = "0"
+      sidebarReference.current.style.width = '0';
 
       setTimeout(() => {
-        setIsResetting(false)
-      }, 300)
+        setIsResetting(false);
+      }, 300);
     }
-  }, [collapse])
+  }, [collapse]);
 
   useEffect(() => {
     if (isMobile) {
-      handleCollapse()
+      handleCollapse();
     } else {
-      resetWidth()
+      resetWidth();
     }
-  }, [isMobile, handleCollapse, resetWidth])
+  }, [isMobile, handleCollapse, resetWidth]);
 
   useEffect(() => {
     if (isMobile) {
-      handleCollapse()
+      handleCollapse();
     }
-  }, [pathname, isMobile, handleCollapse])
+  }, [pathname, isMobile, handleCollapse]);
 
-  // Sync width with store state changes if externally toggled
   useEffect(() => {
-    if (isCollapsed && sidebarRef.current && sidebarRef.current.style.width !== "0px") {
-      handleCollapse()
-    } else if (!isCollapsed && sidebarRef.current && sidebarRef.current.style.width === "0px") {
-      resetWidth()
+    if (
+      isCollapsed &&
+      sidebarReference.current &&
+      sidebarReference.current.style.width !== '0px'
+    ) {
+      handleCollapse();
+    } else if (
+      !isCollapsed &&
+      sidebarReference.current?.style.width === '0px'
+    ) {
+      resetWidth();
     }
-  }, [isCollapsed, handleCollapse, resetWidth])
+  }, [isCollapsed, handleCollapse, resetWidth]);
 
-  // Socket Listeners for Sidebar Data Freshness
-  // We need to listen to generic updates and possibly re-fetch specific lists if we want 100% accuracy
-  // OR we rely on generic doc:update to patch specific lists (which store.updateDocument does)
-  // But adding/removing from favorites/recent requires specific events or manual fetch on change.
-  // For now, let's stick to base document events.
   useEffect(() => {
-    if (!socket) return
+    if (!socket) return;
 
-    socket.on("doc:create", (payload) => {
-      // Server emits { document, userId }
+    socket.on('doc:create', (payload) => {
       if (payload?.document) {
-        addDocument(payload.document)
-        // Also add to recent pages since we just created/opened it
-        setRecentPages([payload.document, ...recentPages.slice(0, 9)])
-      }
-    })
+        addDocument(payload.document);
 
-    socket.on("doc:update", (payload) => {
-      // Server emits { id, updates, userId }
+        setRecentPages([payload.document, ...recentPages.slice(0, 9)]);
+      }
+    });
+
+    socket.on('doc:update', (payload) => {
       if (payload?.id && payload?.updates) {
-        updateDocument(payload.id, payload.updates)
+        updateDocument(payload.id, payload.updates);
         if (payload.updates.isArchived === true) {
-          archiveDocument(payload.id)
+          archiveDocument(payload.id);
         }
       }
-    })
+    });
 
-    socket.on("doc:delete", (payload) => {
-      // Server emits { id, userId }
+    socket.on('doc:delete', (payload) => {
       if (payload?.id) {
-        removeDocument(payload.id)
+        removeDocument(payload.id);
       }
-    })
+    });
 
-    socket.on("doc:archive", (payload) => {
-      // Server emits { id, userId }
+    socket.on('doc:archive', (payload) => {
       if (payload?.id) {
-        archiveDocument(payload.id)
+        archiveDocument(payload.id);
       }
-    })
+    });
 
     return () => {
-      socket.off("doc:create")
-      socket.off("doc:update")
-      socket.off("doc:delete")
-      socket.off("doc:archive")
-    }
-  }, [socket, addDocument, updateDocument, removeDocument, archiveDocument])
+      socket.off('doc:create');
+      socket.off('doc:update');
+      socket.off('doc:delete');
+      socket.off('doc:archive');
+    };
+  }, [
+    socket,
+    addDocument,
+    updateDocument,
+    removeDocument,
+    archiveDocument,
+    recentPages,
+    setRecentPages,
+  ]);
 
-  // Initial Load of All Data
-  const loadAllData = async () => {
-    setIsLoading(true)
+  const loadAllData = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const [docs, archived, recent, favorites, published, shared] = await Promise.all([
-        getSidebarDocuments(),
-        getArchivedDocuments(),
-        getRecentPages(),
-        getFavorites(),
-        getPublishedPages(),
-        getSharedDocuments()
-      ])
+      const [docs, archived, recent, favorites, published, shared] =
+        await Promise.all([
+          getSidebarDocuments(),
+          getArchivedDocuments(),
+          getRecentPages(),
+          getFavorites(),
+          getPublishedPages(),
+          getSharedDocuments(),
+        ]);
 
-      setDocuments(docs)
-      setRecentPages(recent)
-      setFavoritePages(favorites)
-      setPublishedPages(published)
-      setSharedPages(shared)
-      setTrashPages(archived)
-
+      setDocuments(docs);
+      setRecentPages(recent);
+      setFavoritePages(favorites);
+      setPublishedPages(published);
+      setSharedPages(shared);
+      setTrashPages(archived);
     } catch (error) {
-      console.error("Error loading sidebar data:", error)
+      console.error('Error loading sidebar data:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  }, [
+    setDocuments,
+    setRecentPages,
+    setFavoritePages,
+    setPublishedPages,
+    setSharedPages,
+    setTrashPages,
+  ]);
 
   useEffect(() => {
-    loadAllData()
+    loadAllData();
 
-    // Listen for custom events that might trigger re-fetch of specific lists (like favorites)
     const handleFavoriteChange = () => {
-      getFavorites().then(setFavoritePages)
-    }
-    document.addEventListener('favorite-changed', handleFavoriteChange)
-    return () => document.removeEventListener('favorite-changed', handleFavoriteChange)
-  }, [])
+      getFavorites().then(setFavoritePages);
+    };
+    document.addEventListener('favorite-changed', handleFavoriteChange);
+    return () => {
+      document.removeEventListener('favorite-changed', handleFavoriteChange);
+    };
+  }, [loadAllData, setFavoritePages]);
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.preventDefault()
-    event.stopPropagation()
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-    isResizingRef.current = true
-    document.addEventListener("mousemove", handleMouseMove)
-    document.addEventListener("mouseup", handleMouseUp)
-  }
+    isResizingReference.current = true;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   const handleMouseMove = (event: MouseEvent) => {
-    if (!isResizingRef.current) return
+    if (!isResizingReference.current) return;
 
-    let newWidth = event.clientX
+    let newWidth = event.clientX;
 
-    if (newWidth < 240) newWidth = 240
-    if (newWidth > 480) newWidth = 480
+    if (newWidth < 240) newWidth = 240;
+    if (newWidth > 480) newWidth = 480;
 
-    if (sidebarRef.current) {
-      sidebarRef.current.style.width = `${newWidth}px`
+    if (sidebarReference.current) {
+      sidebarReference.current.style.width = `${newWidth}px`;
     }
-  }
+  };
 
   const handleMouseUp = () => {
-    isResizingRef.current = false
-    document.removeEventListener("mousemove", handleMouseMove)
-    document.removeEventListener("mouseup", handleMouseUp)
-  }
+    isResizingReference.current = false;
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
 
   const handleCreate = async () => {
-    setIsCreating(true)
+    setIsCreating(true);
     try {
-      const document = await createDocument("Untitled")
-      // No need to loadDocuments, optimistic update or socket will handle it?
-      // Actually create returns the doc, we can add it directly.
-      // But socket might also send it back? 
-      // Current implementation broadcasts doc:create, so we might get duplicate if we also add here.
-      // But we are the creator, so maybe we should add immediately for speed.
-      // Store `addDocument` usually brings to top.
-      // Let's rely on socket or `loadDocuments` if we want to be sure.
-      // For now, let's re-fetch to be safe or just push.
-      router.push(`/documents/${document.id}`)
+      const document = await createDocument('Untitled');
+
+      router.push(`/documents/${document.id}`);
     } catch (error) {
-      console.error("Error creating document:", error)
+      console.error('Error creating document:', error);
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
   return (
     <>
       <aside
-        ref={sidebarRef}
+        ref={sidebarReference}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-10",
-          isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "w-0"
+          'group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-10',
+          isResetting && 'transition-all ease-in-out duration-300',
+          isMobile && 'w-0'
         )}
       >
         <div className="flex flex-col h-full">
@@ -271,7 +289,7 @@ export const Navigation = () => {
             <div className="flex items-center justify-between gap-x-2 mb-4">
               <div className="flex items-center gap-x-1 flex-1">
                 <span className="text-sm font-medium">
-                  {session?.user?.name?.split(' ')[0] || "Guest"}'s Notion
+                  {session?.user?.name?.split(' ')[0] || 'Guest'}'s Notion
                 </span>
                 <NotificationsDropdown />
               </div>
@@ -280,7 +298,7 @@ export const Navigation = () => {
                 onClick={handleCollapse}
                 type="button"
                 className={cn(
-                  "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover/sidebar:opacity-100 transition opacity-100"
+                  'h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover/sidebar:opacity-100 transition opacity-100'
                 )}
               >
                 <ChevronsLeft className="h-6 w-6" />
@@ -312,33 +330,25 @@ export const Navigation = () => {
             <hr className="my-2" />
 
             <div className="mt-4">
-              {/* Favorites */}
+              {}
               <SidebarSection
                 label="Favorites"
                 icon={Star}
                 data={favoritePages}
               />
 
-              {/* Published */}
+              {}
               <SidebarSection
                 label="Published"
                 icon={Globe}
                 data={publishedPages}
               />
 
-              {/* Recent */}
-              <SidebarSection
-                label="Recent"
-                icon={Clock}
-                data={recentPages}
-              />
+              {}
+              <SidebarSection label="Recent" icon={Clock} data={recentPages} />
 
-              {/* Shared */}
-              <SidebarSection
-                label="Shared"
-                icon={Users}
-                data={sharedPages}
-              />
+              {}
+              <SidebarSection label="Shared" icon={Users} data={sharedPages} />
 
               <hr className="my-2" />
 
@@ -366,7 +376,9 @@ export const Navigation = () => {
 
           <div className="p-3 border-t bg-secondary/50">
             <button
-              onClick={() => setIsImportModalOpen(true)}
+              onClick={() => {
+                setIsImportModalOpen(true);
+              }}
               className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm"
             >
               <Upload className="h-4 w-4 mr-2" />
@@ -374,16 +386,14 @@ export const Navigation = () => {
             </button>
             <Popover>
               <PopoverTrigger asChild>
-                <button
-                  className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm"
-                >
+                <button className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm">
                   <Trash className="h-4 w-4 mr-2" />
                   <span>Trash</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent
                 className="p-0 w-72"
-                side={isMobile ? "bottom" : "right"}
+                side={isMobile ? 'bottom' : 'right'}
               >
                 <TrashBox documents={trashPages} />
               </PopoverContent>
@@ -412,7 +422,7 @@ export const Navigation = () => {
         />
       )}
 
-      {(
+      {
         <div className="absolute top-0 left-0 z-50">
           {isCollapsed && (
             <button
@@ -423,9 +433,14 @@ export const Navigation = () => {
             </button>
           )}
         </div>
-      )}
+      }
 
-      <ImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} />
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => {
+          setIsImportModalOpen(false);
+        }}
+      />
     </>
-  )
-}
+  );
+};

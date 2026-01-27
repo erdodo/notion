@@ -1,142 +1,141 @@
 import {
-    BlockNoteSchema,
-    defaultBlockSpecs,
-    defaultInlineContentSpecs,
-    defaultStyleSpecs,
-    createStyleSpec
-} from "@blocknote/core"
-import { CalloutBlock } from "./blocks/callout-block"
-import { DividerBlock } from "./blocks/divider-block"
-import { QuoteBlock } from "./blocks/quote-block"
-import { TOCBlock } from "./blocks/toc-block"
-import { ToggleBlock } from "./blocks/toggle-block"
-import { BookmarkBlock } from "./blocks/bookmark-block"
-import { ImageBlock } from "./blocks/image-block"
-import { VideoBlock } from "./blocks/video-block"
-import { AudioBlock } from "./blocks/audio-block"
-import { FileBlock } from "./blocks/file-block"
-import { EmbedBlock } from "./blocks/embed-block"
-import { PageMentionBlock } from "./blocks/page-mention-block"
-import { InlineDatabaseBlock } from "./blocks/inline-database-block"
+  BlockNoteSchema,
+  defaultBlockSpecs,
+  defaultInlineContentSpecs,
+  defaultStyleSpecs,
+  createStyleSpec,
+} from '@blocknote/core';
+import { createReactBlockSpec } from '@blocknote/react';
+import dynamic from 'next/dynamic';
 
-// Custom style specs
+import { AudioBlock } from './blocks/audio-block';
+import { BookmarkBlock } from './blocks/bookmark-block';
+import { CalloutBlock } from './blocks/callout-block';
+import { DividerBlock } from './blocks/divider-block';
+import { EmbedBlock } from './blocks/embed-block';
+import { FileBlock } from './blocks/file-block';
+import { GridBlock } from './blocks/grid-block';
+import { ImageBlock } from './blocks/image-block';
+import { InlineDatabaseBlock } from './blocks/inline-database-block';
+import { PageMentionBlock } from './blocks/page-mention-block';
+import { QuoteBlock } from './blocks/quote-block';
+import { TOCBlock } from './blocks/toc-block';
+import { ToggleBlock } from './blocks/toggle-block';
+import { VideoBlock } from './blocks/video-block';
+
 const customStyleSpecs = {
-    ...defaultStyleSpecs,
-    // Inline code style
-    code: createStyleSpec(
-        {
-            type: "code",
-            propSchema: "boolean",
-        },
-        {
-            render: () => {
-                const code = document.createElement("code")
-                code.className = "bn-inline-code"
-                return {
-                    dom: code,
-                }
-            },
-        }
-    ),
-    // Text color
-    textColor: createStyleSpec(
-        {
-            type: "textColor",
-            propSchema: "string",
-        },
-        {
-            render: (value) => {
-                const span = document.createElement("span")
-                span.setAttribute("data-text-color", value || "default")
-                return {
-                    dom: span,
-                }
-            },
-        }
-    ),
-    // Background/Highlight color
-    backgroundColor: createStyleSpec(
-        {
-            type: "backgroundColor",
-            propSchema: "string",
-        },
-        {
-            render: (value) => {
-                const span = document.createElement("span")
-                span.setAttribute("data-background-color", value || "default")
-                return {
-                    dom: span,
-                }
-            },
-        }
-    ),
-}
+  ...defaultStyleSpecs,
 
-import dynamic from "next/dynamic"
-import { createReactBlockSpec } from "@blocknote/react"
-
-// Define SyncedBlock locally to avoid circular dependencies
-const SyncedBlockView = dynamic(
-    () => import("./blocks/synced-block-view").then((mod) => mod.SyncedBlockView),
+  code: createStyleSpec(
     {
-        ssr: false,
-        loading: () => <div className="p-2 border border-red-200 rounded text-xs text-red-500">Loading Synced Block...</div>
+      type: 'code',
+      propSchema: 'boolean',
+    },
+    {
+      render: () => {
+        const code = document.createElement('code');
+        code.className = 'bn-inline-code';
+        return {
+          dom: code,
+        };
+      },
     }
-)
+  ),
+
+  textColor: createStyleSpec(
+    {
+      type: 'textColor',
+      propSchema: 'string',
+    },
+    {
+      render: (value) => {
+        const span = document.createElement('span');
+        span.dataset.textColor = value || 'default';
+        return {
+          dom: span,
+        };
+      },
+    }
+  ),
+
+  backgroundColor: createStyleSpec(
+    {
+      type: 'backgroundColor',
+      propSchema: 'string',
+    },
+    {
+      render: (value) => {
+        const span = document.createElement('span');
+        span.dataset.backgroundColor = value || 'default';
+        return {
+          dom: span,
+        };
+      },
+    }
+  ),
+};
+
+const SyncedBlockView = dynamic(
+  () =>
+    import('./blocks/synced-block-view').then(
+      (module_) => module_.SyncedBlockView
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="p-2 border border-red-200 rounded text-xs text-red-500">
+        Loading Synced Block...
+      </div>
+    ),
+  }
+);
 
 const SyncedBlock = createReactBlockSpec(
-    {
-        type: "syncedBlock",
-        propSchema: {
-            sourcePageId: {
-                default: "",
-            },
-            sourceBlockId: {
-                default: "",
-            },
-            childrenJSON: {
-                default: "[]",
-            }
-        },
-        content: "none",
+  {
+    type: 'syncedBlock',
+    propSchema: {
+      sourcePageId: {
+        default: '',
+      },
+      sourceBlockId: {
+        default: '',
+      },
+      childrenJSON: {
+        default: '[]',
+      },
     },
-    {
-        render: (props) => {
-            return <SyncedBlockView block={props.block} editor={props.editor} />
-        },
-    }
-)
+    content: 'none',
+  },
+  {
+    render: (properties) => {
+      return (
+        <SyncedBlockView block={properties.block} editor={properties.editor} />
+      );
+    },
+  }
+);
 
-
-import { GridBlock } from "./blocks/grid-block"
-
-// Note: backgroundColor will be handled via CSS and block metadata
-// BlockNote doesn't support runtime prop schema modification easily
 export const schema = BlockNoteSchema.create({
-    blockSpecs: {
-        // Standard blocks
-        ...defaultBlockSpecs,
+  blockSpecs: {
+    ...defaultBlockSpecs,
 
-        // Custom blocks
-        callout: CalloutBlock(),
-        divider: DividerBlock(),
-        quote: QuoteBlock(),
-        toc: TOCBlock(),
-        toggle: ToggleBlock(),
-        bookmark: BookmarkBlock(),
-        image: ImageBlock(),
-        video: VideoBlock(),
-        audio: AudioBlock(),
-        file: FileBlock(),
-        embed: EmbedBlock(),
+    callout: CalloutBlock(),
+    divider: DividerBlock(),
+    quote: QuoteBlock(),
+    toc: TOCBlock(),
+    toggle: ToggleBlock(),
+    bookmark: BookmarkBlock(),
+    image: ImageBlock(),
+    video: VideoBlock(),
+    audio: AudioBlock(),
+    file: FileBlock(),
+    embed: EmbedBlock(),
 
-        // New block
-        pageMention: PageMentionBlock(),
-        inlineDatabase: InlineDatabaseBlock(),
-        syncedBlock: SyncedBlock(),
-        grid: GridBlock(),
-    },
-    inlineContentSpecs: defaultInlineContentSpecs,
-    styleSpecs: customStyleSpecs,
-})
-
+    pageMention: PageMentionBlock(),
+    inlineDatabase: InlineDatabaseBlock(),
+    syncedBlock: SyncedBlock(),
+    grid: GridBlock(),
+  },
+  inlineContentSpecs: defaultInlineContentSpecs,
+  styleSpecs: customStyleSpecs,
+});

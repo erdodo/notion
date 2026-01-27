@@ -1,113 +1,107 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { Skeleton } from '../skeleton'
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+import { Skeleton } from '../skeleton';
 
 describe('Skeleton', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
-  // Basic Rendering
   it('should render skeleton element', () => {
-    const { container } = render(<Skeleton />)
-    expect(container.querySelector('div')).toBeInTheDocument()
-  })
+    const { container } = render(<Skeleton />);
+    expect(container.querySelector('div')).toBeInTheDocument();
+  });
 
   it('should render as div element', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.tagName).toBe('DIV')
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.tagName).toBe('DIV');
+  });
 
-  // Default Styling
   it('should have rounded styling', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('rounded-md')
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('rounded-md');
+  });
 
   it('should have background color', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toMatch(/bg-/)
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toMatch(/bg-/);
+  });
 
   it('should have muted background', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('bg-gray-200')
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('bg-gray-200');
+  });
 
   it('should have animation', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('animate-pulse')
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('animate-pulse');
+  });
 
-  // Size Tests
   it('should render default size', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton).toBeInTheDocument()
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton).toBeInTheDocument();
+  });
 
   it('should support custom height', () => {
-    const { container } = render(<Skeleton className="h-12" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-12')
-  })
+    const { container } = render(<Skeleton className="h-12" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-12');
+  });
 
   it('should support custom width', () => {
-    const { container } = render(<Skeleton className="w-12" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('w-12')
-  })
+    const { container } = render(<Skeleton className="w-12" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('w-12');
+  });
 
   it('should support custom square size', () => {
-    const { container } = render(<Skeleton className="h-12 w-12 rounded-full" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-12')
-    expect(skeleton?.className).toContain('w-12')
-    expect(skeleton?.className).toContain('rounded-full')
-  })
+    const { container } = render(
+      <Skeleton className="h-12 w-12 rounded-full" />
+    );
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-12');
+    expect(skeleton?.className).toContain('w-12');
+    expect(skeleton?.className).toContain('rounded-full');
+  });
 
-  // Text Skeleton
   it('should render text skeleton', () => {
-    const { container } = render(<Skeleton className="h-4 w-full" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-4')
-    expect(skeleton?.className).toContain('w-full')
-  })
+    const { container } = render(<Skeleton className="h-4 w-full" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-4');
+    expect(skeleton?.className).toContain('w-full');
+  });
 
   it('should render text skeleton with partial width', () => {
-    const { container } = render(<Skeleton className="h-4 w-1/2" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('w-1/2')
-  })
+    const { container } = render(<Skeleton className="h-4 w-1/2" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('w-1/2');
+  });
 
-  // Avatar Skeleton
   it('should render avatar skeleton', () => {
     const { container } = render(
       <Skeleton className="h-12 w-12 rounded-full" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-12')
-    expect(skeleton?.className).toContain('w-12')
-    expect(skeleton?.className).toContain('rounded-full')
-  })
+    );
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-12');
+    expect(skeleton?.className).toContain('w-12');
+    expect(skeleton?.className).toContain('rounded-full');
+  });
 
-  // Button Skeleton
   it('should render button skeleton', () => {
-    const { container } = render(
-      <Skeleton className="h-10 w-24 rounded-md" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-10')
-    expect(skeleton?.className).toContain('w-24')
-    expect(skeleton?.className).toContain('rounded-md')
-  })
+    const { container } = render(<Skeleton className="h-10 w-24 rounded-md" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-10');
+    expect(skeleton?.className).toContain('w-24');
+    expect(skeleton?.className).toContain('rounded-md');
+  });
 
-  // Card Skeleton
   it('should render card skeleton layout', () => {
     const { container } = render(
       <div className="space-y-4">
@@ -115,80 +109,74 @@ describe('Skeleton', () => {
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/4" />
       </div>
-    )
-    const skeletons = container.querySelectorAll('div > div')
-    expect(skeletons.length).toBeGreaterThanOrEqual(3)
-  })
+    );
+    const skeletons = container.querySelectorAll('div > div');
+    expect(skeletons.length).toBeGreaterThanOrEqual(3);
+  });
 
-  // List Skeleton
   it('should render list skeleton items', () => {
-    const { container } = render(
+    render(
       <div className="space-y-2">
         <Skeleton className="h-4 w-full" data-testid="item-1" />
         <Skeleton className="h-4 w-full" data-testid="item-2" />
         <Skeleton className="h-4 w-full" data-testid="item-3" />
       </div>
-    )
-    expect(screen.getByTestId('item-1')).toBeInTheDocument()
-    expect(screen.getByTestId('item-2')).toBeInTheDocument()
-    expect(screen.getByTestId('item-3')).toBeInTheDocument()
-  })
+    );
+    expect(screen.getByTestId('item-1')).toBeInTheDocument();
+    expect(screen.getByTestId('item-2')).toBeInTheDocument();
+    expect(screen.getByTestId('item-3')).toBeInTheDocument();
+  });
 
-  // Attributes
   it('should support className prop', () => {
-    const { container } = render(<Skeleton className="custom-skeleton" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('custom-skeleton')
-  })
+    const { container } = render(<Skeleton className="custom-skeleton" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('custom-skeleton');
+  });
 
   it('should support data attributes', () => {
-    render(<Skeleton data-testid="custom-skeleton" />)
-    expect(screen.getByTestId('custom-skeleton')).toBeInTheDocument()
-  })
+    render(<Skeleton data-testid="custom-skeleton" />);
+    expect(screen.getByTestId('custom-skeleton')).toBeInTheDocument();
+  });
 
   it('should support aria-label', () => {
-    render(<Skeleton aria-label="loading" />)
-    expect(screen.getByLabelText('loading')).toBeInTheDocument()
-  })
+    render(<Skeleton aria-label="loading" />);
+    expect(screen.getByLabelText('loading')).toBeInTheDocument();
+  });
 
   it('should support aria-busy', () => {
-    render(<Skeleton aria-busy="true" />)
-    // expect(screen.getByRole('status', { hidden: true })).toHaveAttribute('aria-busy', 'true')
-  })
+    render(<Skeleton aria-busy="true" />);
+  });
 
-  // Animation Tests
   it('should have pulse animation', () => {
-    const { container } = render(<Skeleton />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('animate-pulse')
-  })
+    const { container } = render(<Skeleton />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('animate-pulse');
+  });
 
   it('should support disabling animation via className', () => {
-    const { container } = render(<Skeleton className="animate-none" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('animate-none')
-  })
+    const { container } = render(<Skeleton className="animate-none" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('animate-none');
+  });
 
-  // Rounded Styles
   it('should support full rounded', () => {
-    const { container } = render(<Skeleton className="rounded-full" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('rounded-full')
-  })
+    const { container } = render(<Skeleton className="rounded-full" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('rounded-full');
+  });
 
   it('should support no rounded', () => {
-    const { container } = render(<Skeleton className="rounded-none" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('rounded-none')
-  })
+    const { container } = render(<Skeleton className="rounded-none" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('rounded-none');
+  });
 
   it('should support custom rounded', () => {
-    const { container } = render(<Skeleton className="rounded-lg" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('rounded-lg')
-  })
+    const { container } = render(<Skeleton className="rounded-lg" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('rounded-lg');
+  });
 
-  // Multiple Skeletons
   it('should render multiple skeletons', () => {
     render(
       <>
@@ -196,75 +184,67 @@ describe('Skeleton', () => {
         <Skeleton data-testid="skeleton-2" />
         <Skeleton data-testid="skeleton-3" />
       </>
-    )
-    expect(screen.getByTestId('skeleton-1')).toBeInTheDocument()
-    expect(screen.getByTestId('skeleton-2')).toBeInTheDocument()
-    expect(screen.getByTestId('skeleton-3')).toBeInTheDocument()
-  })
+    );
+    expect(screen.getByTestId('skeleton-1')).toBeInTheDocument();
+    expect(screen.getByTestId('skeleton-2')).toBeInTheDocument();
+    expect(screen.getByTestId('skeleton-3')).toBeInTheDocument();
+  });
 
-  // Spacing Tests
   it('should support gap in skeleton container', () => {
     const { container } = render(
       <div className="flex gap-4">
         <Skeleton className="h-12 w-12" />
         <Skeleton className="h-12 flex-1" />
       </div>
-    )
-    const wrapper = container.querySelector('div')
-    expect(wrapper?.className).toContain('gap-4')
-  })
+    );
+    const wrapper = container.querySelector('div');
+    expect(wrapper?.className).toContain('gap-4');
+  });
 
-  // Aspect Ratio
   it('should support aspect-square for circular skeleton', () => {
     const { container } = render(
       <Skeleton className="h-12 w-12 rounded-full aspect-square" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('aspect-square')
-  })
+    );
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('aspect-square');
+  });
 
-  // Header Skeleton
   it('should render header skeleton', () => {
     const { container } = render(
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-full" />
       </div>
-    )
-    const skeletons = container.querySelectorAll('div > div')
-    expect(skeletons.length).toBeGreaterThanOrEqual(2)
-  })
+    );
+    const skeletons = container.querySelectorAll('div > div');
+    expect(skeletons.length).toBeGreaterThanOrEqual(2);
+  });
 
-  // Input Skeleton
   it('should render input skeleton', () => {
     const { container } = render(
       <Skeleton className="h-10 w-full rounded-md" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-10')
-    expect(skeleton?.className).toContain('w-full')
-  })
+    );
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-10');
+    expect(skeleton?.className).toContain('w-full');
+  });
 
-  // Combination Tests
   it('should combine multiple classes', () => {
     const { container } = render(
       <Skeleton className="h-12 w-12 rounded-full" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-12')
-    expect(skeleton?.className).toContain('w-12')
-    expect(skeleton?.className).toContain('rounded-full')
-  })
+    );
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-12');
+    expect(skeleton?.className).toContain('w-12');
+    expect(skeleton?.className).toContain('rounded-full');
+  });
 
   it('should combine with spacing classes', () => {
-    const { container } = render(
-      <Skeleton className="h-4 w-full mb-4" />
-    )
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('mb-4')
-  })
+    const { container } = render(<Skeleton className="h-4 w-full mb-4" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('mb-4');
+  });
 
-  // Table Skeleton
   it('should render table cell skeleton', () => {
     const { container } = render(
       <table>
@@ -276,11 +256,10 @@ describe('Skeleton', () => {
           </tr>
         </tbody>
       </table>
-    )
-    expect(container.querySelector('td > div')).toBeInTheDocument()
-  })
+    );
+    expect(container.querySelector('td > div')).toBeInTheDocument();
+  });
 
-  // Nested Skeletons
   it('should render nested skeleton structure', () => {
     const { container } = render(
       <div className="space-y-4 p-4 border rounded">
@@ -291,45 +270,41 @@ describe('Skeleton', () => {
           <Skeleton className="h-4 w-4/5" />
         </div>
       </div>
-    )
-    expect(container.querySelectorAll('div').length).toBeGreaterThan(1)
-  })
+    );
+    expect(container.querySelectorAll('div').length).toBeGreaterThan(1);
+  });
 
-  // State Indicators
   it('should work as loading state indicator', () => {
     const { container } = render(
       <div>
         <Skeleton className="h-4 w-full" aria-label="loading content" />
       </div>
-    )
-    expect(container.querySelector('div > div')).toBeInTheDocument()
-  })
+    );
+    expect(container.querySelector('div > div')).toBeInTheDocument();
+  });
 
-  // Accessibility
   it('should have semantic role', () => {
-    render(<Skeleton role="status" aria-label="content loading" />)
-    expect(screen.getByRole('status')).toBeInTheDocument()
-  })
+    render(<Skeleton role="status" aria-label="content loading" />);
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
 
   it('should support aria-hidden', () => {
-    render(<Skeleton aria-hidden="true" data-testid="hidden-skeleton" />)
-    const skeleton = screen.getByTestId('hidden-skeleton')
-    expect(skeleton).toHaveAttribute('aria-hidden', 'true')
-  })
+    render(<Skeleton aria-hidden="true" data-testid="hidden-skeleton" />);
+    const skeleton = screen.getByTestId('hidden-skeleton');
+    expect(skeleton).toHaveAttribute('aria-hidden', 'true');
+  });
 
-  // Flex Layout
   it('should support flex growth', () => {
     const { container } = render(
       <div className="flex">
         <Skeleton className="w-12 h-12" />
         <Skeleton className="flex-1 h-12" />
       </div>
-    )
-    const skeletons = container.querySelectorAll('div > div')
-    expect(skeletons.length).toBeGreaterThanOrEqual(2)
-  })
+    );
+    const skeletons = container.querySelectorAll('div > div');
+    expect(skeletons.length).toBeGreaterThanOrEqual(2);
+  });
 
-  // Grid Layout
   it('should support grid layout', () => {
     const { container } = render(
       <div className="grid grid-cols-3 gap-4">
@@ -337,37 +312,34 @@ describe('Skeleton', () => {
         <Skeleton className="h-32" />
         <Skeleton className="h-32" />
       </div>
-    )
-    const skeletons = container.querySelectorAll('div.grid > div')
-    expect(skeletons.length).toBeGreaterThanOrEqual(3)
-  })
+    );
+    const skeletons = container.querySelectorAll('div.grid > div');
+    expect(skeletons.length).toBeGreaterThanOrEqual(3);
+  });
 
-  // Edge Cases
   it('should render without className', () => {
-    const { container } = render(<Skeleton />)
-    expect(container.querySelector('div')).toBeInTheDocument()
-  })
+    const { container } = render(<Skeleton />);
+    expect(container.querySelector('div')).toBeInTheDocument();
+  });
 
   it('should render with only height', () => {
-    const { container } = render(<Skeleton className="h-4" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('h-4')
-  })
+    const { container } = render(<Skeleton className="h-4" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('h-4');
+  });
 
   it('should render with only width', () => {
-    const { container } = render(<Skeleton className="w-24" />)
-    const skeleton = container.querySelector('div')
-    expect(skeleton?.className).toContain('w-24')
-  })
+    const { container } = render(<Skeleton className="w-24" />);
+    const skeleton = container.querySelector('div');
+    expect(skeleton?.className).toContain('w-24');
+  });
 
-  // Ref Forwarding
   it('should forward ref to div element', () => {
-    let ref: HTMLDivElement | null = null
-    render(<Skeleton ref={el => (ref = el)} />)
-    expect(ref).toBeInstanceOf(HTMLDivElement)
-  })
+    let reference: HTMLDivElement | null = null;
+    render(<Skeleton ref={(element) => (reference = element)} />);
+    expect(reference).toBeInstanceOf(HTMLDivElement);
+  });
 
-  // Complex Layouts
   it('should render comment skeleton', () => {
     const { container } = render(
       <div className="space-y-4">
@@ -379,9 +351,9 @@ describe('Skeleton', () => {
           </div>
         </div>
       </div>
-    )
-    expect(container.querySelectorAll('div').length).toBeGreaterThan(1)
-  })
+    );
+    expect(container.querySelectorAll('div').length).toBeGreaterThan(1);
+  });
 
   it('should render product card skeleton', () => {
     const { container } = render(
@@ -394,9 +366,9 @@ describe('Skeleton', () => {
         </div>
         <Skeleton className="h-10 w-full rounded-md" />
       </div>
-    )
-    expect(container.querySelectorAll('div').length).toBeGreaterThan(1)
-  })
+    );
+    expect(container.querySelectorAll('div').length).toBeGreaterThan(1);
+  });
 
   it('should render post skeleton', () => {
     const { container } = render(
@@ -414,7 +386,7 @@ describe('Skeleton', () => {
           <Skeleton className="h-4 w-5/6" />
         </div>
       </div>
-    )
-    expect(container.querySelectorAll('div').length).toBeGreaterThan(1)
-  })
-})
+    );
+    expect(container.querySelectorAll('div').length).toBeGreaterThan(1);
+  });
+});

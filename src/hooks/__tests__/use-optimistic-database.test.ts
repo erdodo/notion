@@ -1,16 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
-import { useOptimisticDatabase } from '../use-optimistic-database'
-import type { DetailedDatabase } from '../use-optimistic-database'
+import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+import { useOptimisticDatabase } from '../use-optimistic-database';
+import type { DetailedDatabase } from '../use-optimistic-database';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     refresh: vi.fn(),
   }),
-}))
+}));
 
 describe('useOptimisticDatabase', () => {
-  let mockDatabase: DetailedDatabase
+  let mockDatabase: DetailedDatabase;
 
   beforeEach(() => {
     mockDatabase = {
@@ -44,38 +45,38 @@ describe('useOptimisticDatabase', () => {
           page: null,
         },
       ],
-    } as DetailedDatabase
-  })
+    } as DetailedDatabase;
+  });
 
   it('should initialize with provided database', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
-    expect(result.current.database.id).toBe('db-1')
-    expect(result.current.database.rows).toHaveLength(1)
-  })
+    expect(result.current.database.id).toBe('db-1');
+    expect(result.current.database.rows).toHaveLength(1);
+  });
 
   it('should update cell value optimistically', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
     act(() => {
-      result.current.updateCell('row-1', 'prop-1', 'Updated Value')
-    })
+      result.current.updateCell('row-1', 'prop-1', 'Updated Value');
+    });
 
-    const updatedCell = result.current.database.rows[0].cells[0]
-    expect(updatedCell.value).toBe('Updated Value')
-  })
+    const updatedCell = result.current.database.rows[0].cells[0];
+    expect(updatedCell.value).toBe('Updated Value');
+  });
 
   it('should add new cell if it does not exist', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
     act(() => {
-      result.current.updateCell('row-1', 'prop-2', 'New Value')
-    })
+      result.current.updateCell('row-1', 'prop-2', 'New Value');
+    });
 
-    const row = result.current.database.rows[0]
-    expect(row.cells).toHaveLength(2)
-    expect(row.cells[1].value).toBe('New Value')
-  })
+    const row = result.current.database.rows[0];
+    expect(row.cells).toHaveLength(2);
+    expect(row.cells[1].value).toBe('New Value');
+  });
 
   it('should not affect other rows when updating', () => {
     mockDatabase.rows.push({
@@ -91,19 +92,19 @@ describe('useOptimisticDatabase', () => {
         },
       ],
       page: null,
-    } as any)
+    } as any);
 
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
     act(() => {
-      result.current.updateCell('row-1', 'prop-1', 'Updated')
-    })
+      result.current.updateCell('row-1', 'prop-1', 'Updated');
+    });
 
-    expect(result.current.database.rows[1].cells[0].value).toBe('Another')
-  })
+    expect(result.current.database.rows[1].cells[0].value).toBe('Another');
+  });
 
   it('should handle adding new rows', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
     const newRow = {
       id: 'row-2',
@@ -111,67 +112,70 @@ describe('useOptimisticDatabase', () => {
       pageId: 'page-2',
       cells: [],
       page: null,
-    }
+    };
 
     act(() => {
-      result.current.addRow(newRow as any)
-    })
+      result.current.addRow(newRow as any);
+    });
 
-    expect(result.current.database.rows).toHaveLength(2)
-  })
+    expect(result.current.database.rows).toHaveLength(2);
+  });
 
   it('should handle deleting rows', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
-    expect(result.current.database.rows).toHaveLength(1)
+    expect(result.current.database.rows).toHaveLength(1);
 
     act(() => {
-      result.current.deleteRow('row-1')
-    })
+      result.current.deleteRow('row-1');
+    });
 
-    expect(result.current.database.rows).toHaveLength(0)
-  })
+    expect(result.current.database.rows).toHaveLength(0);
+  });
 
   it('should update database when props change', () => {
     const { result, rerender } = renderHook(
-      (db) => useOptimisticDatabase(db),
-      { initialProps: mockDatabase }
-    )
+      (database) => useOptimisticDatabase(database),
+      {
+        initialProps: mockDatabase,
+      }
+    );
 
-    expect(result.current.database.id).toBe('db-1')
+    expect(result.current.database.id).toBe('db-1');
 
-    const newDatabase = { ...mockDatabase, id: 'db-2' } as DetailedDatabase
-    rerender(newDatabase)
+    const newDatabase = { ...mockDatabase, id: 'db-2' } as DetailedDatabase;
+    rerender(newDatabase);
 
-    expect(result.current.database.id).toBe('db-2')
-  })
+    expect(result.current.database.id).toBe('db-2');
+  });
 
   it('should preserve optimistic updates after re-initialization', () => {
     const { result, rerender } = renderHook(
-      (db) => useOptimisticDatabase(db),
-      { initialProps: mockDatabase }
-    )
+      (database) => useOptimisticDatabase(database),
+      {
+        initialProps: mockDatabase,
+      }
+    );
 
     act(() => {
-      result.current.updateCell('row-1', 'prop-1', 'Optimistic Value')
-    })
+      result.current.updateCell('row-1', 'prop-1', 'Optimistic Value');
+    });
 
-    const newDatabase = { ...mockDatabase } as DetailedDatabase
-    rerender(newDatabase)
+    const newDatabase = { ...mockDatabase } as DetailedDatabase;
+    rerender(newDatabase);
 
-    // Update should be preserved through reinitialization
-    expect(result.current.database.rows[0].cells[0].value).toBeDefined()
-  })
+    expect(result.current.database.rows[0].cells[0].value).toBeDefined();
+  });
 
   it('should handle multiple cell updates', () => {
-    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase))
+    const { result } = renderHook(() => useOptimisticDatabase(mockDatabase));
 
     act(() => {
-      result.current.updateCell('row-1', 'prop-1', 'Value 1')
-      result.current.updateCell('row-1', 'prop-2', 'Value 2')
-      result.current.updateCell('row-1', 'prop-3', 'Value 3')
-    })
+      result.current.updateCell('row-1', 'prop-1', 'Value 1');
+      result.current.updateCell('row-1', 'prop-2', 'Value 2');
+      result.current.updateCell('row-1', 'prop-3', 'Value 3');
+    });
 
-    expect(result.current.database.rows[0].cells).toHaveLength(3)
-  })
-})
+    expect(result.current.database.rows[0].cells).toHaveLength(3);
+  });
+});
