@@ -1,25 +1,5 @@
-- [x] public itemlardan bir sayfa sildim. anlık olarak listeden silinmedi. sayfa yenilenince trash'e taşındı.
-- [x] sidebar listesinde itemların yanında + butonu var. bunun bir işlevi yok kaldır.
-- [x] sidebarda itemların 3 nokta menüsünde move to seçeneği var. bu açılan modal içinden hiçbir sayfa seçilmiyor sanırım disabled. burayı düzelt.
-- [x] cover'da sağ tık menüsünde reposition diye bir buton var. bu özelliği kazandır aktif olarak çalışsın. 
-- [x] cover sağ altında 2 tane buton var. remove ve change cover. remove butonundan labelı kaldır, change cover butonunda sadece change yazsın. bir de reposition butonu ekle.
-- [x] coverda sağ tık menüsünde random butonunu kaldır. bunu change cover modalı içine taşı.
-- [x] coverda sağ tık menüsünde change butonuna tıkladığımda hata alıyorum. change limit gibi. bu uyarıyı vermesin yine change cover modalı açılsın.
-- [x] sayfa iconunda sağ tık menüsündeki change çalışmıyor. normalde icon seçim menüsü açılmalı.
-- [x] sayfa iconunda sağ tık menüsündeki remove çalışmıyor. hata alıyorum. src/components/context-menu/menus/cover-image-menu.tsx (44:17) @ async onRemove
-- [x] sayfa başlığı inputu alt satıra geçemesin. 50 karakter sınırı olsun ve hep yana doğru uzasın. ekrana sığmadığında ... şeklinde gösterilsin.
-- [x] sayfa başlığında enter tuşlandıysa sayfa contentine focuslansın
-- [x] bloklarda bir metin seçimi yapıldığında 2 tane formatlama menüsü açılıyor(renk, alignment değişim menüsü).  
-- [x] slash menüden toggle seçtiğimde item ekleniyor ancak bir altındaki focus oluyor. 
-- [x] toggleda açılan menü yok. heading togglelar düzgün çalışıyor
-- [x] sürükle bırak ile eleman taşımada bir beyazlık geliyor ve düzgün taşıma sağlanamıyor çünkü ekran blurlu görünüyor
-- [ ] bir elemanı toggle içine taşıyamıyorum
-- [x] bir metin yada emoji eklemek için slash menüyü açtığımda yani ekrana '/' yazdığımda menü düzgün açılıyor ancak seçim sonrası '/' silinmiyor
-- [x] slash menüden page metion seçilmiyor. 
-- [x] ekrana divider ekledim ancak görünmüyor sanırım css problemi var. eklendiğine eminim
-- [x] sayfa altına sayfa ekledim. görünüm biraz daha badge gibi olmalı sayfa olduğu belli olmuyor. link gibi görünüyor. 
-- [x] eklenen sayfa parentta iken untitled page isminde ancak ilgili sayfaya gittiğimde titlesinin untitled olduğunu görüyorum. linkin sayfa gibi görünmesi geliştirmesini yaparken title ile senkronzie olduğunu ve iconların da parent sayfasında görüntülendiğinden emin ol.
-- [x] bir alt sayfa yada veritabanı eklendiğinde buna blank olarak yeni sekmede açmak istemeyebilirim. burada yeni sekme, ilgili sekme, modal ve drawer seçenekleri olsun. kullanıcı nerede açılacağını seçebilsin
-- [x] resim bloğunda caption olmak zorunda değil. eğer caption yoksa placeholder gözükmesin
-
-
+- [ ] callout component için renk değişimi yapılmasın. yalnızca birkaç state olmalı. success, error, warning, info gibi. buna göre renk ve ikonlar değişmeli
+- [ ] table of content componenti tıklandığında font menüsü açılıyor. açılmasını engellemeli
+- [ ] syncblock içinde slah menü açtığımda 2 kere açılıyor yada sync block altındaki bloğa etki ediyor gibi garip bir durum var
+- [ ] slah menü içinden bir item'a tıkladığımda alt bloğa focus olabiliyor
+- [ ] bir sayfa altına slah menüden bir sayfa daha ekledim. tıklanarak gidilmiyor, normalde alt sayfa olması gereken sayfa navigation altında hem ana düzeyde hem de alt düzeyde görünüyor

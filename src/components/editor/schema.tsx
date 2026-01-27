@@ -108,6 +108,8 @@ const SyncedBlock = createReactBlockSpec(
 )
 
 
+import { GridBlock } from "./blocks/grid-block"
+
 // Note: backgroundColor will be handled via CSS and block metadata
 // BlockNote doesn't support runtime prop schema modification easily
 export const schema = BlockNoteSchema.create({
@@ -132,6 +134,7 @@ export const schema = BlockNoteSchema.create({
         pageMention: PageMentionBlock(),
         inlineDatabase: InlineDatabaseBlock(),
         syncedBlock: SyncedBlock(),
+        grid: GridBlock(),
     },
     inlineContentSpecs: defaultInlineContentSpecs,
     styleSpecs: customStyleSpecs,

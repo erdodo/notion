@@ -89,8 +89,8 @@ export const Item = ({
       onClick={handleClick}
       onContextMenu={onContextMenu}
       className={cn(
-        "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer",
-        active && "bg-primary/5 text-primary"
+        "group min-h-[27px] text-sm py-1 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out",
+        active && "bg-primary/10 text-primary font-semibold"
       )}
       style={{
         paddingLeft: level > 0 ? `${(level * 12) + 12}px` : "12px"

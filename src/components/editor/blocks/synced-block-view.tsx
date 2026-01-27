@@ -179,7 +179,7 @@ export const SyncedBlockView = ({ block, editor }: SyncedBlockProps) => {
     }
 
     return (
-        <div className={`synced-block group relative rounded border transition-colors ${isMaster ? "border-red-400 bg-red-50/10" : "border-red-400 border-dashed bg-transparent"}`}>
+        <div className={`synced-block group relative rounded border transition-colors w-full ${isMaster ? "border-red-400 bg-red-50/10" : "border-red-400 border-dashed bg-transparent"}`}>
             {/* Header */}
             <div className="flex items-center justify-between px-2 py-1 text-xs text-red-400 select-none bg-red-50/50 dark:bg-red-900/20 rounded-t">
                 <span className="flex items-center gap-1 font-medium">

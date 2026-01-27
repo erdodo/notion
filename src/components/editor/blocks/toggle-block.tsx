@@ -1,18 +1,9 @@
 "use client"
-
+/*
 import { createReactBlockSpec } from "@blocknote/react"
 import { ChevronRight } from "lucide-react"
 import React from "react"
 
-/**
- * Toggle Block - A collapsible block that can contain nested content
- * 
- * Features:
- * - Click on chevron or title area to toggle open/closed state
- * - Supports nested blocks as children
- * - Smooth transitions with CSS animations
- * - Accessible with proper ARIA attributes
- */
 export const ToggleBlock = createReactBlockSpec(
     {
         type: "toggle",
@@ -56,7 +47,7 @@ export const ToggleBlock = createReactBlockSpec(
                             }
                         }}
                     >
-                        {/* Toggle Icon */}
+                        
                         <div
                             className="flex-shrink-0 mt-1 transition-transform duration-200"
                             style={{
@@ -67,7 +58,7 @@ export const ToggleBlock = createReactBlockSpec(
                             <ChevronRight size={18} className="text-muted-foreground" />
                         </div>
 
-                        {/* Content - Title */}
+                        
                         <div
                             className="flex-1 min-w-0 min-h-[24px]"
                             ref={props.contentRef}
@@ -76,9 +67,55 @@ export const ToggleBlock = createReactBlockSpec(
                                 e.stopPropagation()
                             }}
                         />
+                        {isOpen && (
+                            <div
+                                className="toggle-block-body"
+                                ref={props.contentRef}
+                                onClick={(e) => {
+                                    // Allow text editing - stop propagation to prevent toggle
+                                    e.stopPropagation()
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
             )
         },
     }
 )
+    */
+
+import { defaultProps } from "@blocknote/core";
+import { createReactBlockSpec, ToggleWrapper } from "@blocknote/react";
+import { ChevronRight } from "lucide-react";
+
+// The Toggle block that we want to add to our editor.
+export const ToggleBlock = createReactBlockSpec(
+    {
+        type: "toggle",
+        propSchema: {
+            ...defaultProps,
+        },
+        content: "inline",
+    },
+    {
+        render: (props) => {
+            return (
+                <>
+                    <ToggleWrapper block={props.block} editor={props.editor}>
+                        <div
+                            className="flex-1 min-w-0 min-h-[24px]"
+                            ref={props.contentRef}
+                            onClick={(e) => {
+                                // Allow text editing - stop propagation to prevent toggle
+                                e.stopPropagation()
+
+                            }}
+                        />
+                    </ToggleWrapper>
+
+                </>
+            )
+        }
+    },
+);

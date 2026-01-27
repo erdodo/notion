@@ -148,7 +148,7 @@ describe('Page Actions', () => {
 
             await PageActions.updatePage('page-1', updateData)
 
-            expect(db.page.updateMany).toHaveBeenCalledWith({
+            expect(db.page.update).toHaveBeenCalledWith({
                 where: { id: 'page-1', userId: mockUser.id },
                 data: expect.objectContaining({
                     ...updateData,

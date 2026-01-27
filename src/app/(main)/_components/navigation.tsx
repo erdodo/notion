@@ -367,17 +367,17 @@ export const Navigation = () => {
           <div className="p-3 border-t bg-secondary/50">
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm"
             >
-              <Upload className="h-4 w-4" />
+              <Upload className="h-4 w-4 mr-2" />
               <span>Import</span>
             </button>
             <Popover>
               <PopoverTrigger asChild>
                 <button
-                  className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+                  className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm"
                 >
-                  <Trash className="h-4 w-4" />
+                  <Trash className="h-4 w-4 mr-2" />
                   <span>Trash</span>
                 </button>
               </PopoverTrigger>
@@ -390,9 +390,9 @@ export const Navigation = () => {
             </Popover>
             <button
               onClick={settings.onOpen}
-              className="w-full flex items-center gap-x-2 px-2 py-1.5 text-sm hover:bg-primary/5 rounded-sm text-muted-foreground"
+              className="group min-h-[27px] text-sm py-1 px-2 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium cursor-pointer transition-colors duration-200 ease-in-out rounded-sm"
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-4 w-4 mr-2" />
               <span>Settings</span>
             </button>
           </div>

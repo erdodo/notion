@@ -80,7 +80,7 @@ export const DocumentList = ({
     return (
       <div
         className={cn(
-          "text-sm text-muted-foreground/80 py-1",
+          "text-xs text-muted-foreground/60 py-1 font-medium select-none",
           level === 0 && "px-2"
         )}
         style={{

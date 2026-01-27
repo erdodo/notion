@@ -46,7 +46,7 @@ export const InlineDatabaseBlock = createReactBlockSpec(
 
             // Prevent editing of the database container
             return (
-                <div contentEditable={false} className="my-4">
+                <div contentEditable={false} className="my-4 w-full">
                     {loading && (
                         <div className="border rounded-lg p-4 space-y-3">
                             <Skeleton className="h-8 w-48" />

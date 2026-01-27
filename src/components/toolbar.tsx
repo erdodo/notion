@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { ImageIcon, Smile, X } from "lucide-react"
+import { ImageIcon, Smile, X, LayoutTemplate } from "lucide-react"
 import { updateDocument } from "@/app/(main)/_actions/documents"
 import { IconPicker } from "./icon-picker"
 import { useContextMenu } from "@/hooks/use-context-menu"
+import { useTemplateModal } from "@/hooks/use-template-modal"
 import { CoverImageModal } from "./modals/cover-image-modal"
 
 interface Page {
@@ -22,6 +23,7 @@ interface ToolbarProps {
 
 export const Toolbar = ({ page, preview }: ToolbarProps) => {
   const [coverModalOpen, setCoverModalOpen] = useState(false)
+  const templateModal = useTemplateModal()
 
   const { onContextMenu } = useContextMenu({
     type: "icon",
@@ -108,6 +110,16 @@ export const Toolbar = ({ page, preview }: ToolbarProps) => {
             >
               <ImageIcon className="h-4 w-4 mr-2 inline" />
               Add cover
+            </button>
+          )}
+
+          {!preview && (
+            <button
+              onClick={templateModal.onOpen}
+              className="text-muted-foreground text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 py-1 rounded-md"
+            >
+              <LayoutTemplate className="h-4 w-4 mr-2 inline" />
+              Templates
             </button>
           )}
         </div>

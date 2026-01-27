@@ -141,9 +141,33 @@ export const useDocumentsStore = create<DocumentsStore>()(
                 const operationId = uuidv4()
 
                 // Add to store immediately
-                set((state) => ({
-                    documents: [optimisticDoc, ...state.documents],
-                }))
+                if (!document.parentId) {
+                    set((state) => ({
+                        documents: [optimisticDoc, ...state.documents],
+                    }))
+                } else {
+                    // Start: Helper to add to parent
+                    // We define it inline or use a helper outside if possible, but inline is safer for scope
+                    const addToParent = (docs: Document[], parentId: string, newChild: Document): Document[] => {
+                        return docs.map(doc => {
+                            if (doc.id === parentId) {
+                                return {
+                                    ...doc,
+                                    children: doc.children ? [newChild, ...doc.children] : [newChild],
+                                    _count: { ...doc._count, children: (doc._count?.children || 0) + 1 }
+                                }
+                            }
+                            if (doc.children && doc.children.length > 0) {
+                                return { ...doc, children: addToParent(doc.children, parentId, newChild) }
+                            }
+                            return doc
+                        })
+                    }
+
+                    set((state) => ({
+                        documents: addToParent(state.documents, document.parentId!, optimisticDoc)
+                    }))
+                }
 
                 get().addPendingOperation({
                     id: operationId,
@@ -310,6 +334,10 @@ export const useDocumentsStore = create<DocumentsStore>()(
 
             addDocument: (document) => set((state) => {
                 // Check if document already exists (avoid duplicates from optimistic + websocket)
+                // Note: Optimistic doc has temp ID usually, but we might rely on ID correlation?
+                // The optimistic manager replaces temp ID with real ID. 
+                // If we get doc:create with real ID, we should check if it's already there (handled by optimistic manager usually).
+
                 const exists = findDocument(state.documents, document.id)
                 if (exists) {
                     // Update existing instead
@@ -317,6 +345,40 @@ export const useDocumentsStore = create<DocumentsStore>()(
                         documents: updateRecursive(state.documents, document.id, document)
                     }
                 }
+
+                if (document.parentId) {
+                    // Add to parent
+                    const addToParent = (docs: Document[], parentId: string, newChild: Document): Document[] => {
+                        return docs.map(doc => {
+                            if (doc.id === parentId) {
+                                // Check if child already in children (paranoid check)
+                                if (doc.children?.some(c => c.id === newChild.id)) return doc
+
+                                return {
+                                    ...doc,
+                                    children: doc.children ? [newChild, ...doc.children] : [newChild],
+                                    _count: { ...doc._count, children: (doc._count?.children || 0) + 1 }
+                                }
+                            }
+                            if (doc.children && doc.children.length > 0) {
+                                return { ...doc, children: addToParent(doc.children, parentId, newChild) }
+                            }
+                            return doc
+                        })
+                    }
+
+                    // If parent is not loaded in state, we do NOTHING. 
+                    // It will appear when parent is fetched/expanded.
+                    // We certainly do NOT add to root.
+                    const parentExists = findDocument(state.documents, document.parentId)
+                    if (parentExists) {
+                        return { documents: addToParent(state.documents, document.parentId, document) }
+                    } else {
+                        return state
+                    }
+                }
+
+                // Root document
                 return {
                     documents: [document, ...state.documents].sort((a, b) => 0)
                 }

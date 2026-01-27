@@ -1,0 +1,6 @@
+Transaction Name,Date,Amount,Category,Account,Status
+Netflix Subscription,2025-01-01,-15.99,Subscriptions,Credit Card,Cleared
+Grocery Shopping,2025-01-02,-150.00,Food,Debit Card,Cleared
+Salary,2025-01-15,3000.00,Income,Checking,Cleared
+Coffee,2025-01-16,-5.50,Dining Out,Cash,Pending
+Rent,2025-02-01,-1200.00,Housing,Checking,Pending

@@ -183,70 +183,212 @@ export const BlockNoteEditorComponent = ({
     return () => document.removeEventListener("paste", handlePaste, { capture: true })
   }, [editor])
 
+  // Track dragged block ID reliably
+  const draggedBlockIdRef = useRef<string | null>(null)
+
+  const handleDragStart = (e: React.DragEvent) => {
+    const target = e.target as HTMLElement
+    const blockEl = target.closest('[data-id]')
+    if (blockEl) {
+      draggedBlockIdRef.current = blockEl.getAttribute('data-id')
+    }
+  }
+
   // Global Drag & Drop Handler
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
+  const [dropIndicator, setDropIndicator] = useState<{ x: number, y: number, height: number } | null>(null)
 
   const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
+    // e.preventDefault() // Let events bubble internally for BlockNote? 
+    // Actually, keeping preventDefault is risky if we want internal BlockNote DnD to work.
+    // If files, we prevent default?
+    if (e.dataTransfer.types.includes("Files")) {
+      e.preventDefault()
+      setIsDraggingFile(true)
+    }
   }
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
+    if (e.dataTransfer.types.includes("Files")) {
+      e.preventDefault()
+      setIsDraggingFile(false)
+    }
+    setDropIndicator(null)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
+    if (e.dataTransfer.types.includes("Files")) {
+      e.preventDefault()
+      setIsDraggingFile(true)
+      return
+    }
+
+    // Block Split Visual Feedback
+    const targetEl = (e.target as HTMLElement).closest('[data-id]') as HTMLElement
+    if (targetEl) {
+      const rect = targetEl.getBoundingClientRect()
+      const offsetX = e.clientX - rect.left
+      // Widen the hit area to 30% or 40%
+      const isRightSide = offsetX > (rect.width * 0.70)
+
+      // Don't show indicator if we are hovering the source block itself
+      const targetId = targetEl.getAttribute('data-id')
+      if (targetId && draggedBlockIdRef.current === targetId) {
+        setDropIndicator(null)
+        return
+      }
+
+      if (isRightSide) {
+        e.preventDefault() // Prevent default to allow drop here
+
+        // Show indicator
+        const containerRect = editorWrapperRef.current?.getBoundingClientRect()
+        if (containerRect) {
+          setDropIndicator({
+            x: rect.right - containerRect.left - 4, // Shift left slightly to be visible
+            y: rect.top - containerRect.top,
+            height: rect.height
+          })
+          return
+        }
+      }
+    }
+    setDropIndicator(null)
   }
 
   const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
+    setIsDraggingFile(false)
+    setDropIndicator(null)
 
-    const files = e.dataTransfer.files
-    if (files.length === 0) return
+    if (e.dataTransfer.files.length > 0) {
+      e.preventDefault()
 
-    for (const file of Array.from(files)) {
-      try {
-        let bucket = edgestore.editorMedia
-        let blockType = "file"
-        let props: any = { title: file.name }
+      for (const file of Array.from(e.dataTransfer.files)) {
+        try {
+          let bucket = edgestore.editorMedia
+          let blockType = "file"
+          let props: any = { title: file.name }
 
-        if (file.type.startsWith("image/")) {
-          blockType = "image"
-          props = { caption: "" }
-        } else if (file.type.startsWith("video/")) {
-          blockType = "video"
-          props = { caption: "" }
-        } else if (file.type.startsWith("audio/")) {
-          blockType = "audio"
-          props = { title: file.name, caption: "" }
-        } else {
-          bucket = edgestore.documentFiles
-          props = { name: file.name, size: file.size, type: file.type }
+          if (file.type.startsWith("image/")) {
+            blockType = "image"
+            props = { caption: "" }
+          } else if (file.type.startsWith("video/")) {
+            blockType = "video"
+            props = { caption: "" }
+          } else if (file.type.startsWith("audio/")) {
+            blockType = "audio"
+            props = { title: file.name, caption: "" }
+          } else {
+            bucket = edgestore.documentFiles
+            props = { name: file.name, size: file.size, type: file.type }
+          }
+
+          const res = await bucket.upload({ file })
+          const currentBlock = editor.getTextCursorPosition().block
+
+          editor.insertBlocks(
+            [{
+              type: blockType,
+              props: {
+                url: res.url,
+                ...props
+              }
+            } as any],
+            currentBlock,
+            "after"
+          )
+        } catch (error) {
+          console.error("Drop upload failed", error)
+        }
+      }
+      return
+    }
+    // Don't return here, continue to split logic
+
+
+    // 2. Handle Block Reordering / Split Drop
+    // We try to detect if we are dropping ONTO a block to split it.
+
+    // Find target block ID from DOM
+    let targetEl = e.target as HTMLElement
+    while (targetEl && !targetEl.getAttribute("data-id")) {
+      targetEl = targetEl.parentElement as HTMLElement
+    }
+
+    if (!targetEl) return // console.log("No target block found")
+
+    const targetId = targetEl.getAttribute("data-id")
+    if (!targetId) return
+
+    // Get Target Block
+    let targetBlock = editor.getBlock(targetId)
+    if (!targetBlock) return
+
+    // Check Drop Position (Right Edge?)
+    const rect = targetEl.getBoundingClientRect()
+    const offsetX = e.clientX - rect.left
+    const isRightSide = offsetX > (rect.width * 0.50) // Widen to 50%
+
+    if (isRightSide) {
+      // console.log("Dropping on Right Side - Attempting Split")
+      e.preventDefault()
+      e.stopPropagation() // Critical: Stop BlockNote from handling this
+
+      // Identify Source Block
+      let sourceBlockId = draggedBlockIdRef.current
+
+      // Fallback to selection if ref is missing (e.g. external drag or selection drag)
+      if (!sourceBlockId) {
+        const selection = editor.getSelection()
+        if (selection && selection.blocks && selection.blocks.length > 0) {
+          sourceBlockId = selection.blocks[0].id
+        }
+      }
+
+      if (!sourceBlockId) return // console.warn("Could not identify source block")
+
+      // Need to await getting the block
+      const sourceBlock = await editor.getBlock(sourceBlockId)
+      if (!sourceBlock) return
+
+      if (sourceBlock.id === targetBlock.id) return // Can't self-split
+
+      // Remove Source Block from old location
+      editor.removeBlocks([sourceBlock])
+
+      // Logic:
+      // 1. If Target is Grid: Add Column.
+      // 2. If Target is Not Grid: Convert to Grid (2 cols).
+
+      if (targetBlock.type === "grid") {
+        const currentCols = targetBlock.props.columns as number
+        if (currentCols < 6) {
+          const newCols = currentCols + 1
+          const propKey = `col${newCols}`
+
+          editor.updateBlock(targetBlock, {
+            props: {
+              columns: newCols,
+              [propKey]: JSON.stringify([sourceBlock])
+            }
+          })
+        }
+      } else {
+        // Create new Grid
+        const newGrid = {
+          type: "grid",
+          props: {
+            columns: 2,
+            col1: JSON.stringify([targetBlock]),
+            col2: JSON.stringify([sourceBlock])
+          }
         }
 
-        const res = await bucket.upload({ file })
-        const currentBlock = editor.getTextCursorPosition().block
-
-        editor.insertBlocks(
-          [{
-            type: blockType,
-            props: {
-              url: res.url,
-              ...props
-            }
-          } as any],
-          currentBlock,
-          "after"
-        )
-      } catch (error) {
-        console.error("Drop upload failed", error)
+        editor.replaceBlocks([targetBlock], [newGrid as any])
       }
     }
   }
+
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (slashMenuOpen || mentionOpen) return // Let menu handlers work
@@ -398,6 +540,27 @@ export const BlockNoteEditorComponent = ({
         group: "Basic",
         icon: <div className="text-xl">↗️</div>,
         subtext: "Link to an existing page",
+      },
+      {
+        title: "Ask AI",
+        onItemClick: () => {
+          cleanupSlashCommand()
+          // Mock AI Action
+          const currentBlock = editor.getTextCursorPosition().block
+          editor.insertBlocks(
+            [{
+              type: "callout",
+              props: { type: "info" },
+              content: "✨ AI is thinking... (Mock Feature)"
+            } as any],
+            currentBlock,
+            "after"
+          )
+        },
+        aliases: ["ai", "ask", "magic"],
+        group: "AI",
+        icon: <div className="text-xl">✨</div>,
+        subtext: "Generate or edit content with AI",
       },
       // ... existing custom items ...
       {
@@ -631,6 +794,47 @@ export const BlockNoteEditorComponent = ({
         group: "Advanced",
         icon: <div className="text-xl">🔗</div>,
         subtext: "Paste a synced block from clipboard",
+      },
+      // Grid Layouts
+      {
+        title: "2 Columns",
+        onItemClick: () => insertOrUpdateBlock("grid", { columns: 2 }),
+        aliases: ["2 cols", "columns 2", "grid 2"],
+        group: "Layout",
+        icon: <div className="text-xl">❚❚</div>,
+        subtext: "2 Column Layout",
+      },
+      {
+        title: "3 Columns",
+        onItemClick: () => insertOrUpdateBlock("grid", { columns: 3 }),
+        aliases: ["3 cols", "columns 3", "grid 3"],
+        group: "Layout",
+        icon: <div className="text-xl">❚❚❚</div>,
+        subtext: "3 Column Layout",
+      },
+      {
+        title: "4 Columns",
+        onItemClick: () => insertOrUpdateBlock("grid", { columns: 4 }),
+        aliases: ["4 cols", "columns 4", "grid 4"],
+        group: "Layout",
+        icon: <div className="text-xl">::::</div>,
+        subtext: "4 Column Layout",
+      },
+      {
+        title: "5 Columns",
+        onItemClick: () => insertOrUpdateBlock("grid", { columns: 5 }),
+        aliases: ["5 cols", "columns 5", "grid 5"],
+        group: "Layout",
+        icon: <div className="text-xl">:::::</div>,
+        subtext: "5 Column Layout",
+      },
+      {
+        title: "6 Columns",
+        onItemClick: () => insertOrUpdateBlock("grid", { columns: 6 }),
+        aliases: ["6 cols", "columns 6", "grid 6"],
+        group: "Layout",
+        icon: <div className="text-xl">::::::</div>,
+        subtext: "6 Column Layout",
       }
     ]
 
@@ -690,6 +894,19 @@ export const BlockNoteEditorComponent = ({
       // and we should NOT close the menu or re-evaluate triggers.
       if (editorWrapperRef.current && !editorWrapperRef.current.contains(selection.anchorNode)) {
         return
+      }
+
+      // Fix for Double Slash Menu in Synced Blocks:
+      // Check if we are inside a nested editor (Synced Block). 
+      // The SyncedBlockView renders a .bn-editor. The main editor also is a .bn-editor.
+      // If we are in a nested one, the closest .synced-block will be present.
+      const anchorNode = selection.anchorNode
+      if (anchorNode && anchorNode instanceof Element || anchorNode?.parentElement) {
+        const el = (anchorNode instanceof Element ? anchorNode : anchorNode?.parentElement) as HTMLElement
+        if (el.closest('.synced-block')) {
+          // We are inside a synced block. Do not trigger Main Editor's slash menu.
+          return
+        }
       }
 
       const range = selection.getRangeAt(0)
@@ -879,9 +1096,12 @@ export const BlockNoteEditorComponent = ({
   return (
     <div
       ref={editorWrapperRef}
-      className={`blocknote-editor relative rounded-md transition-colors ${isDragging ? "bg-primary/5 ring-2 ring-primary ring-inset" : ""}`}
+      className={`blocknote-editor relative rounded-md transition-colors ${isDraggingFile ? "bg-primary/5 ring-2 ring-primary ring-inset" : ""}`}
       onDragEnter={handleDragEnter}
-      onDrop={handleDrop}
+      onDropCapture={handleDrop}
+      onDragOverCapture={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDragStart={handleDragStart}
     >
       <BlockNoteView
         editor={editor}
@@ -894,6 +1114,18 @@ export const BlockNoteEditorComponent = ({
       >
         {/* We use our custom menu outside */}
       </BlockNoteView>
+
+      {/* Drop Indicator */}
+      {dropIndicator && (
+        <div
+          className="absolute z-50 pointer-events-none bg-primary w-1 rounded-full shadow-lg transition-all duration-150"
+          style={{
+            top: dropIndicator.y,
+            left: dropIndicator.x,
+            height: dropIndicator.height
+          }}
+        />
+      )}
 
       {slashMenuOpen && (
         <SlashMenu
@@ -939,7 +1171,7 @@ export const BlockNoteEditorComponent = ({
 
       <FormattingToolbar editor={editor} />
 
-      {isDragging && (
+      {isDraggingFile && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-[1px] rounded-md pointer-events-none">
           <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full font-medium shadow-lg">
             Drop files to upload

@@ -24,6 +24,10 @@ vi.mock('@/hooks/use-context-menu', () => ({
     useContextMenu: () => ({ onContextMenu: vi.fn() })
 }))
 
+vi.mock('@/lib/edgestore', () => ({
+    useEdgeStore: () => ({ edgestore: { coverImages: { upload: vi.fn() } } })
+}))
+
 describe('Toolbar', () => {
     const mockPage = {
         id: '123',

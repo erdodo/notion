@@ -61,9 +61,14 @@ export const TOCBlock = createReactBlockSpec(
                                     headings.map((h) => (
                                         <div
                                             key={h.blockId}
-                                            className="text-sm hover:underline cursor-pointer text-blue-600 dark:text-blue-400"
+                                            className="text-sm hover:underline cursor-pointer text-blue-600 dark:text-blue-400 select-none"
                                             style={{ marginLeft: `${(h.level - 1) * 1.5}rem` }}
-                                            onClick={() => {
+                                            onMouseDown={(e) => {
+                                                // Prevent default to stop selection/focus which triggers menu
+                                                e.preventDefault()
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
                                                 const element = document.querySelector(`[data-id="${h.blockId}"]`)
                                                 if (element) {
                                                     element.scrollIntoView({ behavior: "smooth", block: "center" })
