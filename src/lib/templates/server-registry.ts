@@ -1,11 +1,14 @@
 import { Template } from "./types";
 import { goalSettingTemplate } from "./definitions/goal-setting.factory";
 import { nofiBudgetTemplate } from "./definitions/nofi-budget.factory";
+import { dokumanlarTemplate } from "./definitions/dokumanlar.factory";
 
 const SERVER_TEMPLATES: Template[] = [
     goalSettingTemplate,
-    nofiBudgetTemplate
+    nofiBudgetTemplate,
+    dokumanlarTemplate
 ];
+
 
 export function getFactoryById(id: string) {
     const template = SERVER_TEMPLATES.find(t => t.id === id);
