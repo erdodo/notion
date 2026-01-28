@@ -2,16 +2,13 @@
 
 import { Property } from '@prisma/client';
 
-import { FormulaConfig } from './config/formula-editor';
+import type { SelectOption } from './config/select-config';
 
 import { updateProperty } from '@/app/(main)/_actions/database';
 import { FormulaEditor } from '@/components/database/config/formula-editor';
 import { RelationConfig } from '@/components/database/config/relation-config';
 import { RollupConfig } from '@/components/database/config/rollup-config';
-import {
-  SelectConfig,
-  SelectOption,
-} from '@/components/database/config/select-config';
+import { SelectConfig } from '@/components/database/config/select-config';
 import {
   Dialog,
   DialogContent,
@@ -44,14 +41,14 @@ export function PropertyConfigDialog({
 
   const handleUpdateConfig = async (config: RelationConfigType) => {
     await updateProperty(property.id, {
-      relationConfig: config,
+      relationConfig: config as any,
     });
     onOpenChange(false);
   };
 
   const handleUpdateRollupConfig = async (config: RollupConfigType) => {
     await updateProperty(property.id, {
-      rollupConfig: config,
+      rollupConfig: config as any,
     });
     onOpenChange(false);
   };
@@ -71,8 +68,8 @@ export function PropertyConfigDialog({
   };
 
   const handleUpdateOptions = async (options: SelectOption[]) => {
-    onPropertyUpdate?.(property.id, { options });
-    await updateProperty(property.id, { options });
+    onPropertyUpdate?.(property.id, { options: options as any });
+    await updateProperty(property.id, { options: options as any });
   };
 
   return (
@@ -88,20 +85,20 @@ export function PropertyConfigDialog({
         </DialogHeader>
         {configType === 'select' && (
           <SelectConfig
-            options={(property.options as SelectOption[]) || []}
+            options={(property.options as any as SelectOption[]) || []}
             onChange={handleUpdateOptions}
           />
         )}
         {configType === 'relation' && (
           <RelationConfig
-            config={property.relationConfig as RelationConfigType}
+            config={property.relationConfig as any as RelationConfigType}
             currentDatabaseId={databaseId}
             onChange={handleUpdateConfig}
           />
         )}
         {configType === 'rollup' && (
           <RollupConfig
-            config={property.rollupConfig as RollupConfigType}
+            config={property.rollupConfig as any as RollupConfigType}
             properties={allProperties}
             onChange={handleUpdateRollupConfig}
             onCancel={() => {
@@ -113,13 +110,13 @@ export function PropertyConfigDialog({
         {configType === 'formula' && (
           <FormulaEditor
             expression={
-              (property.formulaConfig as FormulaConfig)?.expression || ''
+              ((property.formulaConfig as any)?.expression as string) || ''
             }
             properties={allProperties}
             onChange={(expr) => handleUpdateFormulaConfig(expr)}
             onResultTypeChange={(type) =>
               handleUpdateFormulaConfig(
-                (property.formulaConfig as FormulaConfig)?.expression || '',
+                ((property.formulaConfig as any)?.expression as string) || '',
                 type
               )
             }

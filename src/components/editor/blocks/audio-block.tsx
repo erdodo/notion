@@ -18,21 +18,13 @@ export const AudioBlock = createReactBlockSpec(
     },
   },
   {
-    render: (properties) => <AudioBlockContent {...properties} />,
+    render: (properties) => <AudioBlockContent {...properties as any} />,
   }
 );
 
 interface AudioBlockProps {
-  block: {
-    id: string;
-    type: 'audio';
-    props: {
-      url: string;
-      title: string;
-      caption: string;
-    };
-  };
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }
 
 const AudioBlockContent = (properties: AudioBlockProps) => {

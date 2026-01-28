@@ -18,6 +18,7 @@ import { RollupConfig } from '@/lib/rollup-service';
 
 export interface FormulaConfig {
   expression: string;
+  resultType?: 'string' | 'number' | 'boolean' | 'date';
 }
 
 const PlaceholderCell = TextCell;
@@ -70,7 +71,7 @@ export function CellRenderer(properties: CellProperties) {
         <RelationCell
           propertyId={properties.propertyId}
           rowId={properties.rowId}
-          value={properties.cell?.value}
+          value={(properties.cell as any)?.value}
           config={
             properties.column.columnDef.meta?.property
               ?.relationConfig as unknown as RelationConfig
@@ -96,8 +97,12 @@ export function CellRenderer(properties: CellProperties) {
           propertyId={properties.propertyId}
           rowId={properties.rowId}
           config={
-            properties.column.columnDef.meta?.property
-              ?.formulaConfig as unknown as FormulaConfig
+            {
+              expression: (properties.column.columnDef.meta?.property
+                ?.formulaConfig as any)?.expression || '',
+              resultType: (properties.column.columnDef.meta?.property
+                ?.formulaConfig as any)?.resultType || 'string',
+            }
           }
         />
       );

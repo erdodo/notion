@@ -181,7 +181,7 @@ export function DatabaseToolbar({ database }: DatabaseToolbarProperties) {
                 className="gap-1 pr-1 text-xs h-6"
               >
                 <span className="font-normal">
-                  {property?.name}: {filter.value || filter.operator}
+                  {property?.name}: {String(filter.value || filter.operator)}
                 </span>
                 <Button
                   variant="ghost"

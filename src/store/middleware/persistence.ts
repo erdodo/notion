@@ -76,12 +76,12 @@ export const persist: Persist = (config, options) => (set, get, api) => {
     hydrate();
   }
 
-  const persistedSet = (...arguments_) => {
-    set(...arguments_);
+  const persistedSet: any = (...arguments_: any[]) => {
+    set(...(arguments_ as [any]));
     persist();
   };
 
-  return config(persistedSet, get, api);
+  return config(persistedSet as any, get, api);
 };
 
 export function clearPersistedState(

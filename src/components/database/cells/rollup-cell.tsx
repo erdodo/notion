@@ -23,16 +23,20 @@ export function RollupCell({
   config,
 }: RollupCellProperties) {
   const [value, setValue] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    setLoading(true);
-    computeRollupValue(rowId, propertyId)
-      .then(setValue)
-      .finally(() => {
+    const fetchValue = async () => {
+      try {
+        const result = await computeRollupValue(rowId, propertyId);
+        setValue(result);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    setLoading(true);
+    fetchValue();
   }, [rowId, propertyId]);
 
   useEffect(() => {

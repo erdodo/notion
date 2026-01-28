@@ -14,7 +14,7 @@ export function createSyncMiddleware<T>(
     (set: unknown, get: unknown, payload: unknown) => void
   >
 ) {
-  return (set: unknown, get: unknown, api: unknown) => {
+  return (set: any, get: any, api: any) => {
     const setupListeners = () => {
       const socket = getSocket();
       if (!socket) return;
@@ -30,7 +30,7 @@ export function createSyncMiddleware<T>(
       setupListeners();
     }
 
-    return config(set, get, api);
+    return config(set as any, get, api);
   };
 }
 
@@ -112,7 +112,7 @@ export class OptimisticUpdateManager<T> {
   }
 
   rollbackAll(): void {
-    for (const update of this.queue) update.rollback();
+    for (const [, update] of this.queue) update.rollback();
     this.queue.clear();
   }
 }

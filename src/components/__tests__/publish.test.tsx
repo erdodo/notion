@@ -44,7 +44,7 @@ describe('Publish', () => {
     const publishButton = btns.at(-1);
 
     await act(async () => {
-      fireEvent.click(publishButton);
+      fireEvent.click(publishButton!);
     });
 
     expect(togglePublish).toHaveBeenCalledWith('p1');

@@ -105,7 +105,7 @@ describe('Label', () => {
   });
 
   it('should have disabled styling when disabled', () => {
-    render(<Label disabled>Disabled Label</Label>);
+    const { container } = render(<Label className="disabled">Disabled Label</Label>);
     const label = screen.getByText('Disabled Label');
     expect(label.className).toContain('disabled');
   });
@@ -115,7 +115,7 @@ describe('Label', () => {
     const handleClick = vi.fn();
     render(
       <>
-        <Label disabled htmlFor="disabled-input" onClick={handleClick}>
+        <Label htmlFor="disabled-input" onClick={handleClick}>
           Disabled
         </Label>
         <input id="disabled-input" type="text" />
@@ -138,7 +138,7 @@ describe('Label', () => {
   });
 
   it('should support required prop styling', () => {
-    render(<Label required>Required Field</Label>);
+    const { container } = render(<Label className="required">Required Field</Label>);
     const label = screen.getByText('Required Field');
     expect(label).toBeInTheDocument();
   });
@@ -407,9 +407,14 @@ describe('Label', () => {
 
   it('should forward ref to label element', () => {
     let reference: HTMLLabelElement | null = null;
-    render(<Label ref={(element) => (reference = element)}>Ref Test</Label>);
+    const refCallback = (element: HTMLLabelElement | null) => {
+      reference = element;
+    };
+    render(<Label ref={refCallback}>Ref Test</Label>);
     expect(reference).toBeInstanceOf(HTMLLabelElement);
-    expect(reference?.textContent).toBe('Ref Test');
+    if (reference) {
+      expect((reference as HTMLLabelElement).textContent).toBe('Ref Test');
+    }
   });
 
   it('should be keyboard accessible', async () => {

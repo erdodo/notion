@@ -1,6 +1,6 @@
 'use client';
 
-import { createReactBlockSpec, BlockNoteEditor } from '@blocknote/react';
+import { createReactBlockSpec } from '@blocknote/react';
 import { useState, useEffect } from 'react';
 
 export const TOCBlock = createReactBlockSpec(
@@ -16,7 +16,7 @@ export const TOCBlock = createReactBlockSpec(
   }
 );
 
-function TOCBlockComponent({ editor }: { editor: BlockNoteEditor }) {
+function TOCBlockComponent({ editor }: { editor: any }) {
   const [headings, setHeadings] = useState<
     { id: string; text: string; level: number; blockId: string }[]
   >([]);

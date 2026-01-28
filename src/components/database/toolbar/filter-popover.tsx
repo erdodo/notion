@@ -201,7 +201,7 @@ export function FilterPopover({ properties }: FilterPopoverProperties) {
                             )}
                           >
                             {filter.value ? (
-                              format(new Date(filter.value), 'PPP')
+                              format(new Date(filter.value as any), 'PPP')
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -212,7 +212,7 @@ export function FilterPopover({ properties }: FilterPopoverProperties) {
                           <Calendar
                             mode="single"
                             selected={
-                              filter.value ? new Date(filter.value) : undefined
+                              filter.value ? new Date(filter.value as any) : undefined
                             }
                             onSelect={(date) => {
                               updateFilter(index, {
@@ -229,7 +229,7 @@ export function FilterPopover({ properties }: FilterPopoverProperties) {
                       <Input
                         className="h-7 text-xs"
                         placeholder="Type option..."
-                        value={filter.value || ''}
+                        value={filter.value as any || ''}
                         onChange={(e) => {
                           updateFilter(index, {
                             ...filter,
@@ -241,7 +241,7 @@ export function FilterPopover({ properties }: FilterPopoverProperties) {
                       <Input
                         className="h-7 text-xs"
                         placeholder="Value..."
-                        value={filter.value || ''}
+                        value={filter.value as any || ''}
                         onChange={(e) => {
                           updateFilter(index, {
                             ...filter,

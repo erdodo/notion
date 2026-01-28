@@ -31,7 +31,7 @@ export function MultiSelectCell({
 
   const value =
     typeof initialValue === 'object'
-      ? (initialValue?.value as string[]) || []
+      ? ((initialValue as any)?.value as string[]) || []
       : [];
   const selectedIds = Array.isArray(value) ? value : [];
 
@@ -66,12 +66,11 @@ export function MultiSelectCell({
 
     const newOptions = [...options, newOption];
 
-    onPropertyUpdate?.(property.id, { options: newOptions });
+    onPropertyUpdate?.(property!.id, { options: newOptions as any });
 
-    await updateProperty(property.id, {
-      ...property,
-      options: newOptions,
-    });
+    await updateProperty(property!.id, {
+      options: newOptions as any,
+    } as any);
 
     updateValue({ value: [...selectedIds, newOption.id] });
     setSearch('');
@@ -213,13 +212,12 @@ export function MultiSelectCell({
                                     ? { ...o, color: color.value }
                                     : o
                                 );
-                                onPropertyUpdate?.(property.id, {
-                                  options: newOptions,
+                                onPropertyUpdate?.(property!.id, {
+                                  options: newOptions as any,
                                 });
-                                updateProperty(property.id, {
-                                  ...property,
-                                  options: newOptions,
-                                });
+                                updateProperty(property!.id, {
+                                  options: newOptions as any,
+                                } as any);
                               }}
                             />
                           ))}
@@ -238,13 +236,12 @@ export function MultiSelectCell({
                                     ? { ...o, name: newName }
                                     : o
                                 );
-                                onPropertyUpdate?.(property.id, {
-                                  options: newOptions,
+                                onPropertyUpdate?.(property!.id, {
+                                  options: newOptions as any,
                                 });
-                                updateProperty(property.id, {
-                                  ...property,
-                                  options: newOptions,
-                                });
+                                updateProperty(property!.id, {
+                                  options: newOptions as any,
+                                } as any);
                               }
                             }
                           }}
@@ -261,13 +258,12 @@ export function MultiSelectCell({
                             const newOptions = options.filter(
                               (o) => o.id !== option.id
                             );
-                            onPropertyUpdate?.(property.id, {
-                              options: newOptions,
+                            onPropertyUpdate?.(property!.id, {
+                              options: newOptions as any,
                             });
-                            updateProperty(property.id, {
-                              ...property,
-                              options: newOptions,
-                            });
+                            updateProperty(property!.id, {
+                              options: newOptions as any,
+                            } as any);
 
                             if (selectedIds.includes(option.id)) {
                               updateValue({

@@ -11,12 +11,12 @@ export function UrlCell({
 }: CellProperties) {
   const initialValue = getValue();
   const value_ =
-    typeof initialValue === 'object' ? initialValue?.value : initialValue;
+    typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
   const [value, setValue] = useState(value_ || '');
 
   useEffect(() => {
     const value__ =
-      typeof initialValue === 'object' ? initialValue?.value : initialValue;
+      typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
     queueMicrotask(() => {
       setValue(value__ || '');
     });

@@ -117,7 +117,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
   return (
     <div className="pb-10 group/header relative">
       <Cover
-        url={coverImage}
+        url={coverImage || undefined}
         pageId={page.id}
         preview={preview}
         position={coverImagePosition}
@@ -125,7 +125,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
 
       <div className="px-12 pt-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
         <div className={coverImage ? '-mt-24' : ''}>
-          <Toolbar page={pageData} preview={preview} />
+          <Toolbar page={{ ...pageData, isPublished: false }} preview={preview} />
         </div>
 
         <div className="mt-8">
@@ -138,7 +138,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                const editor = document.querySelector('.bn-editor')!;
+                const editor = document.querySelector('.bn-editor') as any;
                 if (editor) {
                   editor.focus();
                 }

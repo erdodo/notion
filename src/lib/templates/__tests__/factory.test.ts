@@ -30,7 +30,7 @@ vi.mock('fs/promises', () => {
   return {
     default: {
       readFile: vi.fn(),
-      access: vi.fn().mockResolvedValue(),
+      access: vi.fn().mockResolvedValue(undefined),
     },
   };
 });

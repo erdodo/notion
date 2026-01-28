@@ -75,12 +75,12 @@ describe('Checkbox', () => {
     const { container } = render(<Checkbox name="agree" />);
     const input = container.querySelector('input[type="checkbox"]')!;
     expect(input).toBeInTheDocument();
-    expect(input.name).toBe('agree');
+    expect((input as HTMLInputElement).name).toBe('agree');
   });
 
   it('should support value attribute', () => {
     render(<Checkbox value="option-1" />);
-    const checkbox = screen.getByRole('checkbox');
+    const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
     expect(checkbox.value).toBe('option-1');
   });
 

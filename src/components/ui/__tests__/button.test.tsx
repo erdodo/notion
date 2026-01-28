@@ -243,7 +243,9 @@ describe('Button', () => {
     );
 
     expect(buttonReference).toBeTruthy();
-    expect(buttonReference?.tagName).toBe('BUTTON');
+    if (buttonReference) {
+      expect((buttonReference as HTMLButtonElement).tagName).toBe('BUTTON');
+    }
   });
 
   it('should have focus-visible ring style', () => {

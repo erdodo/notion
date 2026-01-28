@@ -373,7 +373,10 @@ describe('Switch', () => {
 
   it('should forward ref to button element', () => {
     let reference: HTMLButtonElement | null = null;
-    render(<Switch ref={(element) => (reference = element)} />);
+    const refCallback = (element: HTMLButtonElement | null) => {
+      reference = element;
+    };
+    render(<Switch ref={refCallback} />);
     expect(reference).toBeInstanceOf(HTMLButtonElement);
   });
 

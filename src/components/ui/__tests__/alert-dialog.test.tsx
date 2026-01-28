@@ -562,9 +562,12 @@ describe('AlertDialog', () => {
 
   it('should forward ref to trigger button', () => {
     let reference: HTMLButtonElement | null = null;
+    const refCallback = (element: HTMLButtonElement | null) => {
+      reference = element;
+    };
     render(
       <AlertDialog>
-        <AlertDialogTrigger ref={(element) => (reference = element)}>
+        <AlertDialogTrigger ref={refCallback}>
           Open
         </AlertDialogTrigger>
         <AlertDialogContent>

@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { CellProps as CellProperties } from './types';
 
 export function CreatedTimeCell({ row }: CellProperties) {
-  const value = row?.original?.originalRow?.createdAt;
+  const value = (row?.original as any)?.originalRow?.createdAt;
 
   if (!value)
     return (
@@ -27,7 +27,7 @@ export function CreatedTimeCell({ row }: CellProperties) {
 }
 
 export function UpdatedTimeCell({ row }: CellProperties) {
-  const value = row?.original?.originalRow?.updatedAt;
+  const value = (row?.original as any)?.originalRow?.updatedAt;
 
   if (!value)
     return (

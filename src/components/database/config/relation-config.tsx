@@ -66,8 +66,7 @@ export function RelationConfig({
           <SelectContent>
             {databases.map((database) => (
               <SelectItem key={database.id} value={database.id}>
-                {}
-                {database.page?.icon} {database.page?.title}
+                {(database as any).page?.icon} {(database as any).page?.title}
               </SelectItem>
             ))}
           </SelectContent>

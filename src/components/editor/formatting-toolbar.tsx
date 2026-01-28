@@ -173,7 +173,7 @@ export function FormattingToolbar({ editor }: FormattingToolbarProperties) {
 
     try {
       if (color === 'default') {
-        editor.removeStyles({ textColor: true });
+        editor.removeStyles({ textColor: '' } as any);
       } else {
         editor.addStyles({ textColor: color });
       }
@@ -187,7 +187,7 @@ export function FormattingToolbar({ editor }: FormattingToolbarProperties) {
 
     try {
       if (color === 'default') {
-        editor.removeStyles({ backgroundColor: true });
+        editor.removeStyles({ backgroundColor: '' } as any);
       } else {
         editor.addStyles({ backgroundColor: color });
       }

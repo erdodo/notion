@@ -112,7 +112,7 @@ describe('BlockMenu', () => {
 
   it('should support searching blocks', () => {
     const menu = createMockBlockMenu();
-    const search = (query) => {
+    const search = (query: any) => {
       return menu.blocks.filter((block) =>
         block.name.toLowerCase().includes(query.toLowerCase())
       );

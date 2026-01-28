@@ -33,7 +33,7 @@ export function PropertyBadge({
         {property.name}
       </span>
       <div className="flex-1 min-w-0 text-foreground text-xs">
-        <PropertyValue property={property} value={value} />
+        <PropertyValue property={property} value={value as any} />
       </div>
     </div>
   );

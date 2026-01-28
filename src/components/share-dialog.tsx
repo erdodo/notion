@@ -11,7 +11,7 @@ import {
   X,
   Loader2,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -69,16 +69,6 @@ export function ShareDialog({
 
   const [origin, setOrigin] = useState('');
 
-  useEffect(() => {
-    if (globalThis.window !== undefined) {
-      setOrigin(globalThis.location.origin);
-    }
-
-    if (isOpen) {
-      loadShares();
-    }
-  }, [isOpen, pageId, loadShares]);
-
   const loadShares = useCallback(async () => {
     setLoading(true);
     try {
@@ -96,6 +86,16 @@ export function ShareDialog({
       setLoading(false);
     }
   }, [pageId]);
+
+  useEffect(() => {
+    if (globalThis.window !== undefined) {
+      setOrigin(globalThis.location.origin);
+    }
+
+    if (isOpen) {
+      loadShares();
+    }
+  }, [isOpen, pageId, loadShares]);
 
   const handleInvite = async () => {
     if (!email.trim()) return;

@@ -3,7 +3,7 @@ import { Row } from '@tanstack/react-table';
 
 interface CalculationCellProperties {
   property: Property;
-  rows: Row<DatabaseRow>[];
+  rows: Row<DatabaseRow & { cells?: Cell[] }>[];
 }
 
 export function CalculationCell({ property, rows }: CalculationCellProperties) {

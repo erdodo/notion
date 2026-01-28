@@ -31,12 +31,7 @@ export function CalendarView({
     database,
     updateCell: _updateCell,
     addRow: addOptimisticRow,
-  } = useOptimisticDatabase(
-    initialDatabase as Database & {
-      properties: Property[];
-      rows: (DatabaseRow & { cells: Cell[]; page: Page | null })[];
-    }
-  );
+  } = useOptimisticDatabase(initialDatabase as any);
   const { navigateToPage } = usePageNavigation();
 
   const {
@@ -72,6 +67,7 @@ export function CalendarView({
       id: temporaryId,
       databaseId: database.id,
       pageId: null,
+      parentRowId: null,
       order: database.rows.length,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -83,11 +79,11 @@ export function CalendarView({
         id: `temp-cell-${temporaryId}`,
         rowId: temporaryId,
         propertyId: dateProperty.id,
-        value: date,
+        value: date as any,
       });
     }
 
-    addOptimisticRow(newRow);
+    addOptimisticRow(newRow as any);
 
     const createdRow = await addRow(database.id);
 

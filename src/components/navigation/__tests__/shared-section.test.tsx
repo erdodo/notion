@@ -1,4 +1,5 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { SharedSection } from '../shared-section';
 

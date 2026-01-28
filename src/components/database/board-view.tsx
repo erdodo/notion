@@ -122,8 +122,8 @@ export function BoardView({ database: initialDatabase }: BoardViewProperties) {
         const value = cell?.value;
 
         const optionId =
-          typeof value === 'object'
-            ? (value as OptionValue).value
+          typeof value === 'object' && value !== null && 'value' in value
+            ? (value as unknown as OptionValue).value
             : (value as string);
         const option = options.find((o) => o.id === optionId);
 
@@ -173,10 +173,10 @@ export function BoardView({ database: initialDatabase }: BoardViewProperties) {
       const cell = row.cells.find((c) => c.propertyId === groupByProperty.id);
       const value = cell?.value;
 
-      let groupId =
-        typeof value === 'object'
-          ? (value as OptionValue).value
-          : String(value);
+      let groupId: string =
+        typeof value === 'object' && value !== null && 'value' in value
+          ? (value as unknown as OptionValue).value || 'uncategorized'
+          : String(value || 'uncategorized');
 
       if (!value) groupId = 'uncategorized';
 
@@ -247,8 +247,8 @@ export function BoardView({ database: initialDatabase }: BoardViewProperties) {
           );
           const value = cell?.value;
           const optionId =
-            typeof value === 'object'
-              ? (value as OptionValue).value
+            typeof value === 'object' && value !== null && 'value' in value
+              ? (value as unknown as OptionValue).value
               : (value as string);
           const options =
             (groupByProperty.options as unknown as PropertyOption[]) || [];

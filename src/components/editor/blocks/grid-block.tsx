@@ -1,7 +1,6 @@
 'use client';
 
 import { PartialBlock, BlockNoteEditor } from '@blocknote/core';
-import { BlockNoteSchema } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/mantine';
 import { createReactBlockSpec, useCreateBlockNote } from '@blocknote/react';
 import { useTheme } from 'next-themes';
@@ -32,7 +31,7 @@ const GridColumn = ({
 }: {
   initialContentJSON: string;
   onContentChange: (json: string) => void;
-  editorSchema: BlockNoteSchema;
+  editorSchema: any;
   readOnly?: boolean;
   className?: string;
   width?: number;
@@ -51,9 +50,9 @@ const GridColumn = ({
             if (!clean.props) clean.props = { url: '' };
           }
 
-          if (clean.type === 'inlineDatabase') {
-            delete clean.content;
-            if (!clean.props) clean.props = { linkedDatabaseId: '' };
+          if ((clean as any).type === 'inlineDatabase') {
+            delete (clean as any).content;
+            if (!(clean as any).props) (clean as any).props = { linkedDatabaseId: '' };
           }
           return clean;
         });
@@ -116,7 +115,7 @@ export const GridBlock = createReactBlockSpec(
   },
   {
     render: ({ block, editor }) => {
-      return <GridBlockComponent block={block} editor={editor} />;
+      return <GridBlockComponent block={block as any} editor={editor as any} />;
     },
   }
 );
@@ -125,14 +124,14 @@ function GridBlockComponent({
   block,
   editor,
 }: {
-  block: PartialBlock;
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }) {
-  const cols = Math.min(Math.max(block.props.columns, 2), 6);
+  const cols = Math.min(Math.max((block.props as any).columns || 2, 2), 6);
 
   const [colWidths, setColWidths] = useState<number[]>(() => {
-    const w = block.props.widths
-      ? block.props.widths.split(',').map(Number)
+    const w = (block.props as any).widths
+      ? (block.props as any).widths.split(',').map(Number)
       : [];
     if (w.length === cols) return w;
 
@@ -140,19 +139,18 @@ function GridBlockComponent({
   });
 
   useEffect(() => {
-    const w = block.props.widths
-      ? block.props.widths.split(',').map(Number)
+    const w = (block.props as any).widths
+      ? (block.props as any).widths.split(',').map(Number)
       : [];
     if (w.length === cols && w.join(',') !== colWidths.join(',')) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setColWidths(w);
     }
-  }, [block.props.widths, cols, colWidths]);
+  }, [(block.props as any).widths, cols, colWidths]);
 
   const updateColumn = (index: number, contentJSON: string) => {
-    const propertyKey = `col${index + 1}` as keyof typeof block.props;
-    if (block.props[propertyKey] !== contentJSON) {
-      editor.updateBlock(block, {
+    const propertyKey = `col${index + 1}`;
+    if ((block.props as any)[propertyKey] !== contentJSON) {
+      editor.updateBlock(block as any, {
         props: { [propertyKey]: contentJSON },
       });
     }
@@ -180,7 +178,7 @@ function GridBlockComponent({
   );
 
   const saveWidths = useCallback(() => {
-    editor.updateBlock(block, {
+    editor.updateBlock(block as any, {
       props: { widths: colWidths.join(',') },
     });
   }, [editor, block, colWidths]);
@@ -224,8 +222,8 @@ function GridBlockComponent({
       }}
     >
       {Array.from({ length: cols }).map((_, index) => {
-        const propertyKey = `col${index + 1}` as keyof typeof block.props;
-        const content = block.props[propertyKey] as string;
+        const propertyKey = `col${index + 1}`;
+        const content = (block.props as any)[propertyKey] as string;
         const width = colWidths[index];
 
         return (

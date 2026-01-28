@@ -39,7 +39,7 @@ export function FormulaCell({
       setLoading(true);
       try {
         const res = await computeFormulaValue(rowId, propertyId);
-        setResult(res);
+        setResult(res as any);
       } finally {
         setLoading(false);
       }
@@ -81,7 +81,7 @@ export function FormulaCell({
         return result.value ? '✓' : '✗';
       }
       case 'date': {
-        return new Date(result.value).toLocaleDateString();
+        return new Date(result.value as any).toLocaleDateString();
       }
       default: {
         return String(result.value);

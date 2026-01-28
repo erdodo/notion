@@ -8,7 +8,7 @@ export function CheckboxCell({ getValue, updateValue }: CellProperties) {
   const initialValue = getValue();
   const value =
     typeof initialValue === 'object'
-      ? initialValue?.value
+      ? (initialValue as any)?.value
       : initialValue === true;
 
   const [checked, setChecked] = useState(!!value);
@@ -16,7 +16,7 @@ export function CheckboxCell({ getValue, updateValue }: CellProperties) {
   useEffect(() => {
     const value =
       typeof initialValue === 'object'
-        ? initialValue?.value
+        ? (initialValue as any)?.value
         : initialValue === true;
     queueMicrotask(() => {
       setChecked(!!value);

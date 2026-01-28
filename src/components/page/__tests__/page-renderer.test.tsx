@@ -40,6 +40,18 @@ describe('PageRenderer', () => {
     parentId: null,
     isPublished: false,
     icon: '📄',
+    coverImage: null,
+    coverImagePosition: 50,
+    isFavorite: false,
+    publishedAt: null,
+    archivedAt: null,
+    deletedAt: null,
+    order: 0,
+    isDatabase: false,
+    isSmallText: false,
+    isFullWidth: false,
+    fontStyle: 'default' as const,
+    isLocked: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -47,6 +59,9 @@ describe('PageRenderer', () => {
   const mockDatabaseRow = {
     id: 'row-1',
     databaseId: 'db-1',
+    pageId: 'page-1',
+    order: 0,
+    parentRowId: null,
     values: {},
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -72,6 +87,7 @@ describe('PageRenderer', () => {
       id: 'db-1',
       title: 'Test Database',
       pageId: 'page-1',
+      defaultView: 'table',
       createdAt: new Date(),
       updatedAt: new Date(),
       properties: [
@@ -80,6 +96,15 @@ describe('PageRenderer', () => {
           databaseId: 'db-1',
           name: 'Name',
           type: 'text',
+          order: 0,
+          width: 150,
+          visible: true,
+          config: {},
+          selectOptions: [],
+          multiSelectOptions: [],
+          dateConfig: null,
+          numberConfig: null,
+          formulaConfig: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -88,19 +113,28 @@ describe('PageRenderer', () => {
           databaseId: 'db-1',
           name: 'Status',
           type: 'select',
+          order: 1,
+          width: 150,
+          visible: true,
+          config: {},
+          selectOptions: [],
+          multiSelectOptions: [],
+          dateConfig: null,
+          numberConfig: null,
+          formulaConfig: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
       ],
     },
-  };
+  } as any;
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should render page renderer container', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     const header = screen.getByTestId('document-header');
     const container = header.parentElement;
@@ -113,27 +147,27 @@ describe('PageRenderer', () => {
   });
 
   it('should render document header', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(screen.getByTestId('document-header')).toBeInTheDocument();
     expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
 
   it('should pass page to document header', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(screen.getByText('Test Page')).toBeInTheDocument();
   });
 
   it('should render document editor with page id', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(screen.getByTestId('document-editor')).toBeInTheDocument();
     expect(screen.getByText('Document ID: page-1')).toBeInTheDocument();
   });
 
   it('should pass initial content to document editor', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(
       screen.getByText('Content: This is test content')
@@ -141,13 +175,13 @@ describe('PageRenderer', () => {
   });
 
   it('should render document editor as editable when not preview', () => {
-    render(<PageRenderer page={mockPage} isPreview={false} />);
+    render(<PageRenderer page={mockPage as any} isPreview={false} />);
 
     expect(screen.getByText('Editable')).toBeInTheDocument();
   });
 
   it('should render document editor as not editable when preview mode', () => {
-    render(<PageRenderer page={mockPage} isPreview={true} />);
+    render(<PageRenderer page={mockPage as any} isPreview={true} />);
 
     expect(screen.getByText('Preview Mode')).toBeInTheDocument();
     expect(screen.getByText('Not Editable')).toBeInTheDocument();
@@ -156,31 +190,31 @@ describe('PageRenderer', () => {
   it('should render document editor as not editable when page is archived', () => {
     const archivedPage = { ...mockPage, isArchived: true };
 
-    render(<PageRenderer page={archivedPage} isPreview={false} />);
+    render(<PageRenderer page={archivedPage as any} isPreview={false} />);
 
     expect(screen.getByText('Not Editable')).toBeInTheDocument();
   });
 
   it('should not render page properties when row is not provided', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(screen.queryByTestId('page-properties')).not.toBeInTheDocument();
   });
 
   it('should render page properties when row is provided', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     expect(screen.getByTestId('page-properties')).toBeInTheDocument();
   });
 
   it('should pass row to page properties', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     expect(screen.getByText('2 cells')).toBeInTheDocument();
   });
 
   it('should render page properties with responsive layout', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
@@ -193,7 +227,7 @@ describe('PageRenderer', () => {
   });
 
   it('should render document editor with padding bottom', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     const editorContainer = screen.getByTestId('document-editor').parentElement;
     expect(editorContainer).toHaveClass('pb-40');
@@ -202,7 +236,7 @@ describe('PageRenderer', () => {
   it('should render empty content when page has no content', () => {
     const pageNoContent = { ...mockPage, content: '' };
 
-    render(<PageRenderer page={pageNoContent} />);
+    render(<PageRenderer page={pageNoContent as any} />);
 
     expect(screen.getByText('Content: empty')).toBeInTheDocument();
   });
@@ -210,7 +244,7 @@ describe('PageRenderer', () => {
   it('should render with null content', () => {
     const pageNullContent = { ...mockPage, content: null as any };
 
-    render(<PageRenderer page={pageNullContent} />);
+    render(<PageRenderer page={pageNullContent as any} />);
 
     expect(screen.getByText('Content: empty')).toBeInTheDocument();
   });
@@ -246,7 +280,7 @@ describe('PageRenderer', () => {
       ],
     };
 
-    render(<PageRenderer page={mockPage} row={multiCellRow} />);
+    render(<PageRenderer page={mockPage as any} row={multiCellRow as any} />);
 
     expect(screen.getByText('3 cells')).toBeInTheDocument();
   });
@@ -257,13 +291,13 @@ describe('PageRenderer', () => {
       cells: [],
     };
 
-    render(<PageRenderer page={mockPage} row={noCellRow} />);
+    render(<PageRenderer page={mockPage as any} row={noCellRow as any} />);
 
     expect(screen.getByText('0 cells')).toBeInTheDocument();
   });
 
   it('should render header before properties', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const header = screen.getByTestId('document-header');
     const properties = screen.getByTestId('page-properties');
@@ -274,7 +308,7 @@ describe('PageRenderer', () => {
   });
 
   it('should render properties before editor', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const properties = screen.getByTestId('page-properties');
     const editor = screen.getByTestId('document-editor');
@@ -286,11 +320,11 @@ describe('PageRenderer', () => {
 
   it('should maintain correct order: header > properties > editor', () => {
     const { container } = render(
-      <PageRenderer page={mockPage} row={mockDatabaseRow} />
+      <PageRenderer page={mockPage as any} row={mockDatabaseRow} />
     );
 
     const divs = [...container.querySelectorAll('[data-testid]')];
-    const order = divs.map((d) => d.dataset.testid);
+    const order = divs.map((d) => (d as HTMLElement).dataset.testid);
 
     expect(order).toEqual([
       'document-header',
@@ -300,23 +334,23 @@ describe('PageRenderer', () => {
   });
 
   it('should maintain correct order when no row: header > editor', () => {
-    const { container } = render(<PageRenderer page={mockPage} />);
+    const { container } = render(<PageRenderer page={mockPage as any} />);
 
     const divs = [...container.querySelectorAll('[data-testid]')];
-    const order = divs.map((d) => d.dataset.testid);
+    const order = divs.map((d) => (d as HTMLElement).dataset.testid);
 
     expect(order).toEqual(['document-header', 'document-editor']);
   });
 
   it('should render with relative positioning', () => {
-    const { container } = render(<PageRenderer page={mockPage} />);
+    const { container } = render(<PageRenderer page={mockPage as any} />);
 
     const mainDiv = container.querySelector('[class*="relative"]');
     expect(mainDiv).toHaveClass('relative');
   });
 
   it('should render with group class for hover effects', () => {
-    const { container } = render(<PageRenderer page={mockPage} />);
+    const { container } = render(<PageRenderer page={mockPage as any} />);
 
     const mainDiv = container.querySelector('[class*="group"]');
     expect(mainDiv).toHaveClass('group');
@@ -325,32 +359,32 @@ describe('PageRenderer', () => {
   it('should handle preview mode with archived page', () => {
     const archivedPage = { ...mockPage, isArchived: true };
 
-    render(<PageRenderer page={archivedPage} isPreview={true} />);
+    render(<PageRenderer page={archivedPage as any} isPreview={true} />);
 
     expect(screen.getByText('Preview Mode')).toBeInTheDocument();
     expect(screen.getByText('Not Editable')).toBeInTheDocument();
   });
 
   it('should render document header with preview prop', () => {
-    render(<PageRenderer page={mockPage} isPreview={true} />);
+    render(<PageRenderer page={mockPage as any} isPreview={true} />);
 
     expect(screen.getByText('Preview Mode')).toBeInTheDocument();
   });
 
   it('should not show preview mode when isPreview is false', () => {
-    render(<PageRenderer page={mockPage} isPreview={false} />);
+    render(<PageRenderer page={mockPage as any} isPreview={false} />);
 
     expect(screen.queryByText('Preview Mode')).not.toBeInTheDocument();
   });
 
   it('should not show preview mode when isPreview is undefined', () => {
-    render(<PageRenderer page={mockPage} />);
+    render(<PageRenderer page={mockPage as any} />);
 
     expect(screen.queryByText('Preview Mode')).not.toBeInTheDocument();
   });
 
   it('should pass correct editable state when not archived and not preview', () => {
-    render(<PageRenderer page={mockPage} isPreview={false} />);
+    render(<PageRenderer page={mockPage as any} isPreview={false} />);
 
     expect(screen.getByText('Editable')).toBeInTheDocument();
   });
@@ -358,20 +392,20 @@ describe('PageRenderer', () => {
   it('should pass correct editable state when archived but not preview', () => {
     const archivedPage = { ...mockPage, isArchived: true };
 
-    render(<PageRenderer page={archivedPage} isPreview={false} />);
+    render(<PageRenderer page={archivedPage as any} isPreview={false} />);
 
     expect(screen.getByText('Not Editable')).toBeInTheDocument();
   });
 
   it('should render full height container', () => {
-    const { container } = render(<PageRenderer page={mockPage} />);
+    const { container } = render(<PageRenderer page={mockPage as any} />);
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv).toHaveClass('h-full');
   });
 
   it('should render flex column layout', () => {
-    const { container } = render(<PageRenderer page={mockPage} />);
+    const { container } = render(<PageRenderer page={mockPage as any} />);
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv).toHaveClass('flex', 'flex-col');
@@ -382,7 +416,7 @@ describe('PageRenderer', () => {
       'This is a very long page title that should still render correctly in the header';
     const pageWithLongTitle = { ...mockPage, title: longTitle };
 
-    render(<PageRenderer page={pageWithLongTitle} />);
+    render(<PageRenderer page={pageWithLongTitle as any} />);
 
     expect(screen.getByText(longTitle)).toBeInTheDocument();
   });
@@ -391,7 +425,7 @@ describe('PageRenderer', () => {
     const longContent = 'A'.repeat(1000);
     const pageWithLongContent = { ...mockPage, content: longContent };
 
-    render(<PageRenderer page={pageWithLongContent} />);
+    render(<PageRenderer page={pageWithLongContent as any} />);
 
     expect(screen.getByText(`Content: ${longContent}`)).toBeInTheDocument();
   });
@@ -400,7 +434,7 @@ describe('PageRenderer', () => {
     const specialTitle = 'Test Page @#$%^&*()';
     const pageWithSpecialTitle = { ...mockPage, title: specialTitle };
 
-    render(<PageRenderer page={pageWithSpecialTitle} />);
+    render(<PageRenderer page={pageWithSpecialTitle as any} />);
 
     expect(screen.getByText(specialTitle)).toBeInTheDocument();
   });
@@ -409,14 +443,14 @@ describe('PageRenderer', () => {
     const unicodeTitle = 'Test Page 中文 العربية 한글';
     const pageWithUnicode = { ...mockPage, title: unicodeTitle };
 
-    render(<PageRenderer page={pageWithUnicode} />);
+    render(<PageRenderer page={pageWithUnicode as any} />);
 
     expect(screen.getByText(unicodeTitle)).toBeInTheDocument();
   });
 
   it('should render all three main sections in order', () => {
     const { container } = render(
-      <PageRenderer page={mockPage} row={mockDatabaseRow} />
+      <PageRenderer page={mockPage as any} row={mockDatabaseRow} />
     );
 
     const children = [...(container.querySelector('div.flex')?.children || [])];
@@ -429,35 +463,21 @@ describe('PageRenderer', () => {
       database: {
         ...mockDatabaseRow.database,
         properties: [
-          {
-            id: 'prop-1',
-            databaseId: 'db-1',
-            name: 'Text',
-            type: 'text',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'prop-2',
-            databaseId: 'db-1',
-            name: 'Number',
-            type: 'number',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
+          ...mockDatabaseRow.database.properties,
           {
             id: 'prop-3',
             databaseId: 'db-1',
             name: 'Date',
             type: 'date',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'prop-4',
-            databaseId: 'db-1',
-            name: 'Select',
-            type: 'select',
+            order: 2,
+            width: 150,
+            visible: true,
+            config: {},
+            selectOptions: [],
+            multiSelectOptions: [],
+            dateConfig: null,
+            numberConfig: null,
+            formulaConfig: null,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
@@ -465,32 +485,27 @@ describe('PageRenderer', () => {
       },
     };
 
-    render(<PageRenderer page={mockPage} row={complexRow} />);
+    render(<PageRenderer page={mockPage as any} row={complexRow as any} />);
 
     expect(screen.getByTestId('page-properties')).toBeInTheDocument();
   });
 
   it('should handle edge case: page with minimal data', () => {
     const minimalPage = {
+      ...mockPage,
       id: 'p1',
       title: '',
       content: '',
-      isArchived: false,
-      userId: 'u1',
-      parentId: null,
-      isPublished: false,
       icon: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
-    render(<PageRenderer page={minimalPage} />);
+    render(<PageRenderer page={minimalPage as any} />);
 
     expect(screen.getByTestId('document-editor')).toBeInTheDocument();
   });
 
   it('should be responsive on medium screen', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
@@ -498,7 +513,7 @@ describe('PageRenderer', () => {
   });
 
   it('should be responsive on large screen', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
@@ -506,7 +521,7 @@ describe('PageRenderer', () => {
   });
 
   it('should have horizontal padding on properties', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
@@ -514,7 +529,7 @@ describe('PageRenderer', () => {
   });
 
   it('should center properties on medium+ screens', () => {
-    render(<PageRenderer page={mockPage} row={mockDatabaseRow} />);
+    render(<PageRenderer page={mockPage as any} row={mockDatabaseRow} />);
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;

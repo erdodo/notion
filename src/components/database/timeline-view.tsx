@@ -9,7 +9,7 @@ import {
   type DatabaseView,
 } from '@prisma/client';
 import moment from 'moment';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { DataSet } from 'vis-data';
 import {
   Timeline,
@@ -219,15 +219,15 @@ export function TimelineView({ database }: TimelineViewProperties) {
         overrideItems: false,
       },
       onMove: async (
-        item: DataItem,
-        callback: (item: DataItem | null) => void
+        item: any,
+        callback: any
       ) => {
         let allowed = true;
         const newStart = item.start;
         const newEnd = item.end;
 
         if (timelineDependencyProperty) {
-          const blockers = dependencies.filter((d) => d.target === item.id);
+          const blockers = dependencies.filter((d: any) => d.target === item.id);
           for (const dep of blockers) {
             const blockerItem = items.get(dep.source);
             if (
@@ -239,13 +239,13 @@ export function TimelineView({ database }: TimelineViewProperties) {
             }
           }
 
-          const blockedItems = dependencies.filter((d) => d.source === item.id);
+          const blockedItems = dependencies.filter((d: any) => d.source === item.id);
           for (const dep of blockedItems) {
             const targetItem = items.get(dep.target);
             if (
               targetItem &&
               targetItem.start &&
-              new Date(newEnd as moment.MomentInput) >
+              new Date(newEnd as any) >
                 new Date(targetItem.start)
             ) {
               allowed = false;
@@ -260,10 +260,7 @@ export function TimelineView({ database }: TimelineViewProperties) {
         }
 
         if (dateProperty && item.id) {
-          let newValue:
-            | Date
-            | { start: moment.MomentInput; end: moment.MomentInput } =
-            item.start;
+          let newValue: any = item.start;
           if (item.end) {
             newValue = {
               start: item.start,
@@ -357,8 +354,8 @@ export function TimelineView({ database }: TimelineViewProperties) {
       <div className="h-full w-full bg-background" ref={containerReference} />
       {timelineInstance && (
         <TimelineDependencies
-          timeline={timelineInstance}
-          items={items}
+          timeline={timelineInstance as any}
+          items={items as any}
           dependencies={dependencies}
         />
       )}

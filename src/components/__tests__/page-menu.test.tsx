@@ -39,12 +39,12 @@ describe('PageMenu', () => {
   });
 
   it('renders options', () => {
-    render(<PageMenu documentId={documentId} isArchived={false} />);
+    render(<PageMenu documentId={documentId} />);
     expect(screen.getByText('Page History')).toBeInTheDocument();
   });
 
   it('opens history modal on click', () => {
-    render(<PageMenu documentId={documentId} isArchived={false} />);
+    render(<PageMenu documentId={documentId} />);
     const historyButton = screen.getByText('Page History');
     fireEvent.click(historyButton);
     expect(mockOnOpen).toHaveBeenCalledWith(documentId);

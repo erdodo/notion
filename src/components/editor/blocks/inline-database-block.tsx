@@ -97,8 +97,8 @@ export const InlineDatabaseBlock = createReactBlockSpec(
       return (
         <InlineDatabase
           linkedDatabaseId={block.props.linkedDatabaseId}
-          editor={editor as BlockNoteEditor}
-          block={block as Block}
+          editor={editor as any}
+          block={block as any}
         />
       );
     },

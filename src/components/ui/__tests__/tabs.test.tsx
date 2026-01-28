@@ -493,8 +493,11 @@ describe('Tabs', () => {
 
   it('should forward ref to tabs element', () => {
     let reference: HTMLDivElement | null = null;
+    const refCallback = (element: HTMLDivElement | null) => {
+      reference = element;
+    };
     render(
-      <Tabs ref={(element) => (reference = element)} defaultValue="tab1">
+      <Tabs ref={refCallback} defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>
         </TabsList>

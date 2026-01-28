@@ -86,9 +86,9 @@ export function PageDialog({
         ) : page ? (
           <div className="p-8">
             {page.isDatabase && database ? (
-              <DatabaseView database={database} page={page} />
+              <DatabaseView database={database as any} page={page} />
             ) : (
-              <PageRenderer page={page} row={row} />
+              <PageRenderer page={page} row={row as any} />
             )}
           </div>
         ) : (

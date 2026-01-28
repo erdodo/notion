@@ -41,7 +41,7 @@ function blockToMarkdown(block: Block): string {
     }
 
     case 'heading': {
-      const level = block.props?.level || 1;
+      const level = Number(block.props?.level) || 1;
       const prefix = '#'.repeat(level);
       return `${prefix} ${contentToMarkdown(block.content)}\n\n`;
     }
@@ -163,8 +163,8 @@ function tableToMarkdown(block: CustomTableBlock): string {
   return md;
 }
 
-export function blocksToHTML(blocks: Block[], title: string): string {
-  const bodyContent = blocks.map(blockToHTML).join('\n');
+export function blocksToHTML(blocks: unknown[], title: string): string {
+  const bodyContent = (blocks as Block[]).map(blockToHTML).join('\n');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -237,9 +237,9 @@ function blockToHTML(block: Block): string {
 
     case 'image': {
       const imgCaption = block.props?.caption
-        ? `<figcaption>${escapeHtml(block.props.caption)}</figcaption>`
+        ? `<figcaption>${escapeHtml(String(block.props.caption))}</figcaption>`
         : '';
-      return `<figure><img src="${block.props?.url || ''}" alt="${escapeHtml(block.props?.caption || '')}">${imgCaption}</figure>`;
+      return `<figure><img src="${block.props?.url || ''}" alt="${escapeHtml(String(block.props?.caption || ''))}">${imgCaption}</figure>`;
     }
 
     case 'video': {
@@ -251,7 +251,7 @@ function blockToHTML(block: Block): string {
     }
 
     case 'file': {
-      return `<a href="${block.props?.url || ''}" download>${escapeHtml(block.props?.name || 'Download')}</a>`;
+      return `<a href="${block.props?.url || ''}" download>${escapeHtml(String(block.props?.name || 'Download'))}</a>`;
     }
 
     case 'callout': {
@@ -389,7 +389,7 @@ export function formatCellValueForCSV(
     case 'DATE': {
       if (!actualValue) return '';
       try {
-        return new Date(actualValue).toLocaleDateString();
+        return new Date(actualValue as string | number).toLocaleDateString();
       } catch {
         return String(actualValue);
       }
@@ -410,15 +410,16 @@ export function formatCellValueForCSV(
     case 'UPDATED_TIME': {
       if (!actualValue) return '';
       try {
-        return new Date(actualValue).toLocaleString();
+        return new Date(actualValue as string | number).toLocaleString();
       } catch {
         return String(actualValue);
       }
     }
 
     case 'RELATION': {
-      if (actualValue?.linkedRowIds) {
-        return actualValue.linkedRowIds.join(', ');
+      const relValue = actualValue as { linkedRowIds?: string[] } | undefined;
+      if (relValue?.linkedRowIds) {
+        return relValue.linkedRowIds.join(', ');
       }
       return '';
     }

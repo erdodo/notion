@@ -109,14 +109,14 @@ export async function GET(request: NextRequest) {
     }
 
     const zipBuffer = await zip.generateAsync({
-      type: 'nodebuffer',
+      type: 'uint8array',
       compression: 'DEFLATE',
       compressionOptions: { level: 6 },
     });
 
     const timestamp = new Date().toISOString().split('T')[0];
 
-    return new Response(zipBuffer, {
+    return new Response(zipBuffer.buffer as ArrayBuffer, {
       headers: new Headers({
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="notion-backup-${timestamp}.zip"`,
@@ -164,9 +164,12 @@ function buildPageStructure(
 
   for (const page of pages) {
     const node = map.get(page.id);
-    if (page.parentId && map.has(page.parentId)) {
-      map.get(page.parentId).children.push(node);
-    } else {
+    if (node && page.parentId && map.has(page.parentId)) {
+      const parentNode = map.get(page.parentId);
+      if (parentNode) {
+        parentNode.children.push(node);
+      }
+    } else if (node) {
       roots.push(node);
     }
   }
@@ -185,7 +188,7 @@ function getPagePath(
 
   while (current?.parentId && !visited.has(current.id)) {
     visited.add(current.id);
-    const parent = allPages.find((p) => p.id === current.parentId);
+    const parent = allPages.find((p) => p.id === current?.parentId);
     if (parent) {
       path.unshift(sanitizeFilename(parent.title || 'Untitled'));
       current = parent;

@@ -84,7 +84,7 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
     await userEvent.type(input, 'https://example.com/image.jpg');
 
     expect(input.value).toBe('https://example.com/image.jpg');
@@ -239,7 +239,7 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
     await userEvent.type(input, 'invalid-url');
 
     expect(input.value).toBe('invalid-url');
@@ -312,7 +312,7 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
     await userEvent.type(input, 'https://example.com/preview.jpg');
 
     expect(input.value).toBe('https://example.com/preview.jpg');

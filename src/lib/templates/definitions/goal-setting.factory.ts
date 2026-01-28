@@ -79,7 +79,7 @@ export const goalSettingTemplate: Template = {
 
       if (
         block.type === 'callout' ||
-        (block.type === 'image' && !block.props.url.includes('gumroad'))
+        (block.type === 'image' && block.props?.url && String(block.props.url).includes('gumroad'))
       ) {
         const buffer = [block];
         let lookahead = 1;
@@ -89,7 +89,7 @@ export const goalSettingTemplate: Template = {
             next.type === 'callout' ||
             next.type === 'image' ||
             next.type === 'quote' ||
-            (next.type === 'paragraph' && next.content.length === 0)
+            (next.type === 'paragraph' && next.content && Array.isArray(next.content) && next.content.length === 0)
           ) {
             buffer.push(next);
             lookahead++;

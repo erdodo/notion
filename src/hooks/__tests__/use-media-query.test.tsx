@@ -7,7 +7,7 @@ describe('useMediaQuery', () => {
   let matchMediaMock: any;
 
   beforeEach(() => {
-    matchMediaMock = vi.fn().mockImplementation((query) => ({
+    matchMediaMock = vi.fn().mockImplementation((query: any) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -41,7 +41,7 @@ describe('useMediaQuery', () => {
   });
 
   it('should match media query when condition is true', () => {
-    matchMediaMock.mockImplementation((query) => ({
+    matchMediaMock.mockImplementation((query: any) => ({
       matches: true,
       media: query,
       addEventListener: vi.fn(),
@@ -66,7 +66,7 @@ describe('useMediaQuery', () => {
   });
 
   it('should update when media query result changes', () => {
-    matchMediaMock.mockImplementation((query) => ({
+    matchMediaMock.mockImplementation((query: any) => ({
       matches: false,
       media: query,
       addEventListener: vi.fn((event, listener) => {
@@ -85,7 +85,7 @@ describe('useMediaQuery', () => {
   it('should cleanup event listeners on unmount', () => {
     const removeEventListenerMock = vi.fn();
 
-    matchMediaMock.mockImplementation((query) => ({
+    matchMediaMock.mockImplementation((query: any) => ({
       matches: false,
       media: query,
       addEventListener: vi.fn(),

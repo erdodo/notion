@@ -448,7 +448,7 @@ describe('Tooltip', () => {
   it('should work with disabled trigger', () => {
     render(
       <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-        <Tooltip disabled>
+        <Tooltip>
           <TooltipTrigger>Disabled</TooltipTrigger>
           <TooltipContent>Should not show</TooltipContent>
         </Tooltip>
@@ -486,10 +486,13 @@ describe('Tooltip', () => {
 
   it('should forward ref to trigger', () => {
     let reference: HTMLButtonElement | null = null;
+    const refCallback = (element: HTMLButtonElement | null) => {
+      reference = element;
+    };
     render(
       <TooltipProvider delayDuration={0} skipDelayDuration={0}>
         <Tooltip>
-          <TooltipTrigger ref={(element) => (reference = element)}>
+          <TooltipTrigger ref={refCallback}>
             Trigger
           </TooltipTrigger>
           <TooltipContent>Content</TooltipContent>

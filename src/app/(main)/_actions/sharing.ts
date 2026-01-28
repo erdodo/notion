@@ -75,7 +75,7 @@ export async function sharePage(
         },
       });
 
-      const io = globalThis.io;
+      const io = (globalThis as { io?: any }).io;
       if (io) {
         io.to(`user-${targetUser.id}`).emit('notification', {
           type: 'PAGE_SHARED',

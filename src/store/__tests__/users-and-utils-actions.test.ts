@@ -23,9 +23,7 @@ globalThis.fetch = vi.fn() as never as typeof fetch;
 describe('Users and Utils Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'user-1' } } as never as {
-      user: { id: string };
-    });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user-1' }, expires: '2025-12-31T00:00:00.000Z' } as any);
   });
 
   afterEach(() => {
@@ -34,7 +32,7 @@ describe('Users and Utils Actions', () => {
 
   describe('Users: searchUsers', () => {
     it('returns matched users', async () => {
-      const mockUsers = [{ id: 'u1', name: 'User 1' }];
+      const mockUsers = [{ id: 'u1', name: 'User 1', email: null, emailVerified: null, image: null, createdAt: new Date(), updatedAt: new Date() }];
       vi.mocked(db.user.findMany).mockResolvedValue(
         mockUsers as never as typeof mockUsers
       );

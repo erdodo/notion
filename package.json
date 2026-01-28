@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "check": "tsc --noEmit --pretty && next lint --dir src",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",

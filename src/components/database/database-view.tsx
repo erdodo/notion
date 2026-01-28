@@ -55,7 +55,7 @@ export function DatabaseView({ database, page }: DatabaseViewProperties) {
       const defaultView =
         database.views.find((v) => v.isDefault) || database.views[0];
       setCurrentViewId(defaultView.id);
-      setFromView(defaultView.type);
+      setFromView(defaultView.type as any);
     }
   }, [database.views, currentViewId, setCurrentViewId, setFromView, shouldInitializeView]);
 

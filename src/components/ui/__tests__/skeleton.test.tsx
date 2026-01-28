@@ -336,7 +336,11 @@ describe('Skeleton', () => {
 
   it('should forward ref to div element', () => {
     let reference: HTMLDivElement | null = null;
-    render(<Skeleton ref={(element) => (reference = element)} />);
+    const refCallback = (element: HTMLDivElement | null) => {
+      reference = element;
+    };
+    const SkeletonWithRef = Skeleton as any;
+    render(<SkeletonWithRef ref={refCallback} />);
     expect(reference).toBeInstanceOf(HTMLDivElement);
   });
 

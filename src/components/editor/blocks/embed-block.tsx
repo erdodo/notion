@@ -18,21 +18,14 @@ export const EmbedBlock = createReactBlockSpec(
   },
   {
     render: (properties) => {
-      return <EmbedBlockComponent {...properties} />;
+      return <EmbedBlockComponent {...properties as any} />;
     },
   }
 );
 
 interface EmbedBlockProps {
-  block: {
-    id: string;
-    type: 'embed';
-    props: {
-      url: string;
-      caption: string;
-    };
-  };
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }
 
 function EmbedBlockComponent(properties: EmbedBlockProps) {

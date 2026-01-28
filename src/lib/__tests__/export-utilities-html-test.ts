@@ -19,13 +19,13 @@ describe('export-utils', () => {
     });
 
     it('should include title in HTML body', () => {
-      const blocks = [];
+      const blocks: any[] = [];
       const result = blocksToHTML(blocks, 'Test Title');
       expect(result).toContain('<h1>Test Title</h1>');
     });
 
     it('should escape HTML special characters in title', () => {
-      const blocks = [];
+      const blocks: any[] = [];
       const result = blocksToHTML(blocks, '<script>alert("xss")</script>');
       expect(result).toContain('&lt;script&gt;');
       expect(result).not.toContain('<script>');

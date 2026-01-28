@@ -270,7 +270,10 @@ describe('Separator', () => {
 
   it('should forward ref to div element', () => {
     let reference: HTMLDivElement | null = null;
-    render(<Separator ref={(element) => (reference = element)} />);
+    const refCallback = (element: HTMLDivElement | null) => {
+      reference = element;
+    };
+    render(<Separator ref={refCallback} />);
     expect(reference).toBeInstanceOf(HTMLDivElement);
   });
 

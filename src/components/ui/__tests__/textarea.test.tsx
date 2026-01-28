@@ -387,7 +387,7 @@ describe('Textarea', () => {
   it('should support text selection', async () => {
     const user = userEvent.setup();
     render(<Textarea value="Hello World" />);
-    const textarea = screen.getByRole('textbox');
+    const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
 
     await user.click(textarea);
     textarea.setSelectionRange(0, 5);
@@ -427,7 +427,10 @@ describe('Textarea', () => {
 
   it('should forward ref to textarea element', () => {
     let reference: HTMLTextAreaElement | null = null;
-    render(<Textarea ref={(element) => (reference = element)} />);
+    const refCallback = (element: HTMLTextAreaElement | null) => {
+      reference = element;
+    };
+    render(<Textarea ref={refCallback} />);
     expect(reference).toBeInstanceOf(HTMLTextAreaElement);
   });
 

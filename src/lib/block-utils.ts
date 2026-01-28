@@ -52,9 +52,9 @@ export function getAvailableConversions(blockType: string): string[] {
 export function convertBlockType(
   block: Block,
   newType: string
-): Partial<Block> {
-  const converted: Partial<Block> = {
-    type: newType as Block['type'],
+): any {
+  const converted: any = {
+    type: newType,
     content: block.content,
     children: block.children,
   };
@@ -62,12 +62,10 @@ export function convertBlockType(
   switch (newType) {
     case 'heading': {
       converted.props = { level: 1 };
-
       break;
     }
     case 'checkListItem': {
       converted.props = { checked: false };
-
       break;
     }
     case 'callout': {
@@ -75,7 +73,6 @@ export function convertBlockType(
         emoji: '💡',
         backgroundColor: 'default',
       };
-
       break;
     }
     default: {
@@ -86,20 +83,18 @@ export function convertBlockType(
   return converted;
 }
 
-export function duplicateBlock(block: Block): Partial<Block> {
+export function duplicateBlock(block: Block): any {
   return {
     type: block.type as Block['type'],
     props: { ...block.props },
     content: block.content,
-    children: block.children
-      ? (block.children.map(duplicateBlock) as Partial<Block>[])
-      : undefined,
+    children: block.children as any,
   };
 }
 
-export function getBlockColorStyle(color: BlockColor, isDark = false): string {
+export function getBlockColorStyle(color: BlockColor | string, isDark = false): string {
   const colors = isDark ? BLOCK_COLORS_DARK : BLOCK_COLORS;
-  return colors[color]?.bg || colors.default.bg;
+  return colors[color as BlockColor]?.bg || colors.default.bg;
 }
 
 export function formatBlockTypeName(type: string): string {

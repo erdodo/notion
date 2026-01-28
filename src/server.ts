@@ -21,7 +21,7 @@ app.prepare().then(() => {
     if (request.url?.startsWith('/socket.io')) {
       console.error('[CustomServer] Handling Socket.io request');
       if (io) {
-        io.engine.handleRequest(request, res);
+        io.engine.handleRequest(request as any, res);
       } else {
         res.statusCode = 503;
         res.end('Socket.io not ready');

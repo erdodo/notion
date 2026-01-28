@@ -1,4 +1,4 @@
-'use client';
+import { Database, Property } from '@prisma/client';
 import { Settings2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-export function CalendarOptions() {
+interface CalendarOptionsProps {
+  database: Database & { properties: Property[] };
+}
+
+export function CalendarOptions({ database }: CalendarOptionsProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>

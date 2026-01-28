@@ -112,7 +112,7 @@ export function ViewSwitcher({ className, database }: ViewSwitcherProperties) {
             <DropdownMenuItem
               key={view.id}
               onSelect={() => {
-                setFromView({ ...view, database });
+                setFromView({ ...view, database: database as any } as any);
 
                 setDatabaseDefaultView(database.id, view.id);
               }}

@@ -143,7 +143,7 @@ describe('ModalProvider', () => {
     });
 
     const modals = [...container.querySelectorAll('[data-testid]')];
-    const testIds = modals.map((m) => m.dataset.testid);
+    const testIds = modals.map((m) => (m as HTMLElement).dataset.testid);
 
     expect(testIds).toContain('search-command');
     expect(testIds).toContain('settings-modal');
@@ -240,7 +240,7 @@ describe('ModalProvider', () => {
 
     await waitFor(() => {
       const firstChild = container.querySelector('[data-testid]');
-      expect(firstChild?.dataset.testid).toBe('search-command');
+      expect((firstChild as HTMLElement)?.dataset.testid).toBe('search-command');
     });
   });
 

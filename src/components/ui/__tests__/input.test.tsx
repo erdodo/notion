@@ -21,13 +21,13 @@ describe('Input', () => {
 
   it('should have correct default type', () => {
     render(<Input />);
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.type).toBe('text');
   });
 
   it('should support text type', () => {
     render(<Input type="text" />);
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.type).toBe('text');
   });
 
@@ -69,7 +69,7 @@ describe('Input', () => {
 
   it('should handle controlled value', () => {
     render(<Input value="test value" onChange={() => {}} />);
-    const input = screen.getByDisplayValue('test value');
+    const input = screen.getByDisplayValue('test value') as HTMLInputElement;
     expect(input.value).toBe('test value');
   });
 
@@ -87,7 +87,7 @@ describe('Input', () => {
 
   it('should support uncontrolled value with defaultValue', () => {
     render(<Input defaultValue="initial" />);
-    const input = screen.getByDisplayValue('initial');
+    const input = screen.getByDisplayValue('initial') as HTMLInputElement;
     expect(input.value).toBe('initial');
   });
 
@@ -108,13 +108,13 @@ describe('Input', () => {
 
   it('should support readOnly prop', () => {
     render(<Input readOnly value="read-only" onChange={() => {}} />);
-    const input = screen.getByDisplayValue('read-only');
+    const input = screen.getByDisplayValue('read-only') as HTMLInputElement;
     expect(input.readOnly).toBe(true);
   });
 
   it('should support required prop', () => {
     render(<Input required />);
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.required).toBe(true);
   });
 
@@ -165,7 +165,7 @@ describe('Input', () => {
 
   it('should support pattern attribute', () => {
     render(<Input type="text" pattern="[0-9]{3}-[0-9]{4}" />);
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.pattern).toBe('[0-9]{3}-[0-9]{4}');
   });
 
@@ -205,7 +205,9 @@ describe('Input', () => {
     );
 
     expect(inputReference).toBeTruthy();
-    expect(inputReference?.tagName).toBe('INPUT');
+    if (inputReference) {
+      expect((inputReference as HTMLInputElement).tagName).toBe('INPUT');
+    }
   });
 
   it('should accept text input', async () => {
@@ -224,7 +226,7 @@ describe('Input', () => {
     const user = userEvent.setup();
     render(<Input />);
 
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     await user.type(input, '!@#$%^&*()');
 
     expect(input.value).toContain('!');
@@ -264,7 +266,7 @@ describe('Input', () => {
     const user = userEvent.setup();
     render(<Input />);
 
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('textbox') as HTMLInputElement;
     await user.type(input, 'keyboard input');
 
     expect(input.value).toBe('keyboard input');

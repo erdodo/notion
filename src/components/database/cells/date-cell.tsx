@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 export function DateCell({ getValue, updateValue }: CellProperties) {
   const initialValue = getValue();
   const value =
-    typeof initialValue === 'object' ? initialValue?.value : initialValue;
+    typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
 
   const [date, setDate] = useState<Date | undefined>(
     value ? new Date(value) : undefined
@@ -24,7 +24,7 @@ export function DateCell({ getValue, updateValue }: CellProperties) {
 
   useEffect(() => {
     const value =
-      typeof initialValue === 'object' ? initialValue?.value : initialValue;
+      typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
     queueMicrotask(() => {
       setDate(value ? new Date(value) : undefined);
     });

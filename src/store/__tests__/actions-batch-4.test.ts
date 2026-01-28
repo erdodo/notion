@@ -70,6 +70,7 @@ describe('Server Actions - Batch 4', () => {
     email: 'test@example.com',
   };
   const mockSession = { user: mockUser };
+  const pusherServer = { trigger: vi.fn() };
 
   beforeEach(() => {
     vi.clearAllMocks();

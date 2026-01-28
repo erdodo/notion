@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  createReactBlockSpec,
-  PartialBlock,
-  BlockNoteEditor,
-} from '@blocknote/react';
+import { createReactBlockSpec } from '@blocknote/react';
 import { Loader2, Link as LinkIcon, Film } from 'lucide-react';
 import { useState, useRef } from 'react';
 
@@ -31,8 +27,8 @@ const VideoBlockContent = ({
   block,
   editor,
 }: {
-  block: PartialBlock;
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }) => {
   const { edgestore } = useEdgeStore();
   const [uploading, setUploading] = useState(false);

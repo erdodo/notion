@@ -14,8 +14,11 @@ describe('useFilteredSortedData', () => {
       name: 'Test Database',
       createdAt: new Date(),
       updatedAt: new Date(),
+      pageId: 'page-1',
+      defaultView: 'table',
       properties: [],
       rows: [],
+      views: [],
     } as DetailedDatabase;
   });
 

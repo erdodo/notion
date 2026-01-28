@@ -68,7 +68,7 @@ export const PageItem = ({
           paddingLeft: level > 0 ? `${level * 12 + 12}px` : '12px',
         }}
       >
-        {page.children?.length > 0 && (
+        {(page.children?.length || 0) > 0 && (
           <div
             role="button"
             onClick={handleExpand}
@@ -98,9 +98,9 @@ export const PageItem = ({
         </div>
       </div>
 
-      {expanded && page.children?.length > 0 && (
+      {expanded && (page.children?.length || 0) > 0 && (
         <div>
-          {page.children.map((child: Page) => (
+          {(page.children || []).map((child: Page) => (
             <PageItem
               key={child.id}
               page={child}

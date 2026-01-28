@@ -3,8 +3,6 @@ import {
   DatabaseView,
   ViewType,
   Property,
-  Filter,
-  Sort,
 } from '@prisma/client';
 import {
   MoreHorizontal,
@@ -60,7 +58,7 @@ import {
   DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { useDatabase, PageOpenMode } from '@/hooks/use-database';
+import { useDatabase } from '@/hooks/use-database';
 
 interface ViewSettingsMenuProperties {
   databaseId: string;
@@ -162,12 +160,12 @@ export function ViewSettingsMenu({
         newName
       );
       await updateDatabaseView(newView.id, {
-        filter: currentView.filter as unknown as Filter[],
-        sort: currentView.sort as unknown as Sort[],
-        group: currentView.group as string,
-        hiddenProperties: currentView.hiddenProperties as string[],
-        propertyWidths: currentView.propertyWidths as Record<string, number>,
-        layout: currentView.layout as Record<string, unknown>,
+        filter: currentView.filter as any,
+        sort: currentView.sort as any,
+        group: currentView.group as any,
+        hiddenProperties: currentView.hiddenProperties as any,
+        propertyWidths: currentView.propertyWidths as any,
+        layout: currentView.layout as any,
       });
       setCurrentViewId(newView.id);
       toast.success('View duplicated');
@@ -194,7 +192,7 @@ export function ViewSettingsMenu({
       ? currentHidden.filter((id) => id !== propertyId)
       : [...currentHidden, propertyId];
 
-    updateView({ hiddenProperties: newHidden });
+    updateView({ hiddenProperties: newHidden } as any);
   };
 
   const activeGroupBy =
@@ -326,7 +324,7 @@ export function ViewSettingsMenu({
                   >
                     <span className="truncate text-xs">
                       {property?.name} {filter.operator.replace('_', ' ')}{' '}
-                      {filter.value}
+                      {String(filter.value)}
                     </span>
                     <Button
                       variant="ghost"
@@ -523,7 +521,7 @@ export function ViewSettingsMenu({
             <DropdownMenuSubContent className="w-[180px]">
               <DropdownMenuRadioGroup
                 value={pageOpenMode}
-                onValueChange={(value: PageOpenMode) => {
+                onValueChange={(value: any) => {
                   setPageOpenMode(value);
                 }}
               >

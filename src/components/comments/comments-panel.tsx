@@ -296,10 +296,10 @@ function CommentItem({
           {}
           {comment.replies && comment.replies.length > 0 && (
             <div className="mt-3 space-y-3 pl-4 border-l-2">
-              {comment.replies.map((reply: CommentWithRelations) => (
+              {comment.replies.map((reply) => (
                 <CommentItem
                   key={reply.id}
-                  comment={reply}
+                  comment={{ ...reply, replies: [] }}
                   currentUserId={currentUserId}
                   onReply={onReply}
                   onDelete={() => deleteComment(reply.id)}

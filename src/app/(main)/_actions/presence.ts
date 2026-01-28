@@ -32,7 +32,7 @@ export async function updatePresence(
     },
   });
 
-  const io = globalThis.io;
+  const io = (globalThis as any).io;
   if (io) {
     io.to(`page-${pageId}`).emit('presence-update', {
       userId: session.user.id,
@@ -59,7 +59,7 @@ export async function leavePresence(pageId: string): Promise<void> {
     },
   });
 
-  const io = globalThis.io;
+  const io = (globalThis as any).io;
   if (io) {
     io.to(`page-${pageId}`).emit('presence-leave', {
       userId: session.user.id,

@@ -37,7 +37,7 @@ export function StatusCell({
 }: CellProperties) {
   const initialValue = getValue();
   const value =
-    typeof initialValue === 'object' ? initialValue?.value : initialValue;
+    typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
 
   const property = column.columnDef.meta?.property;
   const options: StatusOption[] =
@@ -77,12 +77,11 @@ export function StatusCell({
 
     const newOptions = [...options, newOption];
 
-    onPropertyUpdate?.(property.id, { options: newOptions });
+    onPropertyUpdate?.(property!.id, { options: newOptions as any });
 
-    await updateProperty(property.id, {
-      ...property,
-      options: newOptions,
-    });
+    await updateProperty(property!.id, {
+      options: newOptions as any,
+    } as any);
 
     updateValue({ value: newOption.id });
   };
@@ -95,23 +94,21 @@ export function StatusCell({
       o.id === optionId ? { ...o, ...updates } : o
     );
 
-    onPropertyUpdate?.(property.id, { options: newOptions });
+    onPropertyUpdate?.(property!.id, { options: newOptions as any });
 
-    await updateProperty(property.id, {
-      ...property,
-      options: newOptions,
-    });
+    await updateProperty(property!.id, {
+      options: newOptions as any,
+    } as any);
   };
 
   const handleDeleteOption = async (optionId: string) => {
     const newOptions = options.filter((o) => o.id !== optionId);
 
-    onPropertyUpdate?.(property.id, { options: newOptions });
+    onPropertyUpdate?.(property!.id, { options: newOptions as any });
 
-    await updateProperty(property.id, {
-      ...property,
-      options: newOptions,
-    });
+    await updateProperty(property!.id, {
+      options: newOptions as any,
+    } as any);
 
     if (value === optionId) {
       updateValue({ value: null });

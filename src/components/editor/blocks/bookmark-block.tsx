@@ -14,19 +14,13 @@ export const BookmarkBlock = createReactBlockSpec(
     },
   },
   {
-    render: (properties) => <BookmarkBlockContent {...properties} />,
+    render: (properties) => <BookmarkBlockContent {...properties as any} />,
   }
 );
 
 interface BookmarkBlockProps {
-  block: {
-    id: string;
-    type: 'bookmark';
-    props: {
-      url: string;
-    };
-  };
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }
 
 const BookmarkBlockContent = (properties: BookmarkBlockProps) => {

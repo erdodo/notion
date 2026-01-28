@@ -78,7 +78,7 @@ export function PageProperties({ row }: PageProperties_) {
         const index = previous.findIndex((c) => c.propertyId === propertyId);
         if (index !== -1) {
           const newCells = [...previous];
-          newCells[index] = { ...newCells[index], value };
+          newCells[index] = { ...newCells[index], value: value as any };
           return newCells;
         }
         return [
@@ -109,7 +109,7 @@ export function PageProperties({ row }: PageProperties_) {
     setProperties((previous) =>
       previous.map((p) => (p.id === propertyId ? { ...p, ...data } : p))
     );
-    await updateProperty(propertyId, data);
+    await updateProperty(propertyId, data as any);
   };
 
   const moveProperty = async (index: number, direction: 'up' | 'down') => {
@@ -353,11 +353,9 @@ function PagePropertyCell({
         property,
       },
     },
-  } as Column<unknown, unknown> & {
-    columnDef: { meta?: { property: Property } };
-  };
+  } as any;
 
-  const mockTable = {} as Table<unknown>;
+  const mockTable = {} as any;
 
   return (
     <div className="px-2 py-1 -ml-2 rounded hover:bg-muted/50 transition-colors min-h-[28px]">
@@ -367,7 +365,7 @@ function PagePropertyCell({
         propertyId={property.id}
         table={mockTable}
         column={mockColumn}
-        cell={(cell || {}) as Cell<unknown, unknown>}
+        cell={(cell || {}) as any}
         isEditing={isEditing}
         startEditing={() => {
           setIsEditing(true);
@@ -375,8 +373,8 @@ function PagePropertyCell({
         stopEditing={() => {
           setIsEditing(false);
         }}
-        updateValue={(value) => onUpdate(property.id, value)}
-        row={row as Row<unknown>}
+        updateValue={(value) => onUpdate(property.id, value as any)}
+        row={row as any}
         onPropertyUpdate={onPropertyUpdate}
       />
     </div>

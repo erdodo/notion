@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { FormattingToolbar } from '../formatting-toolbar';
 
@@ -41,7 +41,7 @@ describe.skip('FormattingToolbar', () => {
     getSelectionSpy.mockRestore();
   });
 
-  const createMockEditor = () => ({
+  const createMockEditor = (): any => ({
     isActive: vi.fn(() => false),
     getActiveStyles: vi.fn(() => ({})),
     commands: {
@@ -194,7 +194,7 @@ describe.skip('FormattingToolbar', () => {
   });
 
   it('should handle disabled editor gracefully', async () => {
-    const editor = {
+    const editor: any = {
       isActive: vi.fn(() => false),
       getActiveStyles: vi.fn(() => ({})),
       commands: {},

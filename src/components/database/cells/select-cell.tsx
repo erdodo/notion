@@ -28,7 +28,7 @@ export function SelectCell({
 }: CellProperties) {
   const initialValue = getValue();
   const value =
-    typeof initialValue === 'object' ? initialValue?.value : initialValue;
+    typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
 
   const property = column.columnDef.meta?.property;
   const options: SelectOption[] =
@@ -54,12 +54,11 @@ export function SelectCell({
 
     const newOptions = [...options, newOption];
 
-    onPropertyUpdate?.(property.id, { options: newOptions });
+    onPropertyUpdate?.(property!.id, { options: newOptions as any });
 
-    await updateProperty(property.id, {
-      ...property,
-      options: newOptions,
-    });
+    await updateProperty(property!.id, {
+      options: newOptions as any,
+    } as any);
 
     updateValue({ value: newOption.id });
   };
@@ -166,13 +165,12 @@ export function SelectCell({
                                       ? { ...o, color: color.value }
                                       : o
                                   );
-                                  onPropertyUpdate?.(property.id, {
-                                    options: newOptions,
+                                  onPropertyUpdate?.(property!.id, {
+                                    options: newOptions as any,
                                   });
-                                  updateProperty(property.id, {
-                                    ...property,
-                                    options: newOptions,
-                                  });
+                                  updateProperty(property!.id, {
+                                    options: newOptions as any,
+                                  } as any);
                                 }}
                               />
                             ))}
@@ -186,13 +184,12 @@ export function SelectCell({
                               const newOptions = options.filter(
                                 (o) => o.id !== option.id
                               );
-                              onPropertyUpdate?.(property.id, {
-                                options: newOptions,
+                              onPropertyUpdate?.(property!.id, {
+                                options: newOptions as any,
                               });
-                              updateProperty(property.id, {
-                                ...property,
-                                options: newOptions,
-                              });
+                              updateProperty(property!.id, {
+                                options: newOptions as any,
+                              } as any);
                             }}
                           >
                             <Trash className="h-3 w-3 mr-2" /> Delete

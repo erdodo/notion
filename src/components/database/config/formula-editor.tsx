@@ -18,6 +18,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { validateFormula, availableFunctions } from '@/lib/formula-engine';
 
+export interface FormulaConfig {
+  expression: string;
+  resultType: string;
+}
+
 interface FormulaEditorProperties {
   expression: string;
   properties: Property[];

@@ -751,7 +751,13 @@ export async function restorePage(documentId: string, historyId: string) {
     },
   });
 
-  const io = (globalThis as any).io;
+  const io = (
+    globalThis as {
+      io?: {
+        to: (room: string) => { emit: (event: string, data: unknown) => void };
+      };
+    }
+  ).io;
   if (io) {
     io.to(`document-${documentId}`).emit('doc:update', {
       content: history.content,

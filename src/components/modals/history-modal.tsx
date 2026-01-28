@@ -19,9 +19,9 @@ import { useHistory } from '@/hooks/use-history';
 
 interface Page {
   id: string;
-  title: string;
-  icon: string | null;
-  parentId: string | null;
+  title?: string;
+  icon?: string | null;
+  parentId?: string | null;
   content?: string;
   savedAt: string | Date;
   user: {
@@ -44,8 +44,8 @@ export const HistoryModal = () => {
         setLoading(true);
         try {
           const data = await getPageHistory(history.documentId);
-          setVersions(data);
-          if (data.length > 0) setSelectedVersion(data[0]);
+          setVersions(data as any);
+          if (data.length > 0) setSelectedVersion(data[0] as any);
         } catch {
           toast.error('Failed to load history');
         } finally {
@@ -113,7 +113,7 @@ export const HistoryModal = () => {
                 </div>
                 <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
                   <Avatar className="h-4 w-4">
-                    <AvatarImage src={version.user.image} />
+                    <AvatarImage src={version.user.image || undefined} />
                     <AvatarFallback>{version.user.name?.[0]}</AvatarFallback>
                   </Avatar>
                   <span className="truncate">{version.user.name}</span>

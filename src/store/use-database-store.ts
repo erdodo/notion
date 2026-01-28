@@ -813,7 +813,7 @@ export const useDatabaseStore = create<DatabaseStore>()(
       partialize: (state) =>
         ({
           databases: Object.fromEntries(state.databases),
-        }) as unknown,
+        }) as any,
       version: 1,
     }
   )

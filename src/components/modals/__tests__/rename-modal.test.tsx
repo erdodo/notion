@@ -92,7 +92,7 @@ describe('RenameModal', () => {
 
     render(<RenameModal />);
 
-    const input = screen.getByDisplayValue('Old Title');
+    const input = screen.getByDisplayValue('Old Title') as HTMLInputElement;
     await userEvent.clear(input);
     await userEvent.type(input, 'New Title');
 
@@ -309,7 +309,7 @@ describe('RenameModal', () => {
 
     render(<RenameModal />);
 
-    const input = screen.getByDisplayValue('Old Title');
+    const input = screen.getByDisplayValue('Old Title') as HTMLInputElement;
     await userEvent.clear(input);
     await userEvent.type(input, 'Title with & < > " characters');
 
@@ -332,7 +332,7 @@ describe('RenameModal', () => {
 
     render(<RenameModal />);
 
-    const input = screen.getByDisplayValue('Old Title');
+    const input = screen.getByDisplayValue('Old Title') as HTMLInputElement;
     await userEvent.clear(input);
     await userEvent.type(input, '中文标题 العربية');
 
@@ -356,7 +356,7 @@ describe('RenameModal', () => {
 
     render(<RenameModal />);
 
-    const input = screen.getByDisplayValue(longTitle);
+    const input = screen.getByDisplayValue(longTitle) as HTMLInputElement;
     expect(input.value).toBe(longTitle);
   });
 });

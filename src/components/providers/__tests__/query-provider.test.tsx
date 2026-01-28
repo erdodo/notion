@@ -256,7 +256,7 @@ describe('QueryProvider', () => {
     const provider = container.querySelector(
       '[data-testid="query-client-provider"]'
     );
-    expect(provider?.dataset.client).toBe('true');
+    expect((provider as HTMLElement)?.dataset.client).toBe('true');
   });
 
   it('should support nested QueryProviders', () => {

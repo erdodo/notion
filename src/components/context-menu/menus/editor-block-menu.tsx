@@ -51,27 +51,32 @@ export const EditorBlockMenu = ({ data }: EditorBlockMenuProperties) => {
     type: string,
     properties: Record<string, unknown> = {}
   ) => {
-    editor.updateBlock(block, { type, props: properties });
+    if (!block.id) return;
+    editor.updateBlock(block.id, { type: type as any, props: properties });
     closeContextMenu();
   };
 
   const onColorChange = (color: string) => {
-    editor.updateBlock(block, { props: { backgroundColor: color } });
+    if (!block.id) return;
+    editor.updateBlock(block.id, { props: { backgroundColor: color } });
     closeContextMenu();
   };
 
   const onTextColorChange = (color: string) => {
-    editor.updateBlock(block, { props: { textColor: color } });
+    if (!block.id) return;
+    editor.updateBlock(block.id, { props: { textColor: color } });
     closeContextMenu();
   };
 
   const onAlign = (alignment: 'left' | 'center' | 'right') => {
-    editor.updateBlock(block, { props: { textAlignment: alignment } });
+    if (!block.id) return;
+    editor.updateBlock(block.id, { props: { textAlignment: alignment } });
     closeContextMenu();
   };
 
   const onDelete = () => {
-    editor.removeBlocks([block]);
+    if (!block.id) return;
+    editor.removeBlocks([block.id]);
     closeContextMenu();
   };
 

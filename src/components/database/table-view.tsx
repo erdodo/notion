@@ -48,6 +48,7 @@ import {
   FilteredDataResult,
 } from '@/hooks/use-filtered-sorted-data';
 import { useOptimisticDatabase } from '@/hooks/use-optimistic-database';
+import { DetailedDatabase } from '@/hooks/use-optimistic-database';
 
 type DetailedRow = DatabaseRow & {
   cells: Cell[];
@@ -55,8 +56,6 @@ type DetailedRow = DatabaseRow & {
   depth?: number;
   hasChildren?: boolean;
 };
-
-import { DetailedDatabase } from '@/hooks/use-optimistic-database';
 
 interface TableViewProperties {
   database: DetailedDatabase;
@@ -131,7 +130,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
     return visible;
   }, [data, expanded, isGrouped]);
 
-  const columns = useMemo<ColumnDef<DetailedRow>[]>(() => {
+  const columns: any = useMemo<ColumnDef<DetailedRow>[]>(() => {
     const indexColumn: ColumnDef<DetailedRow> = {
       id: 'index',
       header: () => (
@@ -148,15 +147,13 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
       enableResizing: false,
     };
 
-    const propertyColumns = database.properties.map((property, index) => ({
+    const propertyColumns: any = database.properties.map((property, index) => ({
       accessorKey: property.id,
       header: ({
         column,
-      }: {
-        column: ReturnType<typeof table.getAllColumns>[number];
-      }) => (
+      }: any) => (
         <PropertyHeader
-          property={property}
+          property={property as any}
           column={column}
           databaseId={database.id}
           allProperties={database.properties}
@@ -166,7 +163,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
           }}
         />
       ),
-      cell: ({ getValue, row, column, table, cell }) => {
+      cell: ({ getValue, row, column, table, cell }: any) => {
         const updateValue = (value: unknown) => {
           updateCell(row.original.id, property.id, value);
 
@@ -219,7 +216,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
           />
         );
       },
-      footer: ({ table: footerTable }: { table: typeof table }) => (
+      footer: ({ table: footerTable }: any) => (
         <CalculationCell
           property={property}
           rows={footerTable.getFilteredRowModel().rows}
@@ -246,7 +243,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
   ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table: any = useReactTable({
     data: visibleData,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -363,7 +360,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
 
       const currentRowIndex = table
         .getRowModel()
-        .rows.findIndex((r) => r.id === focusedCell.rowId);
+        .rows.findIndex((r: any) => r.id === focusedCell.rowId);
       const currentPropertyIndex = database.properties.findIndex(
         (p) => p.id === focusedCell.propertyId
       );
@@ -462,7 +459,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
         <div className="border border-border/50 rounded-sm overflow-hidden flex flex-col max-h-full">
           <div className="w-max min-w-full flex flex-col">
             <div className="sticky top-0 z-10 bg-background shadow-sm flex min-w-full border-b border-border/50">
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map((headerGroup: any) => (
                 <div
                   key={headerGroup.id}
                   className="flex min-w-full hover:bg-transparent"
@@ -471,7 +468,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
                     items={database.properties.map((p) => p.id)}
                     strategy={horizontalListSortingStrategy}
                   >
-                    {headerGroup.headers.map((header) => {
+                    {headerGroup.headers.map((header: any) => {
                       return <SortableHead key={header.id} header={header} />;
                     })}
                   </SortableContext>
@@ -509,7 +506,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
                         data-state={row.getIsSelected() && 'selected'}
                         className="group h-[33px] flex hover:bg-muted/50 transition-colors border-b border-border/50 min-w-full"
                       >
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getVisibleCells().map((cell: any) => (
                           <div
                             key={cell.id}
                             className="p-0 border-r border-border/50 last:border-r-0 relative flex-shrink-0"
@@ -567,9 +564,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
 function SortableHead({
   header,
 }: {
-  header: ReturnType<
-    typeof useReactTable<DetailedRow>
-  >['getHeaderGroups'][number]['headers'][number];
+  header: any;
 }) {
   const {
     attributes,
@@ -644,15 +639,21 @@ function SortableHead({
   );
 }
 
-interface CellWrapperProps extends Omit<
-  BaseCellProperties,
-  'isEditing' | 'startEditing' | 'stopEditing'
-> {
+interface CellWrapperProps {
   isFirstColumn: boolean;
   depth?: number;
   hasChildren?: boolean;
   isExpanded?: boolean;
   onToggle?: () => void;
+  getValue: any;
+  rowId: any;
+  propertyId: any;
+  table: any;
+  column: any;
+  cell?: any;
+  updateValue: any;
+  row: any;
+  onPropertyUpdate: any;
 }
 
 function CellWrapper({
@@ -661,12 +662,12 @@ function CellWrapper({
   propertyId,
   table,
   column,
-  cell: _cell,
+  cell: cellProp,
   updateValue,
   row,
   onPropertyUpdate,
   ...properties
-}: CellWrapperProps) {
+}: any) {
   const { focusedCell, setFocusedCell, editingCell, setEditingCell } =
     useDatabase();
 
@@ -691,7 +692,7 @@ function CellWrapper({
       type: 'database-cell',
       data: {
         rowId,
-        pageId: row.original.pageId || row.original.originalRow?.pageId,
+        pageId: (row as any).original.pageId || (row as any).original.originalRow?.pageId,
         propertyId,
         value: getValue(),
       },
@@ -754,7 +755,7 @@ function CellWrapper({
           propertyId={propertyId}
           table={table}
           column={column}
-          cell={properties.cell}
+          cell={cellProp}
           isEditing={isEditing}
           startEditing={startEditing}
           stopEditing={stopEditing}

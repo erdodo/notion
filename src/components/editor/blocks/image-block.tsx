@@ -17,8 +17,8 @@ import { useEdgeStore } from '@/lib/edgestore';
 import { cn } from '@/lib/utils';
 
 interface ImageBlockComponentProps {
-  block: Block;
-  editor: BlockNoteEditor;
+  block: any;
+  editor: any;
 }
 
 const ImageBlockComponent = ({ block, editor }: ImageBlockComponentProps) => {
@@ -205,7 +205,7 @@ const ImageBlockComponent = ({ block, editor }: ImageBlockComponentProps) => {
         <input
           className="text-center text-sm text-muted-foreground bg-transparent border-none outline-none mt-2 w-full placeholder:text-muted-foreground/50"
           placeholder="Write a caption..."
-          value={block.props.caption}
+          value={(block.props as any).caption || ''}
           onChange={(e) =>
             editor.updateBlock(block, {
               props: { caption: e.target.value },
@@ -337,7 +337,7 @@ export const ImageBlock = createReactBlockSpec(
   {
     render: (properties) => {
       const { block, editor } = properties;
-      return <ImageBlockComponent block={block} editor={editor} />;
+      return <ImageBlockComponent block={block as any} editor={editor as any} />;
     },
   }
 );

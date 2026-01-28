@@ -126,7 +126,7 @@ export function evaluateFormula(
     };
 
     const expr = boundParser.parse(expression);
-    const value = expr.evaluate(context.props);
+    const value = expr.evaluate(context.props as any);
 
     return { value, error: null };
   } catch (error) {

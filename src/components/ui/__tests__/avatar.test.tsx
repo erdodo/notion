@@ -373,9 +373,12 @@ describe('Avatar', () => {
   });
 
   it('should forward ref to avatar element', () => {
-    let reference: HTMLDivElement | null = null;
+    let reference: HTMLSpanElement | null = null;
+    const refCallback = (element: HTMLSpanElement | null) => {
+      reference = element;
+    };
     render(
-      <Avatar ref={(element) => (reference = element)}>
+      <Avatar ref={refCallback}>
         <AvatarFallback>JD</AvatarFallback>
       </Avatar>
     );

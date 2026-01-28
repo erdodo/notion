@@ -54,7 +54,9 @@ describe('Card Components', () => {
         </Card>
       );
       expect(cardReference).toBeTruthy();
-      expect(cardReference?.tagName).toBe('DIV');
+      if (cardReference) {
+        expect((cardReference as HTMLDivElement).tagName).toBe('DIV');
+      }
     });
 
     it('should support multiple children', () => {
@@ -136,7 +138,9 @@ describe('Card Components', () => {
         </CardTitle>
       );
       expect(titleReference).toBeTruthy();
-      expect(titleReference?.tagName).toBe('H3');
+      if (titleReference) {
+        expect((titleReference as HTMLHeadingElement).tagName).toBe('H3');
+      }
     });
   });
 
@@ -182,7 +186,9 @@ describe('Card Components', () => {
         </CardDescription>
       );
       expect(descReference).toBeTruthy();
-      expect(descReference?.tagName).toBe('P');
+      if (descReference) {
+        expect((descReference as HTMLParagraphElement).tagName).toBe('P');
+      }
     });
   });
 

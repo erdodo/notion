@@ -145,7 +145,7 @@ export async function addComment(
   const io = (
     globalThis as {
       io?: {
-        to: (room: string) => { emit: (event: string, data: any) => void };
+        to: (room: string) => { emit: (event: string, data: unknown) => void };
       };
     }
   ).io;
@@ -201,7 +201,7 @@ export async function updateComment(
   const io = (
     globalThis as {
       io?: {
-        to: (room: string) => { emit: (event: string, data: any) => void };
+        to: (room: string) => { emit: (event: string, data: unknown) => void };
       };
     }
   ).io;

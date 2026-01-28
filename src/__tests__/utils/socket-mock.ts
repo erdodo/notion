@@ -45,14 +45,14 @@ export function createMockSocket(): Socket {
     }),
 
     connect: vi.fn(() => {
-      mockSocket.connected = true;
-      mockSocket.disconnected = false;
+      (mockSocket as any).connected = true;
+      (mockSocket as any).disconnected = false;
       return mockSocket;
     }),
 
     disconnect: vi.fn(() => {
-      mockSocket.connected = false;
-      mockSocket.disconnected = true;
+      (mockSocket as any).connected = false;
+      (mockSocket as any).disconnected = true;
       return mockSocket;
     }),
 

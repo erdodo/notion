@@ -20,3 +20,5 @@ export interface CellProperties {
   row?: Row<unknown>;
   onPropertyUpdate?: (propertyId: string, data: Partial<Property>) => void;
 }
+
+export type CellProps = CellProperties;

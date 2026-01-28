@@ -36,7 +36,7 @@ type TrashItemMenuData = {
 };
 
 type EditorBlockMenuData = {
-  editor: typeof schema.BlockNoteEditor;
+  editor: any;
   block: PartialBlock;
 };
 

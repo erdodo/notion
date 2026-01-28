@@ -1,4 +1,4 @@
-'use client';
+import { Database, Property } from '@prisma/client';
 import { Settings2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,11 @@ import {
 } from '@/components/ui/popover';
 import { useDatabase } from '@/hooks/use-database';
 
-export function GalleryOptions() {
+interface GalleryOptionsProps {
+  database: Database & { properties: Property[] };
+}
+
+export function GalleryOptions({ database }: GalleryOptionsProps) {
   const {
     galleryCardSize,
     setGalleryCardSize,

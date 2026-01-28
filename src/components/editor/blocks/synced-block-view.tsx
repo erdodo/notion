@@ -17,7 +17,7 @@ interface SyncedBlockProperties {
 }
 
 export const SyncedBlockView = ({ block, editor }: SyncedBlockProperties) => {
-  const { sourcePageId, sourceBlockId, childrenJSON } = block.props;
+  const { sourcePageId, sourceBlockId, childrenJSON } = (block.props || {}) as any;
   const { resolvedTheme } = useTheme();
 
   const isMaster = !sourcePageId || !sourceBlockId;
@@ -50,10 +50,10 @@ export const SyncedBlockView = ({ block, editor }: SyncedBlockProperties) => {
       const data = await getBlock(sourcePageId, sourceBlockId);
       if (data?.props?.childrenJSON) {
         try {
-          const parameters = JSON.parse(data.props.childrenJSON);
+          const parameters = JSON.parse(data.props.childrenJSON as string);
 
           setFetchedContent((previous) => {
-            if (JSON.stringify(previous) === data.props.childrenJSON)
+            if (JSON.stringify(previous) === (data.props as any)?.childrenJSON)
               return previous;
             return parameters;
           });
@@ -98,7 +98,7 @@ export const SyncedBlockView = ({ block, editor }: SyncedBlockProperties) => {
 
     if (isMaster) {
       if (contentString !== childrenJSON) {
-        editor.updateBlock(block, {
+        editor.updateBlock(block as any, {
           props: { childrenJSON: contentString },
         });
       }

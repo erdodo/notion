@@ -20,6 +20,8 @@ interface SelectOption {
   color: string;
 }
 
+export type { SelectOption };
+
 interface SelectConfigProperties {
   options: SelectOption[];
   onChange: (options: SelectOption[]) => void;
