@@ -1,0 +1,3763 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <style type="text/css">
+      @import url(https://themes.googleusercontent.com/fonts/css?kit=DFQxm4rd7fRHgM9OTejWVT5Vho6BE7M80rHXEVKqXWegg2XYR88pwOsaJkfiF7cJu5e0vFtnyLdhsxviZUUN-U0KZVwUvSK-LyXz4qcE1hc);
+      ul.lst-kix_list_1-0 {
+        list-style-type: none;
+      }
+      ol.lst-kix_list_9-0.start {
+        counter-reset: lst-ctn-kix_list_9-0 0;
+      }
+      .lst-kix_list_3-0 > li:before {
+        content: '\0025cf   ';
+      }
+      ul.lst-kix_list_5-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_9-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_5-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_9-4 {
+        list-style-type: none;
+      }
+      .lst-kix_list_3-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_3-2 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_5-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_9-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_5-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_9-2 {
+        list-style-type: none;
+      }
+      .lst-kix_list_8-1 > li:before {
+        content: '\0025cb   ';
+      }
+      ul.lst-kix_list_9-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_9-8 {
+        list-style-type: none;
+      }
+      .lst-kix_list_8-2 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_9-5 {
+        list-style-type: none;
+      }
+      .lst-kix_list_9-0 > li {
+        counter-increment: lst-ctn-kix_list_9-0;
+      }
+      ul.lst-kix_list_9-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-3 {
+        list-style-type: none;
+      }
+      .lst-kix_list_3-5 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_5-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-1 {
+        list-style-type: none;
+      }
+      .lst-kix_list_3-4 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_1-2 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_5-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-7 {
+        list-style-type: none;
+      }
+      .lst-kix_list_3-3 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_5-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_5-1 {
+        list-style-type: none;
+      }
+      .lst-kix_list_8-0 > li:before {
+        content: '\0025cf   ';
+      }
+      ul.lst-kix_list_1-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_5-2 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_1-6 {
+        list-style-type: none;
+      }
+      .lst-kix_list_8-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_3-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_8-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_8-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_8-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_3-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_3-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_8-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_8-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_5-0 > li:before {
+        content: '\0025cf   ';
+      }
+      .lst-kix_list_4-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_5-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_4-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_5-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_5-1 > li:before {
+        content: '\0025cb   ';
+      }
+      ul.lst-kix_list_4-8 {
+        list-style-type: none;
+      }
+      .lst-kix_list_5-7 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_8-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-6 {
+        list-style-type: none;
+      }
+      .lst-kix_list_5-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_5-8 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_8-2 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-1 {
+        list-style-type: none;
+      }
+      .lst-kix_list_5-4 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_4-4 {
+        list-style-type: none;
+      }
+      .lst-kix_list_5-5 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_8-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_8-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-2 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_4-3 {
+        list-style-type: none;
+      }
+      .lst-kix_list_6-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_6-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_6-0 > li:before {
+        content: '\0025cf   ';
+      }
+      .lst-kix_list_6-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_6-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_6-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_6-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_6-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-0 > li:before {
+        content: '\0025cf   ';
+      }
+      .lst-kix_list_6-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_7-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_7-3 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_7-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-2 {
+        list-style-type: none;
+      }
+      .lst-kix_list_7-8 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_3-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-2 {
+        list-style-type: none;
+      }
+      ol.lst-kix_list_9-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_3-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_7-0 {
+        list-style-type: none;
+      }
+      .lst-kix_list_7-7 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_3-4 {
+        list-style-type: none;
+      }
+      .lst-kix_list_4-0 > li:before {
+        content: '\0025cf   ';
+      }
+      .lst-kix_list_4-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_4-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_4-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_4-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_4-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_4-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-0 > li:before {
+        content: '' counter(lst-ctn-kix_list_9-0, decimal) '. ';
+      }
+      .lst-kix_list_9-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_9-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-6 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_9-5 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_6-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-5 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-8 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-2 {
+        list-style-type: none;
+      }
+      .lst-kix_list_1-0 > li:before {
+        content: '\0025cf   ';
+      }
+      ul.lst-kix_list_2-3 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-2 {
+        list-style-type: none;
+      }
+      .lst-kix_list_9-8 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_2-6 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-3 {
+        list-style-type: none;
+      }
+      .lst-kix_list_1-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_1-2 > li:before {
+        content: '\0025a0   ';
+      }
+      ul.lst-kix_list_2-7 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-0 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-4 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_6-1 {
+        list-style-type: none;
+      }
+      ul.lst-kix_list_2-5 {
+        list-style-type: none;
+      }
+      .lst-kix_list_1-3 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_1-4 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_1-7 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_1-5 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_1-6 > li:before {
+        content: '\0025a0   ';
+      }
+      li.li-bullet-0:before {
+        margin-left: -18pt;
+        white-space: nowrap;
+        display: inline-block;
+        min-width: 18pt;
+      }
+      .lst-kix_list_2-0 > li:before {
+        content: '\0025cf   ';
+      }
+      .lst-kix_list_2-1 > li:before {
+        content: '\0025cb   ';
+      }
+      .lst-kix_list_1-8 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-2 > li:before {
+        content: '\0025a0   ';
+      }
+      .lst-kix_list_2-3 > li:before {
+        content: '\0025a0   ';
+      }
+      ol {
+        margin: 0;
+        padding: 0;
+      }
+      table td,
+      table th {
+        padding: 0;
+      }
+      .c13 {
+        border-right-style: solid;
+        padding: 6pt 9pt 6pt 9pt;
+        border-bottom-color: #000000;
+        border-top-width: 1pt;
+        border-right-width: 1pt;
+        border-left-color: #000000;
+        vertical-align: top;
+        border-right-color: #000000;
+        border-left-width: 1pt;
+        border-top-style: solid;
+        background-color: #f8fafd;
+        border-left-style: solid;
+        border-bottom-width: 1pt;
+        width: 156pt;
+        border-top-color: #000000;
+        border-bottom-style: solid;
+      }
+      .c20 {
+        -webkit-text-decoration-skip: none;
+        color: #0000ee;
+        font-weight: 400;
+        text-decoration: underline;
+        vertical-align: baseline;
+        text-decoration-skip-ink: none;
+        font-size: 12pt;
+        font-family: 'Google Sans';
+        font-style: normal;
+      }
+      .c4 {
+        color: #1f1f1f;
+        font-weight: 700;
+        text-decoration: none;
+        vertical-align: baseline;
+        font-size: 14pt;
+        font-family: 'Google Sans';
+        font-style: normal;
+      }
+      .c19 {
+        color: #1f1f1f;
+        font-weight: 700;
+        text-decoration: none;
+        vertical-align: baseline;
+        font-size: 18pt;
+        font-family: 'Google Sans';
+        font-style: normal;
+      }
+      .c3 {
+        color: #444746;
+        font-weight: 400;
+        text-decoration: none;
+        vertical-align: super;
+        font-size: 12pt;
+        font-family: 'Google Sans Text';
+        font-style: normal;
+      }
+      .c11 {
+        color: #1f1f1f;
+        font-weight: 700;
+        text-decoration: none;
+        vertical-align: baseline;
+        font-size: 24pt;
+        font-family: 'Google Sans';
+        font-style: normal;
+      }
+      .c2 {
+        margin-left: 23.2pt;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
+        line-height: 1.149999976158142;
+        padding-left: 0pt;
+        text-align: left;
+      }
+      .c6 {
+        vertical-align: super;
+        font-size: 12pt;
+        font-family: 'Google Sans Text';
+        color: #444746;
+        font-weight: 400;
+      }
+      .c9 {
+        padding-top: 0pt;
+        padding-bottom: 0pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c23 {
+        padding-top: 0pt;
+        padding-bottom: 0pt;
+        line-height: 1;
+        text-align: left;
+      }
+      .c18 {
+        padding-top: 12pt;
+        padding-bottom: 6pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c10 {
+        padding-top: 6pt;
+        padding-bottom: 6pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c1 {
+        text-decoration: none;
+        vertical-align: baseline;
+        font-size: 11pt;
+        font-style: normal;
+      }
+      .c5 {
+        padding-top: 0pt;
+        padding-bottom: 6pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c8 {
+        padding-top: 0pt;
+        padding-bottom: 12pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c21 {
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin-right: auto;
+      }
+      .c22 {
+        padding-top: 0pt;
+        padding-bottom: 12.8pt;
+        line-height: 1.149999976158142;
+        text-align: left;
+      }
+      .c17 {
+        background-color: #ffffff;
+        max-width: 468pt;
+        padding: 72pt 72pt 72pt 72pt;
+      }
+      .c0 {
+        color: #1f1f1f;
+        font-weight: 400;
+        font-family: 'Google Sans Text';
+      }
+      .c14 {
+        color: #1f1f1f;
+        font-weight: 700;
+        font-family: 'Google Sans Text';
+      }
+      .c16 {
+        margin-left: 23.2pt;
+        padding-left: 0pt;
+      }
+      .c7 {
+        padding: 0;
+        margin: 0;
+      }
+      .c12 {
+        height: 11pt;
+      }
+      .c15 {
+        height: 0pt;
+      }
+      .title {
+        padding-top: 24pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 36pt;
+        padding-bottom: 6pt;
+        font-family: 'Arial';
+        line-height: 1;
+        page-break-after: avoid;
+        text-align: left;
+      }
+      .subtitle {
+        padding-top: 18pt;
+        color: #666666;
+        font-size: 24pt;
+        padding-bottom: 4pt;
+        font-family: 'Georgia';
+        line-height: 1;
+        page-break-after: avoid;
+        font-style: italic;
+        text-align: left;
+      }
+      li {
+        color: #000000;
+        font-size: 11pt;
+        font-family: 'Arial';
+      }
+      p {
+        margin: 0;
+        color: #000000;
+        font-size: 11pt;
+        font-family: 'Arial';
+      }
+      h1 {
+        padding-top: 12pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 24pt;
+        padding-bottom: 12pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+      h2 {
+        padding-top: 11.2pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 18pt;
+        padding-bottom: 11.2pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+      h3 {
+        padding-top: 12pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 14pt;
+        padding-bottom: 12pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+      h4 {
+        padding-top: 12.8pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 12pt;
+        padding-bottom: 12.8pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+      h5 {
+        padding-top: 12.8pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 9pt;
+        padding-bottom: 12.8pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+      h6 {
+        padding-top: 18pt;
+        color: #000000;
+        font-weight: 700;
+        font-size: 8pt;
+        padding-bottom: 18pt;
+        font-family: 'Arial';
+        line-height: 1;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body class="c17 doc-content">
+    <h1 class="c5">
+      <span class="c11"
+        >Notion Ekosisteminde Mod&uuml;ler Verimlilik Mimarisi: 1000 Fonksiyonel
+        Senaryo ve Sistem Analizi</span
+      >
+    </h1>
+    <p class="c8">
+      <span class="c0"
+        >Modern i&#351; ak&#305;&#351;&#305; y&ouml;netiminde geleneksel
+        d&ouml;k&uuml;man edit&ouml;rlerinden mod&uuml;ler bilgi i&#351;letim
+        sistemlerine ge&ccedil;i&#351;, verinin nas&#305;l
+        yap&#305;land&#305;r&#305;ld&#305;&#287;&#305;na dair k&ouml;kl&uuml;
+        bir paradigma de&#287;i&#351;ikli&#287;ini beraberinde getirmi&#351;tir.
+        Notion, bu d&ouml;n&uuml;&#351;&uuml;m&uuml;n merkezinde yer alarak,
+        bilgiyi &quot;blok&quot; ad&#305; verilen atomik birimlere indirgeyen ve
+        bu birimleri ili&#351;kisel veritaban&#305; mant&#305;&#287;&#305;yla
+        birle&#351;tiren hibrit bir mimari sunmaktad&#305;r.</span
+      ><span class="c6">1</span
+      ><span class="c1 c0"
+        >&nbsp;Bu rapor, Notion platformunun teknik kapasitesini, computational
+        (hesaplamal&#305;) mant&#305;&#287;&#305;n&#305; ve otonom yapay zeka
+        entegrasyonlar&#305;n&#305; derinlemesine inceleyerek,
+        kullan&#305;c&#305;lar&#305;n bu ekosistemi nas&#305;l u&ccedil;tan uca
+        yap&#305;land&#305;rabilece&#287;ine dair 1000 maddelik kapsaml&#305;
+        bir senaryo katalo&#287;u sunmaktad&#305;r.</span
+      >
+    </p>
+    <h2 class="c5">
+      <span class="c19"
+        >Blok Tabanl&#305; &#304;&ccedil;erik Mimarisi ve Teknik
+        Altyap&#305;</span
+      >
+    </h2>
+    <p class="c8">
+      <span class="c0"
+        >Notion mimarisinin temelinde, her i&ccedil;erik biriminin benzersiz bir
+        kimli&#287;e (UUID) sahip ba&#287;&#305;ms&#305;z bir nesne oldu&#287;u
+        blok mant&#305;&#287;&#305; yatar. Bir metin paragraf&#305;, bir
+        g&ouml;rsel, bir veritaban&#305; sat&#305;r&#305; veya
+        g&ouml;m&uuml;l&uuml; bir PDF d&ouml;k&uuml;man&#305;, sistem
+        i&ccedil;in temelde ayn&#305; &quot;blok&quot; nesnesinin farkl&#305;
+        tipleridir.</span
+      ><span class="c6">1</span
+      ><span class="c0"
+        >&nbsp;Bu yap&#305;, verinin sadece g&ouml;rsel olarak de&#287;il,
+        yap&#305;sal olarak da ta&#351;&#305;nabilir,
+        d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebilir ve sorgulanabilir
+        olmas&#305;n&#305; sa&#287;lar.</span
+      ><span class="c3">1</span>
+    </p>
+    <h3 class="c5">
+      <span class="c4">Blok Tipleri ve Fonksiyonel Kapsam</span>
+    </h3>
+    <p class="c8">
+      <span class="c0"
+        >Bloklar, kullan&#305;c&#305; aray&uuml;z&uuml;nde / komutu (slash
+        command) ile &ccedil;a&#287;r&#305;lan bir men&uuml; &uuml;zerinden
+        y&ouml;netilir. Temel bloklar hiyerar&#351;iyi kurarken, medya ve
+        g&ouml;m&uuml;l&uuml; (embed) bloklar harici ekosistemlerle
+        k&ouml;pr&uuml; vazifesi g&ouml;r&uuml;r.</span
+      ><span class="c3">1</span>
+    </p>
+    <p class="c9 c12"><span class="c3"></span></p>
+    <table class="c21">
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Blok Kategorisi</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Temel &#304;&#351;lev</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Teknik &Ouml;rnekler</span></p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Temel Bloklar</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0">Metinsel hiyerar&#351;i ve organizasyon</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">Heading 1-3, Bulleted List, Toggle </span
+            ><span class="c3">4</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Medya Bloklar&#305;</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >G&ouml;rsel ve i&#351;itsel veri entegrasyonu</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">Image, Video, Audio, File </span
+            ><span class="c3">4</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c14">G&ouml;m&uuml;l&uuml; &Ouml;&#287;eler</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >Harici uygulama verilerinin canl&#305; aktar&#305;m&#305;</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">Google Drive, Figma, GitHub Gist </span
+            ><span class="c3">4</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">&#304;leri D&uuml;zey</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >Hesaplamal&#305; ve yap&#305;sal i&ccedil;erik</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0"
+              >Synced Block, Math Equation, Table of Contents </span
+            ><span class="c3">1</span>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <p class="c8">
+      <span class="c0"
+        >Bloklar&#305;n d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebilirli&#287;i (Turn
+        into), veri b&uuml;t&uuml;nl&uuml;&#287;&uuml;n&uuml; bozmadan
+        i&ccedil;eri&#287;in format&#305;n&#305; de&#287;i&#351;tirme
+        esnekli&#287;i sunar. &Ouml;rne&#287;in, bir yap&#305;lacaklar listesi
+        &ouml;&#287;esi (To-do list), tek bir i&#351;lemle bir sayfa
+        blo&#287;una (Page block) d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebilir; bu
+        da bilginin mikrodan makroya evrilmesini sa&#287;lar.</span
+      ><span class="c3">1</span>
+    </p>
+    <h2 class="c5">
+      <span class="c19"
+        >Veritaban&#305; Kuram&#305;: Yap&#305;land&#305;r&#305;lm&#305;&#351;
+        Verinin Sayfa Mimarisiyle Birle&#351;imi</span
+      >
+    </h2>
+    <p class="c8">
+      <span class="c0"
+        >Notion veritabanlar&#305;, geleneksel tablo yap&#305;lar&#305;ndan
+        (spreadsheet) farkl&#305; olarak, her bir kayd&#305;n (item) tam
+        donan&#305;ml&#305; bir sayfa oldu&#287;u bir yap&#305; sunar.</span
+      ><span class="c6">5</span
+      ><span class="c0"
+        >&nbsp;Bu durum, yap&#305;land&#305;r&#305;lm&#305;&#351; verilerin
+        (structured data) i&ccedil;inde
+        yap&#305;land&#305;r&#305;lmam&#305;&#351; (unstructured)
+        i&ccedil;eriklerin saklanmas&#305;na olanak tan&#305;r. Her
+        veritaban&#305; &ouml;&#287;esi, meta verilerini
+        &quot;&Ouml;zellikler&quot; (Properties)
+        arac&#305;l&#305;&#287;&#305;yla ta&#351;&#305;r.</span
+      ><span class="c3">6</span>
+    </p>
+    <h3 class="c5">
+      <span class="c4"
+        >&#304;li&#351;kisel Veri Y&ouml;netimi ve
+        G&ouml;r&uuml;n&uuml;mler</span
+      >
+    </h3>
+    <p class="c8">
+      <span class="c0"
+        >Veritabanlar&#305;n&#305;n g&uuml;c&uuml;, veriyi saklama
+        &#351;eklinden ziyade g&ouml;rselle&#351;tirme ve filtreleme
+        kapasitesinden gelir. Ayn&#305; veri k&uuml;mesi, projenin o anki
+        ihtiyac&#305;na g&ouml;re bir Kanban panosu, bir takvim veya bir zaman
+        &ccedil;izelgesi (Gantt chart) olarak
+        g&ouml;r&uuml;nt&uuml;lenebilir.</span
+      ><span class="c3">8</span>
+    </p>
+    <p class="c9 c12"><span class="c3"></span></p>
+    <table class="c21">
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c14">G&ouml;r&uuml;n&uuml;m Tipi</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c14">Temel Kullan&#305;m Senaryosu</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c14">Ay&#305;rt Edici &Ouml;zellik</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Table View</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0">Envanter y&ouml;netimi, veri giri&#351;i</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0"
+              >S&uuml;tun tabanl&#305; d&ouml;k&uuml;m ve toplu d&uuml;zenleme </span
+            ><span class="c3">8</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Board View</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >S&uuml;re&ccedil; takibi, stat&uuml; y&ouml;netimi</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">Kanban stili s&uuml;r&uuml;kle-b&#305;rak </span
+            ><span class="c3">8</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Calendar View</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0">Editoryal takvim, etkinlik planlama</span>
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">Tarih bazl&#305; g&ouml;rselle&#351;tirme </span
+            ><span class="c3">8</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Timeline View</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >Proje y&ouml;netimi, &ccedil;ak&#305;&#351;ma analizi</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0"
+              >Zaman &ccedil;izelgesi ve ba&#287;&#305;ml&#305;l&#305;k
+              y&ouml;netimi </span
+            ><span class="c3">8</span>
+          </p>
+        </td>
+      </tr>
+      <tr class="c15">
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10"><span class="c1 c14">Gallery View</span></p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c10">
+            <span class="c1 c0"
+              >Portf&ouml;y, moodboard, ki&#351;i listesi</span
+            >
+          </p>
+        </td>
+        <td class="c13" colspan="1" rowspan="1">
+          <p class="c9">
+            <span class="c0">G&ouml;rsel &ouml;nizleme kartlar&#305; </span
+            ><span class="c3">8</span>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <p class="c8">
+      <span class="c0"
+        >Veritaban&#305; &ouml;zellikleri aras&#305;nda yer alan
+        &quot;Relation&quot; ve &quot;Rollup&quot; ara&ccedil;lar&#305;,
+        Notion&#39;&#305; ger&ccedil;ek bir ili&#351;kisel veritaban&#305;
+        y&ouml;netim sistemine (RDBMS) d&ouml;n&uuml;&#351;t&uuml;r&uuml;r. Bir
+        &quot;M&uuml;&#351;teriler&quot; veritaban&#305; ile
+        &quot;Projeler&quot; veritaban&#305; birbirine ba&#287;lanabilir;
+        ard&#305;ndan &quot;Rollup&quot; kullan&#305;larak o m&uuml;&#351;teriye
+        ait projelerin toplam b&uuml;t&ccedil;esi otomatik olarak
+        hesaplanabilir.</span
+      ><span class="c3">7</span>
+    </p>
+    <h2 class="c5">
+      <span class="c19"
+        >Computational Mant&#305;k ve Otomasyon: Formula 2.0 Devrimi</span
+      >
+    </h2>
+    <p class="c8">
+      <span class="c0"
+        >Notion&#39;&#305;n 2023 y&#305;l&#305;nda duyurdu&#287;u Formula 2.0
+        altyap&#305;s&#305;, platformun hesaplama kapasitesini basit aritmetik
+        i&#351;lemlerden fonksiyonel programlama seviyesine
+        ta&#351;&#305;m&#305;&#351;t&#305;r.</span
+      ><span class="c6">11</span
+      ><span class="c0"
+        >&nbsp;Yeni form&uuml;l dili, listeleri (arrays) desteklemekte, yerel
+        de&#287;i&#351;ken tan&#305;mlamaya (let) izin vermekte ve ili&#351;kili
+        veritabanlar&#305;ndaki verilere Rollup kurmaya gerek kalmadan
+        do&#287;rudan eri&#351;im sa&#287;lamaktad&#305;r.</span
+      ><span class="c3">12</span>
+    </p>
+    <h3 class="c5">
+      <span class="c4"
+        >Otomasyon Katman&#305; ve D&uuml;&#287;me (Button)
+        Mekanizmalar&#305;</span
+      >
+    </h3>
+    <p class="c8">
+      <span class="c0"
+        >Verimlili&#287;i art&#305;ran en kritik bile&#351;enlerden biri olan
+        &quot;Database Automations&quot; ve &quot;Buttons&quot;, tekrarlayan
+        i&#351;leri ortadan kald&#305;rmay&#305; hedefler. Bir veritaban&#305;
+        otomasyonu, belirli bir &ouml;zellik de&#287;i&#351;ti&#287;inde
+        (&ouml;rne&#287;in stat&uuml;n&uuml;n &quot;Bitti&quot;
+        yap&#305;lmas&#305;) otomatik olarak Slack bildirimi g&ouml;nderebilir
+        veya ba&#351;ka bir veritaban&#305;na sayfa ekleyebilir.</span
+      ><span class="c6">14</span
+      ><span class="c0"
+        >&nbsp;Buton bloklar&#305; ise kullan&#305;c&#305; etkile&#351;imiyle
+        tetiklenen, onay kutular&#305; i&ccedil;eren ve birden fazla
+        ad&#305;m&#305; tek t&#305;kla ger&ccedil;ekle&#351;tiren otonom i&#351;
+        ak&#305;&#351;lar&#305; kurgulanmas&#305;na izin verir.</span
+      ><span class="c3">16</span>
+    </p>
+    <h2 class="c5">
+      <span class="c19"
+        >Bili&#351;sel Art&#305;r&#305;m: Notion AI ve Yapay Zeka
+        Ajanlar&#305;</span
+      >
+    </h2>
+    <p class="c8">
+      <span class="c0"
+        >Notion AI, bir metin yazma yard&#305;mc&#305;s&#305;n&#305;n
+        &ouml;tesine ge&ccedil;erek, &ccedil;al&#305;&#351;ma alan&#305;n&#305;n
+        tamam&#305;na hakim olan otonom bir &quot;Agent&quot; (Ajan)
+        yap&#305;s&#305;na b&uuml;r&uuml;nm&uuml;&#351;t&uuml;r.</span
+      ><span class="c6">18</span
+      ><span class="c0"
+        >&nbsp;AI Agent, sadece sayfadaki i&ccedil;eri&#287;i &ouml;zetlemekle
+        kalmaz; ayn&#305; zamanda Google Drive, Slack ve di&#287;er
+        ba&#287;l&#305; uygulamalardaki verileri arayabilir, sentezleyebilir ve
+        kullan&#305;c&#305;ya aksiyon maddeleri sunabilir.</span
+      ><span class="c3">18</span>
+    </p>
+    <p class="c8">
+      <span class="c0"
+        >Yapay zekan&#305;n veritaban&#305; seviyesindeki en b&uuml;y&uuml;k
+        etkisi &quot;AI Autofill&quot; &ouml;zelli&#287;idir. Bu &ouml;zellik,
+        y&uuml;zlerce sat&#305;rl&#305;k veriyi d&ouml;k&uuml;man
+        i&ccedil;eriklerine g&ouml;re otomatik olarak &ouml;zetleyebilir, diller
+        aras&#305; &ccedil;eviri yapabilir veya metinden belirli anahtar
+        kelimeleri &ccedil;ekerek &ouml;zellikleri doldurabilir.</span
+      ><span class="c3">19</span>
+    </p>
+    <hr />
+    <h2 class="c10">
+      <span class="c19">1000 Fonksiyonel Senaryo Katalo&#287;u</span>
+    </h2>
+    <p class="c8">
+      <span class="c1 c0"
+        >A&#351;a&#287;&#305;daki liste, Notion&#39;&#305;n t&uuml;m teknik
+        yeteneklerini kapsayan, basitten karma&#351;&#305;&#287;a ve
+        mikro-i&#351;lemlerden makro-sistemlere do&#287;ru ilerleyen 1000 adet
+        fonksiyonel senaryoyu i&ccedil;ermektedir.</span
+      >
+    </p>
+    <h3 class="c5">
+      <span class="c4">1. Temel Sayfa ve Blok Operasyonlar&#305; (1-100)</span>
+    </h3>
+    <ul class="c7 lst-kix_list_1-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Yeni bir bo&#351; sayfa olu&#351;turulabiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Sayfaya a&ccedil;&#305;klay&#305;c&#305; bir ba&#351;l&#305;k
+          eklenebiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Sayfaya emoji k&uuml;t&uuml;phanesinden bir ikon
+          atanabiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Sayfaya bilgisayardan &ouml;zel bir ikon
+          y&uuml;klenebiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Sayfaya Unsplash entegrasyonu ile kapak foto&#287;raf&#305;
+          eklenebiliyor. (Impl: src/components/modals/cover-image-modal.tsx)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[x] Kapak foto&#287;raf&#305;n&#305;n konumu (reposition)
+          ayarlanabiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Sayfaya metin blo&#287;u (Text) eklenerek yaz&#305;
+          yaz&#305;labiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] /h1 komutuyla en b&uuml;y&uuml;k ba&#351;l&#305;k
+          eklenebiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] /h2 komutuyla orta boy ba&#351;l&#305;k eklenebiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] /h3 komutuyla en k&uuml;&ccedil;&uuml;k ba&#351;l&#305;k
+          eklenebiliyor. (Test: src/app/__tests__/e2e/documents.spec.ts)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Yaz&#305;lan metinler se&ccedil;ilerek kal&#305;n (bold)
+          yap&#305;labiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Yaz&#305;lan metinler italik (italic) yap&#305;labiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Metinlerin alt&#305;na &ccedil;izgi (underline)
+          eklenebiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Hatal&#305; bilgilerin &uuml;st&uuml; &ccedil;izilebiliyor
+          (strikethrough). (Test: src/app/__tests__/e2e/text-formatting.spec.ts)</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Metin blo&#287;u rengi (text color)
+          de&#287;i&#351;tirilebiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Metin blo&#287;u arka plan rengi (background color)
+          de&#287;i&#351;tirilebiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] Sayfaya /todo ile onay kutulu liste eklenebiliyor. (Test: src/app/__tests__/e2e/text-formatting.spec.ts)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Tamamlanan g&ouml;revler onay kutusuna
+          t&#305;kland&#305;&#287;&#305;nda otomatik olarak &uuml;st&uuml;
+          &ccedil;iziliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] /bullet ile madde i&#351;aretli liste
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[x] /num ile numaral&#305; liste oluolu&#351;turulabiliyor.#351;turulabiliyor. (Impl: BlockNote built-in)</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /toggle ile i&ccedil;ine i&ccedil;erik gizlenebilen
+          a&ccedil;&#305;l&#305;r listeler olu&#351;turulabiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /quote ile metin i&ccedil;ine al&#305;nt&#305; blo&#287;u
+          eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /div veya --- k&#305;sayoluyla sayfaya ay&#305;r&#305;c&#305;
+          &ccedil;izgi eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /call ile emoji i&ccedil;eren vurgu kutular&#305; (callout)
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Callout blo&#287;unun ikonu ve arka plan rengi
+          &ouml;zelle&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfa i&ccedil;inde ba&#351;ka bir sayfaya link veren blok
+          eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bloklar &#8942;&#8942; simgesinden tutularak sayfa i&ccedil;inde
+          serbest&ccedil;e ta&#351;&#305;nabiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bloklar yan yana getirilerek 2 s&uuml;tunlu yap&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bloklar yan yana getirilerek 3 s&uuml;tunlu yap&#305;
+          olu&#351;turulabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] S&uuml;tun geni&#351;likleri fare ile s&uuml;r&uuml;klenerek
+          ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa tipi &quot;Full width&quot; yap&#305;larak
+          i&ccedil;eri&#287;in t&uuml;m ekrana yay&#305;lmas&#305;
+          sa&#287;lanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa fontu &quot;Serif&quot; olarak de&#287;i&#351;tirilerek
+          editoryal bir g&ouml;r&uuml;n&uuml;m
+          kazand&#305;r&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa fontu &quot;Mono&quot; yap&#305;larak teknik/kod
+          d&ouml;k&uuml;man&#305; havas&#305; verilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa &quot;Small text&quot; moduyla daha fazla
+          i&ccedil;eri&#287;i tek ekranda g&ouml;sterebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa &quot;Favorite&quot; (Y&#305;ld&#305;zl&#305;) listesine
+          eklenerek kenar &ccedil;ubu&#287;unda sabitlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfadaki t&uuml;m i&ccedil;erik se&ccedil;ilip tek seferde
+          silinebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Ctrl+Z ile yap&#305;lan son blok i&#351;lemi geri
+          al&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Silinen sayfalar &quot;Trash&quot; (&Ccedil;&ouml;p Kutusu)
+          i&ccedil;inden 30 g&uuml;n boyunca geri getirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa &quot;Duplicate&quot; (Kopyala) &ouml;zelli&#287;iyle
+          t&uuml;m i&ccedil;eri&#287;iyle
+          &ccedil;o&#287;alt&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bloklar &quot;Copy link to block&quot; ile do&#287;rudan bir
+          blo&#287;a y&ouml;nlendiren linklere sahip olabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Metin blo&#287;u i&ccedil;inde Tab tu&#351;u ile girinti (indent)
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Shift+Tab ile girinti geri al&#305;nabiliyor (outdent).</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /page komutuyla mevcut sayfa alt&#305;na yeni bir alt sayfa
+          (sub-page) eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Alt sayfalar s&uuml;r&uuml;klenerek ana sayfa
+          d&#305;&#351;&#305;na, sidebar&#39;a ta&#351;&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa ba&#351;l&#305;&#287;&#305;na emoji eklenerek
+          sidebar&#39;da g&ouml;rsel navigasyon sa&#287;lanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bloklar &quot;Turn into&quot; men&uuml;s&uuml;yle
+          &ouml;rne&#287;in bir ba&#351;l&#305;ktan a&ccedil;&#305;l&#305;r
+          listeye (toggle) d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Metin blo&#287;u i&ccedil;ine inline kod (code snippet)
+          yerle&#351;tirilebiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Metin blo&#287;u i&ccedil;ine inline denklem (TeX)
+          eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfada sa&#287; &uuml;stteki &quot;Search&quot; butonuyla sayfa
+          i&ccedil;i metin aramas&#305; yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa i&ccedil;eri&#287;i PDF olarak d&#305;&#351;a
+          aktar&#305;labiliyor (export).</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa i&ccedil;eri&#287;i Markdown veya CSV format&#305;nda
+          bilgisayara indirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfada yap&#305;lan t&uuml;m de&#287;i&#351;iklikler &quot;Page
+          History&quot; &uuml;zerinden saat bazl&#305; takip edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Page History&quot; kullan&#305;larak sayfan&#305;n 2 saat
+          &ouml;nceki haline geri d&ouml;n&uuml;lebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0">[ ] Sayfaya yorum (comment) eklenebiliyor.</span
+        ><span class="c3">2</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Yorumlarda ba&#351;ka bir ekip &uuml;yesi @ simgesiyle
+          etiketlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Yorumlara dosya veya g&ouml;rsel eklenebiliyor.</span
+        ><span class="c3">2</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &Ccedil;&ouml;z&uuml;mlenen yorumlar (resolve) ar&#351;ivlenerek
+          sayfadan gizlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfa kilitlenerek (Lock page) kazara veri silinmesi
+          engellenebiliyor.</span
+        ><span class="c3">23</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa kilidi sadece yetkili kullan&#305;c&#305;lar
+          taraf&#305;ndan a&ccedil;&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bloklara &quot;Move to&quot; komutuyla ba&#351;ka bir
+          sayfan&#305;n alt&#305;na transfer edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /toc komutuyla otomatik &quot;&#304;&ccedil;indekiler
+          Tablosu&quot; eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &#304;&ccedil;indekiler tablosu ba&#351;l&#305;klara g&ouml;re
+          (H1, H2, H3) otomatik linkler olu&#351;turuyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /bread komutuyla navigasyon yolu (breadcrumbs)
+          eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfaya /math komutuyla blok d&uuml;zeyinde geli&#351;mi&#351;
+          matematik form&uuml;lleri eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa ba&#351;l&#305;&#287;&#305;n&#305;n hemen alt&#305;na
+          a&ccedil;&#305;klama (description) metni eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa kapa&#287;&#305; &quot;Unsplash&quot; yerine bilgisayardan
+          y&uuml;klenen hareketli bir GIF yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bloklar aras&#305;nda s&uuml;r&uuml;kle-b&#305;rak
+          yap&#305;l&#305;rken mavi &ccedil;izgi yard&#305;m&#305;yla hizalama
+          kontrol&uuml; sa&#287;lan&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Birden fazla blok ayn&#305; anda se&ccedil;ilip toplu olarak
+          renklendirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Birden fazla blok se&ccedil;ilip toplu olarak ba&#351;ka bir
+          sayfaya ta&#351;&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa linki kopyaland&#305;&#287;&#305;nda, Notion
+          d&#305;&#351;&#305;na
+          yap&#305;&#351;t&#305;r&#305;ld&#305;&#287;&#305;nda sayfa
+          ba&#351;l&#305;&#287;&#305;n&#305; otomatik getiriyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /template ile &ouml;zel &#351;ablon butonu
+          eklenebiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &#350;ablon butonu t&#305;kland&#305;&#287;&#305;nda &ouml;nceden
+          tan&#305;mlanm&#305;&#351; bir kontrol listesi
+          olu&#351;turabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &#350;ablon butonu i&ccedil;ine karma&#351;&#305;k
+          veritaban&#305; g&ouml;r&uuml;n&uuml;mleri
+          yerle&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa &quot;Share to web&quot; &ouml;zelli&#287;iyle bir web
+          sitesi gibi yay&#305;na al&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Yay&#305;na al&#305;nan sayfada arama motoru indekslemesi (SEO)
+          a&ccedil;&#305;l&#305;p kapat&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Web sayfas&#305;n&#305; g&ouml;renlerin &quot;Duplicate as
+          template&quot; yapmas&#305;na izin verilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Web sayfas&#305;nda yorum yapma yetkisi ziyaret&ccedil;ilere
+          a&ccedil;&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya &quot;Table&quot; blo&#287;u (basit tablo) eklenerek
+          veriler d&uuml;zenlenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Basit tabloda sat&#305;r ve s&uuml;tun ekleme butonlar&#305;
+          kenarlarda beliriyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Basit tablonun ilk sat&#305;r&#305; &quot;Header row&quot;
+          (ba&#351;l&#305;k sat&#305;r&#305;) olarak renklendirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Basit tablonun ilk s&uuml;tunu &quot;Header column&quot; olarak
+          vurgulanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Basit tablo tek t&#305;kla geli&#351;mi&#351; bir
+          veritaban&#305;na d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada [[ yaz&#305;larak ba&#351;ka bir sayfaya h&#305;zl&#305;
+          link (backlink) verilebiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada + yaz&#305;larak yeni bir alt sayfa an&#305;nda
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada @today yaz&#305;larak dinamik tarih blo&#287;u
+          eklenebiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Tarih blo&#287;una t&#305;klanarak bir hat&#305;rlat&#305;c&#305;
+          (reminder) kurulabiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada --- yazarak ay&#305;r&#305;c&#305; &ccedil;izgi
+          &ccedil;ekilebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Yaz&#305; yazarken : ve emoji ad&#305; yaz&#305;larak
+          (&ouml;rne&#287;in :apple) emoji eklenebiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Cmd/Ctrl+P k&#305;sayoluyla t&uuml;m &ccedil;al&#305;&#351;ma
+          alan&#305;nda h&#305;zl&#305; arama yap&#305;labiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfada bir metin se&ccedil;ildi&#287;inde beliren men&uuml;den
+          &quot;Comment&quot; yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Metin se&ccedil;ildi&#287;inde beliren men&uuml;den metne link
+          (hyperlink) eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada &quot;Backlinks&quot; b&ouml;l&uuml;m&uuml;
+          a&ccedil;&#305;larak bu sayfaya referans veren di&#287;er sayfalar
+          g&ouml;r&uuml;lebiliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Backlink&#39;ler &quot;Expanded&quot; veya &quot;Show in
+          popover&quot; &#351;eklinde g&ouml;r&uuml;nt&uuml;lenebiliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /synced yaz&#305;larak senkronize blok
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">2</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Senkronize blok i&ccedil;indeki i&ccedil;erik
+          de&#287;i&#351;tirildi&#287;inde, bu blo&#287;un kopyas&#305;n&#305;n
+          oldu&#287;u t&uuml;m sayfalar g&uuml;ncelleniyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Senkronize blok &quot;Unsync all&quot; yap&#305;larak
+          ba&#287;&#305;ms&#305;z bloklara
+          d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bloklar&#305;n solundaki &#8942;&#8942; simgesine sa&#287;
+          t&#305;kland&#305;&#287;&#305;nda blok bazl&#305; aksiyonlar
+          men&uuml;s&uuml; a&ccedil;&#305;l&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa simgesi (ikon) rastgele bir emoji se&ccedil;mek i&ccedil;in
+          &quot;Random&quot; butonuyla belirlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada kod blo&#287;u olu&#351;turulup (/code) s&ouml;zdizimi
+          vurgulama (syntax highlighting) yap&#305;labiliyor.</span
+        ><span class="c3">24</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kod blo&#287;una a&ccedil;&#305;klama (caption)
+          eklenebiliyor.</span
+        ><span class="c3">24</span>
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >2. Medya, G&ouml;m&uuml;l&uuml; &Ouml;&#287;eler ve &#304;leri
+        D&uuml;zey Entegrasyonlar (101-200)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_2-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] Bilgisayardan s&uuml;r&uuml;kle-b&#305;rak y&ouml;ntemiyle
+          g&ouml;rsel y&uuml;klenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /image komutuyla g&ouml;rsel linki (URL) verilerek g&ouml;rsel
+          embed edilebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Y&uuml;klenen g&ouml;rsellerin boyutu k&ouml;&#351;elerinden
+          tutularak ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] G&ouml;rseller sayfa i&ccedil;inde ortalanabiliyor, sola veya
+          sa&#287;a yaslanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /video komutuyla YouTube videolar&#305; sayfa i&ccedil;inde
+          oynat&#305;labilecek &#351;ekilde eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /audio komutuyla Spotify veya Soundcloud &ccedil;alma listeleri
+          eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Ses dosyalar&#305; do&#287;rudan Notion sunucular&#305;na
+          y&uuml;klenebiliyor.</span
+        ><span class="c3">3</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /file komutuyla herhangi bir formatta dosya (ZIP, EXE, vb.)
+          depolanabiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Y&uuml;klenen dosyalar t&#305;kland&#305;&#287;&#305;nda
+          do&#287;rudan bilgisayara indiriliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /pdf komutuyla PDF d&ouml;k&uuml;manlar&#305; sayfa i&ccedil;inde
+          kayd&#305;r&#305;labilir (scrollable) &#351;ekilde
+          g&ouml;r&uuml;nt&uuml;leniyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /google komutuyla Google Drive d&ouml;k&uuml;manlar&#305;,
+          tablolar&#305; ve slaytlar&#305; eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Google Drive dosyas&#305;n&#305;n g&uuml;ncel hali Notion
+          i&ccedil;inde e&#351;zamanl&#305; g&ouml;r&uuml;n&uuml;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /figma komutuyla tasar&#305;m dosyalar&#305; canl&#305;
+          &ouml;nizleme (live preview) olarak eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /github komutuyla GitHub Gist kodlar&#305; d&ouml;k&uuml;mante
+          edilebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /maps komutuyla interaktif Google Maps haritalar&#305; sayfaya
+          yerle&#351;tirilebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /tweet komutuyla X (Twitter) payla&#351;&#305;mlar&#305; t&uuml;m
+          etkile&#351;imiyle embed ediliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /framer veya /invision ile prototip tasar&#305;mlar&#305; sayfada
+          sergileniyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /loom komutuyla Loom video kay&#305;tlar&#305; do&#287;rudan
+          sayfa i&ccedil;inde izlenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /typeform ile anketler sayfaya g&ouml;m&uuml;l&uuml;p Notion
+          d&#305;&#351;&#305;na &ccedil;&#305;kmadan doldurulabiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /codepen ile canl&#305; kod demolar&#305; d&ouml;k&uuml;mante
+          edilebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /whimsical ile ak&#305;&#351; diyagramlar&#305; ve zihin
+          haritalar&#305; eklenebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] /miro ile Miro beyaz tahta &ccedil;al&#305;&#351;malar&#305;
+          embed edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] /slack ile Slack kanallar&#305; veya mesajlar&#305; referans
+          olarak eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /web komutuyla bir web sitesinin g&ouml;rsel &ouml;nizlemesi (web
+          bookmark) olu&#351;turulabiliyor.</span
+        ><span class="c3">2</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Web bookmark&#39;lar ba&#351;l&#305;k, a&ccedil;&#305;klama ve
+          g&ouml;rseli otomatik &ccedil;ekiyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kod blo&#287;unda Mermaid dili se&ccedil;ilerek ak&#305;&#351;
+          &#351;emalar&#305; kodla &ccedil;izilebiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid ile TD (Top-Down) y&ouml;n&uuml;nde ak&#305;&#351;
+          &#351;emas&#305; olu&#351;turulabiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid ile LR (Left-Right) y&ouml;n&uuml;nde ak&#305;&#351;
+          &#351;emas&#305; olu&#351;turulabiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid &#351;emalar&#305;nda d&uuml;&#287;&uuml;mler (nodes)
+          kare, yuvarlak veya karar (diamond) &#351;eklinde
+          yap&#305;labiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid ile Gantt diyagram&#305; olu&#351;turularak proje takvimi
+          g&ouml;rselle&#351;tirilebiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid ile &quot;User Journey&quot; diyagramlar&#305;
+          &ccedil;izilebiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mermaid ile pasta grafik (pie chart)
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">26</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kod blo&#287;unda Mermaid g&ouml;r&uuml;n&uuml;m&uuml;
+          &quot;Code&quot;, &quot;Preview&quot; veya &quot;Split&quot; olarak
+          ayarlanabiliyor.</span
+        ><span class="c3">25</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Mermaid &#351;emalar&#305;nda d&uuml;&#287;&uuml;mlere
+          t&#305;klanabilir linkler atanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] /code blo&#287;unda kod sat&#305;r numaralar&#305;
+          g&ouml;sterilip gizlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kod blo&#287;una &quot;Copy&quot; butonu eklenerek tek t&#305;kla
+          kopyalama sa&#287;lan&#305;yor.</span
+        ><span class="c3">24</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kod blo&#287;unda kodlar otomatik olarak uygun renklere (syntax
+          highlight) b&uuml;r&uuml;n&uuml;yor.</span
+        ><span class="c3">24</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /video ile Vimeo linki eklenerek video
+          g&ouml;m&uuml;lebiliyor.</span
+        ><span class="c3">4</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /embed ile herhangi bir iframe destekleyen URL
+          eklenebiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Embed edilen &ouml;&#287;eler sayfa s&#305;n&#305;rlar&#305;
+          i&ccedil;inde yeniden boyutland&#305;r&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Google Calendar takvimleri /embed ile sayfaya
+          yerle&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Apple Maps haritalar&#305; embed edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] GitHub repository kartlar&#305; link &uuml;zerinden otomatik
+          embed ediliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bir d&ouml;k&uuml;man i&ccedil;ine ba&#351;ka bir Notion
+          sayfas&#305;n&#305;n &quot;Link mention&quot; hali
+          eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfaya /comment komutuyla o b&ouml;lgeye &ouml;zel
+          tart&#305;&#351;ma alan&#305; a&ccedil;&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] /math blo&#287;unda LaTeX s&ouml;zdizimi kullan&#305;larak
+          kompleks form&uuml;ller yaz&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Matematik form&uuml;lleri metin i&ccedil;inde $ sembolleri
+          aras&#305;na yaz&#305;larak inline kullan&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] G&ouml;m&uuml;l&uuml; &ouml;&#287;elerin (embed)
+          kayna&#287;&#305; de&#287;i&#351;tirilmek istendi&#287;inde
+          &quot;Replace&quot; butonu kullan&#305;l&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfaya /template butonu eklenip i&ccedil;ine &quot;Synced
+          Block&quot; konularak global &#351;ablonlar
+          olu&#351;turulabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] PDF embed&#39;lerinde sayfa numaras&#305;na g&ouml;re
+          do&#287;rudan y&ouml;nlendirme yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Figma embed&#39;lerinde belirli bir &quot;Frame&quot;
+          (&ccedil;er&ccedil;eve) &ouml;nizleme olarak
+          se&ccedil;ilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Google Sheets dosyalar&#305; &quot;Live&quot; olarak embed edilip
+          veriler g&uuml;ncellendik&ccedil;e Notion&#39;da
+          de&#287;i&#351;iyor.</span
+        >
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >3. Veritaban&#305; Temelleri, &Ouml;zellikler ve Mant&#305;ksal
+        Yap&#305; (201-350)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_3-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] /table inline komutuyla sayfa i&ccedil;inde bir veritaban&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] /table full komutuyla tam sayfa veritaban&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305;na isim verilebiliyor ve a&ccedil;&#305;klama
+          eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;n&#305;n ilk s&uuml;tunu &quot;Name&quot;
+          (Ba&#351;l&#305;k) &ouml;zelli&#287;idir ve silinemez.</span
+        ><span class="c3">6</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Name&quot; s&uuml;tununa girilen her metin asl&#305;nda bir
+          sayfad&#305;r ve t&#305;kland&#305;&#287;&#305;nda
+          a&ccedil;&#305;l&#305;r.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Add property&quot; butonuyla yeni veri s&uuml;tunlar&#305;
+          eklenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Text&quot; &ouml;zelli&#287;i eklenerek k&#305;sa notlar
+          saklanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Number&quot; &ouml;zelli&#287;i eklenerek say&#305;sal
+          veriler tutulabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Say&#305; &ouml;zelli&#287;i format&#305; &quot;Percent&quot;
+          (y&uuml;zde) olarak ayarlanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Say&#305; &ouml;zelli&#287;i &quot;Progress bar&quot; (ilerleme
+          &ccedil;ubu&#287;u) olarak g&ouml;rselle&#351;tirilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &#304;lerleme &ccedil;ubu&#287;unun rengi (mavi, ye&#351;il,
+          turuncu vb.) se&ccedil;ilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Say&#305; &ouml;zelli&#287;i &quot;Progress ring&quot; (ilerleme
+          halkas&#305;) olarak g&ouml;sterilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Say&#305; &ouml;zelli&#287;i &quot;Turkish Lira&quot; (&#8378;)
+          veya &quot;US Dollar&quot; ($) olarak formatlanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Select&quot; &ouml;zelli&#287;i ile bir listeden tek bir
+          se&ccedil;enek se&ccedil;ilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Multi-select&quot; &ouml;zelli&#287;i ile bir listeden
+          birden fazla etiket se&ccedil;ilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Select/Multi-select etiketlerinin isimleri ve renkleri
+          de&#287;i&#351;tirilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Etiketler s&uuml;r&uuml;klenerek listedeki s&#305;ralar&#305;
+          belirlenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Status&quot; &ouml;zelli&#287;i ile &quot;To-do&quot;,
+          &quot;In Progress&quot; ve &quot;Complete&quot; kategorileri
+          y&ouml;netilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Status &ouml;zelli&#287;ine &ouml;zel yeni alt durumlar
+          (&ouml;rne&#287;in &quot;On Hold&quot;) eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Date&quot; &ouml;zelli&#287;i ile tarih ve zaman
+          se&ccedil;ilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Tarih &ouml;zelli&#287;inde &quot;End date&quot;
+          a&ccedil;&#305;larak tarih aral&#305;&#287;&#305; girilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Tarih &ouml;zelli&#287;inde &quot;Include time&quot; ile saat
+          bilgisi eklenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Tarih format&#305; &quot;Day/Month/Year&quot; veya
+          &quot;Month/Day/Year&quot; olarak ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Person&quot; &ouml;zelli&#287;i ile
+          &ccedil;al&#305;&#351;ma alan&#305;ndaki &uuml;yeler sat&#305;rlara
+          atanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Person &ouml;zelli&#287;inde &quot;Limit 1 person&quot;
+          se&ccedil;ene&#287;iyle sadece tek ki&#351;i atanmas&#305;
+          zorlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Files &amp; Media&quot; &ouml;zelli&#287;i ile sat&#305;ra
+          dosya veya g&ouml;rsel y&uuml;klenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Dosya &ouml;zelli&#287;ine d&#305;&#351; ba&#287;lant&#305; (URL)
+          olarak medya eklenebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Checkbox&quot; &ouml;zelli&#287;i ile onay kutusu
+          (True/False) mant&#305;&#287;&#305; kurulabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;URL&quot; &ouml;zelli&#287;i ile t&#305;klanabilir web
+          ba&#287;lant&#305;lar&#305; saklanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Email&quot; &ouml;zelli&#287;i ile e-posta adresleri
+          saklanabiliyor ve t&#305;kland&#305;&#287;&#305;nda mail
+          uygulamas&#305; a&ccedil;&#305;l&#305;yor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Phone&quot; &ouml;zelli&#287;i ile telefon numaralar&#305;
+          saklanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Formula&quot; &ouml;zelli&#287;i ile di&#287;er
+          s&uuml;tunlardaki veriler kullan&#305;larak hesaplama
+          yap&#305;labiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Relation&quot; &ouml;zelli&#287;i ile ba&#351;ka bir
+          veritaban&#305;ndaki sayfalar birbirine ba&#287;lanabiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Relation &ouml;zelli&#287;inde &quot;Separate properties&quot;
+          a&ccedil;&#305;larak her iki veritaban&#305;nda da ba&#287;lant&#305;
+          g&ouml;r&uuml;n&uuml;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Rollup&quot; &ouml;zelli&#287;i ile ili&#351;kili
+          veritaban&#305;ndaki bir s&uuml;tunun verisi buraya
+          &ccedil;ekilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Rollup &uuml;zerinden toplam (sum), ortalama (average) veya
+          benzersiz de&#287;er say&#305;s&#305; al&#305;nabiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Created Time&quot; &ouml;zelli&#287;i ile sat&#305;r&#305;n
+          olu&#351;turuldu&#287;u an otomatik kaydediliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Created By&quot; &ouml;zelli&#287;i ile sat&#305;r&#305;
+          kimin olu&#351;turdu&#287;u otomatik kaydediliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Last Edited Time&quot; &ouml;zelli&#287;i ile son
+          de&#287;i&#351;iklik zaman&#305; otomatik tutuluyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Last Edited By&quot; &ouml;zelli&#287;i ile son
+          de&#287;i&#351;ikli&#287;i yapan ki&#351;i kaydediliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;ID&quot; &ouml;zelli&#287;i ile her sat&#305;ra benzersiz
+          bir s&#305;ra numaras&#305; (&Ouml;rn: TAS-001) verilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; i&ccedil;inde &quot;Filter&quot; butonuyla sadece
+          belirli kriterlere uyan sat&#305;rlar g&ouml;steriliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Filtrelerde &quot;Where Status is In Progress&quot; gibi temel
+          mant&#305;klar kurulabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Advanced Filter&quot; ile i&ccedil; i&ccedil;e
+          ge&ccedil;mi&#351; (And/Or) kompleks filtre gruplar&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;nda &quot;Sort&quot; butonuyla veriler tarihe veya
+          isme g&ouml;re s&#305;ralanabiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Birden fazla s&#305;ralama kural&#305; (&ouml;rne&#287;in
+          &ouml;nce Tarih, sonra &#304;sim) eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;nda &quot;Group&quot; &ouml;zelli&#287;i ile
+          veriler belirli bir &ouml;zelli&#287;e g&ouml;re b&ouml;l&uuml;mlere
+          ayr&#305;labiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Grupland&#305;r&#305;lm&#305;&#351; verilerde her grubun
+          yan&#305;ndaki say&#305;, o gruptaki &ouml;&#287;e miktar&#305;n&#305;
+          g&ouml;steriyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Properties&quot; men&uuml;s&uuml;nden hangi
+          s&uuml;tunlar&#305;n g&ouml;r&uuml;n&uuml;p hangilerinin
+          gizlenece&#287;i se&ccedil;ilebiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; s&uuml;tunlar&#305; s&uuml;r&uuml;klenerek
+          yerleri de&#287;i&#351;tirilebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Database Template&quot; (Veritaban&#305; &#350;ablonu)
+          olu&#351;turularak her yeni sat&#305;r&#305;n i&ccedil;eri&#287;i
+          &ouml;nceden haz&#305;rlanabiliyor.</span
+        ><span class="c3">27</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &#350;ablonlar &quot;Default&quot; (Varsay&#305;lan) olarak
+          ayarlanarak her yeni kay&#305;tta otomatik uygulan&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; &quot;Lock database&quot; ile sadece veri
+          giri&#351;ine izin verecek, yap&#305;ya dokunulmayacak hale
+          geliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; i&ccedil;eri&#287;i toplu olarak se&ccedil;ilip
+          ba&#351;ka bir veritaban&#305;na ta&#351;&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Tablo g&ouml;r&uuml;n&uuml;m&uuml;nde sat&#305;rlar&#305;n
+          solundaki &#8942;&#8942; simgesine t&#305;klanarak
+          &quot;Duplicate&quot; yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Tablonun en alt&#305;ndaki &quot;Calculate&quot;
+          sat&#305;r&#305;nda say&#305;sal s&uuml;tunlar&#305;n toplam&#305;
+          al&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; g&ouml;r&uuml;n&uuml;m&uuml;
+          &quot;Duplicate&quot; edilerek ayn&#305; veri &uuml;zerinde
+          farkl&#305; bir filtreleme yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; &quot;Rename&quot; edilerek ad&#305;
+          de&#287;i&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; ikonu de&#287;i&#351;tirilerek g&ouml;rsel olarak
+          ay&#305;rt edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; &quot;Copy link&quot; ile d&ouml;k&uuml;man
+          i&ccedil;ine link olarak yap&#305;&#351;t&#305;r&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Linked View of Database&quot; olu&#351;turularak orijinal
+          veritaban&#305; ba&#351;ka bir sayfada canl&#305; olarak
+          g&ouml;steriliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Linked View &uuml;zerinde yap&#305;lan de&#287;i&#351;iklikler
+          orijinal veritaban&#305;n&#305; g&uuml;ncelliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Linked View&#39;da orijinal veritaban&#305;ndan
+          ba&#287;&#305;ms&#305;z filtre ve s&#305;ralama ayarlar&#305;
+          yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Database Description&quot; alan&#305; kullan&#305;larak
+          ekibe veritaban&#305;n&#305;n kullan&#305;m amac&#305;
+          a&ccedil;&#305;klanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &Ouml;zellikler (Properties) men&uuml;s&uuml;nden bir
+          &ouml;zelli&#287;in tipi (&ouml;rne&#287;in Text&#39;ten Select&#39;e)
+          de&#287;i&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; sat&#305;rlar&#305; &quot;Peek View&quot;,
+          &quot;Center Peek&quot; veya &quot;Full Page&quot; modunda
+          a&ccedil;&#305;labiliyor.</span
+        ><span class="c3">26</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sat&#305;r sayfalar&#305; i&ccedil;inde ba&#287;&#305;ms&#305;z
+          bloklar (metin, g&ouml;rsel vb.) olu&#351;turulabiliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sat&#305;r sayfalar&#305; i&ccedil;ine ba&#351;ka bir
+          &quot;Inline Database&quot; eklenebiliyor.</span
+        ><span class="c3">5</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0 c1"
+          >[ ] Veritaban&#305; &ouml;&#287;esi olan sayfan&#305;n
+          kapa&#287;&#305; (cover) ve ikonu ba&#287;&#305;ms&#305;z olarak
+          ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Delete Property&quot; ile bir s&uuml;tun t&uuml;m
+          verileriyle birlikte silinebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Silinen s&uuml;tunlar 30 g&uuml;n i&ccedil;inde geri
+          getirilebiliyor (Undo veya Trash
+          arac&#305;l&#305;&#287;&#305;yla).</span
+        >
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >4. Geli&#351;mi&#351; Veritaban&#305; G&ouml;r&uuml;n&uuml;mleri ve
+        G&ouml;rselle&#351;tirme (351-500)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_4-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;na &quot;Board&quot; (Pano)
+          g&ouml;r&uuml;n&uuml;m&uuml; eklenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Board g&ouml;r&uuml;n&uuml;m&uuml;nde kartlar &quot;Status&quot;
+          veya &quot;Select&quot; &ouml;zelliklerine g&ouml;re s&uuml;tunlara
+          ayr&#305;l&#305;yor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Kartlar s&uuml;r&uuml;kle-b&#305;rak ile bir s&uuml;tundan
+          di&#287;erine ta&#351;&#305;narak stat&uuml;s&uuml;
+          g&uuml;ncellenebiliyor.</span
+        ><span class="c3">9</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Board g&ouml;r&uuml;n&uuml;m&uuml;nde &quot;Group by&quot;
+          &ouml;zelli&#287;i &quot;Person&quot; se&ccedil;ilerek g&ouml;rev
+          da&#287;&#305;l&#305;m panosu yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Board kartlar&#305;n&#305;n &uuml;zerinde hangi &ouml;zelliklerin
+          (tarih, ki&#351;i vb.) g&ouml;r&uuml;nece&#287;i
+          se&ccedil;ilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Board kartlar&#305;nda g&ouml;rsel &ouml;nizleme (Card preview)
+          &quot;Page Cover&quot; olarak ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Board g&ouml;r&uuml;n&uuml;m&uuml;nde bo&#351; s&uuml;tunlar
+          (&ouml;rne&#287;in &quot;No Status&quot;) gizlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;na &quot;Timeline&quot; (Zaman &Ccedil;izelgesi)
+          g&ouml;r&uuml;n&uuml;m&uuml; eklenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Timeline&#39;da g&ouml;revlerin ba&#351;lang&#305;&ccedil; ve
+          biti&#351; tarihleri &ccedil;ubuklar olarak
+          g&ouml;r&uuml;n&uuml;yor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Timeline &ccedil;ubuklar&#305;n&#305;n u&ccedil;lar&#305;ndan
+          tutularak g&ouml;rev s&uuml;resi uzat&#305;labiliyor veya
+          k&#305;salt&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Timeline&#39;da &quot;Dependencies&quot;
+          (Ba&#287;&#305;ml&#305;l&#305;klar) aktif edilerek g&ouml;revler
+          aras&#305; oklar &ccedil;ekilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Timeline sol taraf&#305;ndaki tablo k&#305;sm&#305; iste&#287;e
+          g&ouml;re gizlenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Timeline &ouml;l&ccedil;e&#287;i &quot;Quarter&quot;
+          (&Ccedil;eyrek Y&#305;l) veya &quot;Year&quot; (Y&#305;l) olarak
+          de&#287;i&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;na &quot;Calendar&quot; (Takvim)
+          g&ouml;r&uuml;n&uuml;m&uuml; eklenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvimde her &ouml;&#287;e ilgili tarihin kutucu&#287;unda bir
+          kart olarak g&ouml;r&uuml;n&uuml;yor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvimde &ouml;&#287;eler bir g&uuml;nden di&#287;erine
+          s&uuml;r&uuml;klenerek tarihleri g&uuml;ncellenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvimde birden fazla tarih &ouml;zelli&#287;i varsa
+          (&ouml;rne&#287;in Yay&#305;n Tarihi ve G&uuml;ncelleme Tarihi)
+          hangisinin baz al&#305;naca&#287;&#305; se&ccedil;ilebiliyor.</span
+        ><span class="c3">28</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;na &quot;Gallery&quot; (Galeri)
+          g&ouml;r&uuml;n&uuml;m&uuml; eklenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Galeri g&ouml;r&uuml;n&uuml;m&uuml;nde &quot;Card size&quot;
+          (Small, Medium, Large) olarak ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Galeri kartlar&#305;nda g&ouml;rselin karta
+          s&#305;&#287;d&#305;r&#305;l&#305;p
+          s&#305;&#287;d&#305;r&#305;lmayaca&#287;&#305; (Fit image)
+          se&ccedil;ilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Galeri g&ouml;r&uuml;n&uuml;m&uuml; &quot;Moodboard&quot; veya
+          portf&ouml;y sergilemek i&ccedil;in kullan&#305;labiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;na &quot;List&quot; (Liste)
+          g&ouml;r&uuml;n&uuml;m&uuml; eklenebiliyor.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Liste g&ouml;r&uuml;n&uuml;m&uuml; minimalist bir
+          d&ouml;k&uuml;man ar&#351;ivi i&ccedil;in idealdir.</span
+        ><span class="c3">8</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Her g&ouml;r&uuml;n&uuml;m i&ccedil;in ba&#287;&#305;ms&#305;z
+          bir &quot;Filter&quot; ve &quot;Sort&quot; kural&#305; seti
+          tan&#305;mlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; g&ouml;r&uuml;n&uuml;mleri yan yana sekmeler
+          halinde dizilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] G&ouml;r&uuml;n&uuml;m sekmelerine &ouml;zel ikonlar
+          atanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] G&ouml;r&uuml;n&uuml;mler s&uuml;r&uuml;klenerek sekmelerdeki
+          s&#305;ralar&#305; de&#287;i&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Sub-items&quot; &ouml;zelli&#287;i ile g&ouml;revler
+          alt&#305;na alt-g&ouml;revler eklenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Alt g&ouml;revler ana g&ouml;revin alt&#305;nda
+          daralt&#305;labilir (collapse) &#351;ekilde
+          g&ouml;r&uuml;n&uuml;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Alt g&ouml;revlerin &ouml;zellikleri ana g&ouml;revden
+          ba&#287;&#305;ms&#305;z olarak y&ouml;netilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;nda &quot;Properties&quot; men&uuml;s&uuml;nden
+          &quot;Hide in view&quot; se&ccedil;ilerek s&uuml;tunlar silinmeden
+          gizlenebiliyor.</span
+        ><span class="c3">10</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; kilitlendi&#287;inde (Lock database),
+          g&ouml;r&uuml;n&uuml;mlerin filtreleri de de&#287;i&#351;tirilemez
+          hale geliyor.</span
+        ><span class="c3">23</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305;nda &quot;Search&quot; butonuyla sadece o
+          veritaban&#305; i&ccedil;indeki sat&#305;rlarda arama
+          yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Tablo g&ouml;r&uuml;n&uuml;m&uuml;nde s&uuml;tunlar &quot;Freeze
+          up to column&quot; ile dondurulabiliyor (Excel&#39;deki gibi).</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; sayfa i&ccedil;inde &quot;Database title&quot;
+          g&ouml;sterilecek veya gizlenecek &#351;ekilde ayarlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;New&quot; butonunun yan&#305;ndaki oka t&#305;klanarak
+          hangi &#351;ablonun (template) varsay&#305;lan olaca&#287;&#305;
+          se&ccedil;ilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Veritaban&#305; otomasyonu ile bir &ouml;&#287;e
+          eklendi&#287;inde o &ouml;&#287;enin ad&#305; otomatik
+          belirlenebiliyor.</span
+        >
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >5. Formula 2.0 ve &#304;leri D&uuml;zey Computational Senaryolar
+        (501-650)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_5-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] &#304;ki say&#305; s&uuml;tunu form&uuml;l ile toplanabiliyor
+          (prop(&quot;Fiyat&quot;) + prop(&quot;KDV&quot;)).</span
+        ><span class="c3">29</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir tarihten bug&uuml;n&uuml;n tarihi
+          &ccedil;&#305;kar&#305;larak &quot;Kalan G&uuml;n&quot;
+          hesaplanabiliyor.</span
+        ><span class="c3">29</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] if fonksiyonu ile &quot;B&uuml;t&ccedil;e
+          A&#351;&#305;ld&#305;&quot; veya &quot;B&uuml;t&ccedil;e Uygun&quot;
+          uyar&#305;s&#305; verilebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] ifs fonksiyonu ile &ouml;ncelik seviyelerine (P1, P2, P3)
+          g&ouml;re farkl&#305; renkli emojiler atanabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] format() fonksiyonu ile say&#305;sal veriler metin mesaj&#305;
+          i&ccedil;ine g&ouml;m&uuml;lebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] dateAdd() ile teslim tarihine 7 g&uuml;n eklenerek
+          &quot;Hat&#305;rlatma Tarihi&quot; olu&#351;turulabiliyor.</span
+        ><span class="c3">11</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] now() fonksiyonu kullan&#305;larak anl&#305;k zaman ile
+          d&ouml;k&uuml;man ya&#351;&#305; hesaplanabiliyor.</span
+        ><span class="c3">29</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] empty() ile eksik veri giri&#351;i olan sat&#305;rlar tespit
+          edilip &quot;Veri Giriniz&quot; uyar&#305;s&#305;
+          bas&#305;labiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] contains() ile proje ad&#305;nda &quot;&Ouml;nemli&quot; kelimesi
+          ge&ccedil;enler i&#351;aretlenebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] length() ile bir d&ouml;k&uuml;man&#305;n karakter
+          say&#305;s&#305; sayd&#305;r&#305;labiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] round() ile para birimi hesaplamalar&#305; en yak&#305;n
+          kuru&#351;a yuvarlanabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] let() fonksiyonu ile form&uuml;l i&ccedil;inde karma&#351;&#305;k
+          hesaplamalar de&#287;i&#351;kenlere atan&#305;p temiz kod
+          yaz&#305;labiliyor.</span
+        ><span class="c3">13</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] prop(&quot;&#304;li&#351;kili
+          G&ouml;revler&quot;).filter(current.prop(&quot;Stat&uuml;&quot;) ==
+          &quot;Bitti&quot;).length() ile tamamlanan g&ouml;rev say&#305;s&#305;
+          Rollup&#39;s&#305;z bulunabiliyor.</span
+        ><span class="c3">12</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] map() fonksiyonu ile ili&#351;kili t&uuml;m sayfalar&#305;n
+          isimleri virg&uuml;lle ayr&#305;lm&#305;&#351; tek bir metin
+          yap&#305;labiliyor.</span
+        ><span class="c3">12</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] style() fonksiyonu ile form&uuml;l
+          &ccedil;&#305;kt&#305;s&#305;ndaki metnin rengi k&#305;rm&#305;z&#305;
+          veya kal&#305;n yap&#305;labiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Form&uuml;l ile &quot;Geciken G&uuml;n Say&#305;s&#305;&quot;
+          negatif &ccedil;&#305;karsa &quot;Gecikme Yok&quot;
+          yazd&#305;r&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] substring() ile bir ID numaras&#305;n&#305;n sadece ilk 4 hanesi
+          &ccedil;ekilebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] upper() veya lower() ile t&uuml;m metin s&uuml;tunu standart hale
+          getirilebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] test() fonksiyonu ile e-posta adreslerinin format&#305;n&#305;n
+          do&#287;rulu&#287;u (Regex) kontrol edilebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Form&uuml;l ile bir projenin y&uuml;zde ka&ccedil;
+          tamamland&#305;&#287;&#305; dinamik olarak hesaplan&#305;p metin
+          olarak bas&#305;labiliyor.</span
+        ><span class="c3">12</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] link() fonksiyonu ile form&uuml;l sonucunda t&#305;klanabilir
+          &quot;Google&#39;da Ara&quot; butonu/linki
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] abs() ile iki de&#287;er aras&#305;ndaki mutlak fark
+          &ouml;l&ccedil;&uuml;lebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] min() ve max() fonksiyonlar&#305; ile bir dizi tarih
+          aras&#305;ndan en eskisi veya en yenisi bulunabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] sum() ile form&uuml;l i&ccedil;inde tan&#305;mlanan bir say&#305;
+          listesinin toplam&#305; al&#305;nabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] median() veya mean() ile say&#305;sal verilerin ortalamas&#305;
+          veya medyan&#305; hesaplanabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] replaceAll() ile metin i&ccedil;indeki t&uuml;m bo&#351;luklar
+          alt &ccedil;izgiye d&ouml;n&uuml;&#351;t&uuml;r&uuml;lebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Form&uuml;l ile sat&#305;r&#305;n &quot;Created By&quot;
+          &ouml;zelli&#287;ine bak&#305;larak &quot;Benim
+          Olu&#351;turdu&#287;um&quot; etiketi bas&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] dateBetween() ile bir personelin i&#351;e giri&#351;inden
+          bug&uuml;ne ge&ccedil;en toplam ay say&#305;s&#305;
+          hesaplanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] style() fonksiyonuyla arka plan rengi
+          &quot;green_background&quot; yap&#305;larak g&ouml;rsel onay kutusu
+          tasarlanabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] join() ile birden fazla &quot;Multi-select&quot; etiketi
+          aralar&#305;na tire konularak birle&#351;tirilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] slice() ile bir metnin sadece son 3 karakteri
+          al&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] repeat() fonksiyonu ile puanlama sistemine g&ouml;re
+          (&ouml;rne&#287;in 5 &uuml;zerinden 4) 4 adet y&#305;ld&#305;z emojisi
+          bas&#305;labiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] isSame() fonksiyonu ile iki tarihin ayn&#305; g&uuml;n olup
+          olmad&#305;&#287;&#305; kontrol edilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Form&uuml;l i&ccedil;inde current de&#287;i&#351;keni
+          kullan&#305;larak liste i&#351;lemleri (filter/map)
+          yap&#305;labiliyor.</span
+        ><span class="c3">12</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &#304;li&#351;kili veritaban&#305;ndaki bir sayfan&#305;n
+          &quot;Kapak Foto&#287;raf&#305;&quot; URL&#39;i form&uuml;l ile
+          &ccedil;ekilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] match() fonksiyonu ile metin i&ccedil;inden t&uuml;m say&#305;sal
+          ifadeler bir liste olarak ay&#305;klanabiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] sort() ile bir liste alfabetik olarak s&#305;ralanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] reverse() ile listenin s&#305;ras&#305; tersine
+          &ccedil;evrilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Form&uuml;l sonucu bir &quot;Checkbox&quot;
+          (do&#287;ru/yanl&#305;&#351;) de&#287;erine
+          d&ouml;n&uuml;&#351;t&uuml;r&uuml;l&uuml;p filtrelerde
+          kullan&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] unstyle() ile stil uygulanm&#305;&#351; bir metnin ham hali elde
+          edilebiliyor.</span
+        ><span class="c3">30</span>
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >6. Otomasyonlar, Butonlar ve &#304;&#351; Ak&#305;&#351;&#305;
+        M&uuml;hendisli&#287;i (651-800)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_6-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya /button eklenerek t&#305;kland&#305;&#287;&#305;nda
+          &ouml;nceden tan&#305;ml&#305; bir blok grubu
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Butona t&#305;kland&#305;&#287;&#305;nda &ccedil;al&#305;&#351;ma
+          alan&#305;nda yeni bir veritaban&#305; sayfas&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">17</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton t&#305;kland&#305;&#287;&#305;nda olu&#351;turulan
+          sayfan&#305;n &ouml;zellikleri (tarih, sorumlu vb.) otomatik
+          atanabiliyor.</span
+        ><span class="c3">17</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton eylemi &ouml;ncesinde kullan&#305;c&#305;ya &quot;Emin
+          misiniz?&quot; onay penceresi g&ouml;sterilebiliyor.</span
+        ><span class="c3">17</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Butona t&#305;kland&#305;&#287;&#305;nda bir ba&#351;ar&#305;
+          mesaj&#305; (notification) ekran&#305;n alt&#305;nda beliriyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Butona t&#305;kland&#305;&#287;&#305;nda bir sayfa a&ccedil;ma
+          (Open page) eylemi tetiklenebiliyor.</span
+        ><span class="c3">15</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton ile &quot;Kendime G&ouml;rev Ata&quot; i&#351;levi
+          yap&#305;larak &quot;Person&quot; s&uuml;tununa &quot;Person who
+          clicked&quot; atanabiliyor.</span
+        ><span class="c3">17</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton ile bir veritaban&#305;ndaki t&uuml;m sat&#305;rlar tek
+          t&#305;kla &quot;Ar&#351;ivlendi&quot; stat&uuml;s&uuml;ne
+          ge&ccedil;irilebiliyor.</span
+        ><span class="c3">15</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; i&ccedil;inde &quot;Button&quot; tipinde bir
+          property (s&uuml;tun) olu&#351;turulabiliyor.</span
+        ><span class="c3">16</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Database Button t&#305;kland&#305;&#287;&#305;nda sadece o
+          sat&#305;ra &ouml;zel bir i&#351;lem (&ouml;rne&#287;in Onay Tarihi
+          atama) yap&#305;labiliyor.</span
+        ><span class="c3">15</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Database Button ile &quot;Upvote&quot; (oy verme) sistemi
+          kurulabiliyor ve say&#305; form&uuml;lle
+          art&#305;r&#305;labiliyor.</span
+        ><span class="c3">15</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305; otomasyonu (Lightning bolt simgesi) ile
+          &quot;Page Added&quot; tetikleyicisi kurulabiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Yeni sayfa eklendi&#287;inde otomatik olarak bir ekip
+          &uuml;yesine &quot;G&ouml;zden Ge&ccedil;irme&quot; g&ouml;revi
+          atanabiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Property Edited&quot; tetikleyicisi ile stat&uuml;
+          &quot;Gecikti&quot; oldu&#287;unda Slack&#39;e mesaj
+          g&ouml;nderilebiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Otomasyon ile bir sayfa g&uuml;ncellendi&#287;inde &quot;Last
+          Edited By&quot; ki&#351;isine e-posta bildirimi gidebiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Otomasyon tetiklendi&#287;inde ba&#351;ka bir
+          veritaban&#305;ndaki ili&#351;kili sat&#305;rlar
+          g&uuml;ncellenebiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Recurring Automation&quot; ile her Pazartesi saat
+          09:00&#39;da &quot;Haftal&#305;k Plan&quot; sayfas&#305;
+          olu&#351;turulabiliyor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Otomasyon ile bir checkbox i&#351;aretlendi&#287;inde sayfa
+          otomatik olarak &quot;Tamamlananlar&quot; veritaban&#305;na
+          ta&#351;&#305;nabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Otomasyonlarda &quot;Filter&quot; kullan&#305;larak sadece
+          belirli kriterdeki de&#287;i&#351;ikliklerin tetikleme yapmas&#305;
+          sa&#287;lan&#305;yor.</span
+        ><span class="c3">14</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Butonlar i&ccedil;ine &quot;Show confirmation&quot;
+          ad&#305;m&#305; eklenerek hatal&#305; i&#351;lemlerin &ouml;n&uuml;ne
+          ge&ccedil;iliyor.</span
+        ><span class="c3">15</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Butonlar ile bir sayfay&#305; saniyeler i&ccedil;inde
+          &quot;Klonla ve Ar&#351;ivle&quot; i&#351; ak&#305;&#351;&#305;
+          kurgulanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Otomasyon ile bir ki&#351;i sayfaya atand&#305;&#287;&#305;nda o
+          ki&#351;iye Notion mobil &uuml;zerinden push bildirimi gidiyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Buton bloklar&#305; renklendirilerek sayfa i&ccedil;inde
+          g&ouml;rsel bir kumanda paneli (dashboard) yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Buton ile bir d&ouml;k&uuml;man&#305;n &quot;Versiyon
+          Numaras&#305;&quot; bir art&#305;r&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Otomasyon ile &quot;D&ouml;k&uuml;man Onayland&#305;&quot;
+          oldu&#287;unda sayfa otomatik olarak kilitlenebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton ile d&#305;&#351; bir URL&#39;e (&ouml;rne&#287;in
+          &#351;irket portal&#305;) y&ouml;nlendirme yap&#305;labiliyor.</span
+        ><span class="c3">16</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Buton eylemlerinde &quot;Variables&quot; (de&#287;i&#351;kenler)
+          kullan&#305;larak dinamik de&#287;erler atanabiliyor.</span
+        ><span class="c3">16</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Otomasyon ile bir m&uuml;&#351;teri kart&#305;
+          olu&#351;turuldu&#287;unda otomatik bir &quot;Onboarding
+          Checklist&quot; sayfas&#305; &uuml;retiliyor.</span
+        >
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >7. Notion AI: Ak&#305;ll&#305; Asistan ve Otonom &#304;&#351;lemler
+        (801-900)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_7-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfada bo&#351;luk (space) tu&#351;una basarak Notion AI komut
+          sat&#305;r&#305; a&ccedil;&#305;labiliyor.</span
+        ><span class="c3">27</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI&#39;ya &quot;Bu sayfadaki 3 ana fikri madde madde yaz&quot;
+          komutu verilebiliyor.</span
+        ><span class="c3">18</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile karma&#351;&#305;k bir metin saniyeler i&ccedil;inde
+          &ouml;zetlenebiliyor.</span
+        ><span class="c3">21</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile metin i&ccedil;indeki yaz&#305;m ve dilbilgisi
+          hatalar&#305; tek t&#305;kla d&uuml;zeltilebiliyor.</span
+        ><span class="c3">19</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile metnin dili profesyonel, samimi veya ikna edici olarak
+          de&#287;i&#351;tirilebiliyor.</span
+        ><span class="c3">19</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile metin &#304;ngilizce&#39;den T&uuml;rk&ccedil;e&#39;ye
+          (veya 13 di&#287;er dile) &ccedil;evrilebiliyor.</span
+        ><span class="c3">19</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent&#39;a &quot;Ge&ccedil;en haftaki toplant&#305;
+          notlar&#305;nda al&#305;nan kararlar&#305; bul&quot;
+          denebiliyor.</span
+        ><span class="c3">18</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent, ba&#287;l&#305; olan Slack kanallar&#305;ndaki son
+          konu&#351;malar&#305; sorgulayabiliyor.</span
+        ><span class="c3">18</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent, Google Drive&#39;daki PDF dosyalar&#305;n&#305;n
+          i&ccedil;eri&#287;ini analiz edip &ouml;zet
+          &ccedil;&#305;karabiliyor.</span
+        ><span class="c3">18</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Veritaban&#305;nda &quot;AI Autofill&quot; s&uuml;tunu
+          olu&#351;turularak i&ccedil;erik &ouml;zetleri otomatik
+          &uuml;retilebiliyor.</span
+        ><span class="c3">19</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Autofill ile toplant&#305; notlar&#305;ndan aksiyon maddeleri
+          (tasks) s&uuml;tunu doldurulabiliyor.</span
+        ><span class="c3">21</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile bo&#351; bir sayfada &quot;Blog yaz&#305;s&#305;
+          tasla&#287;&#305; olu&#351;tur&quot; komutuyla i&ccedil;erik iskeleti
+          kurulabiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile d&ouml;k&uuml;mandaki jargon i&ccedil;eren kelimeler
+          &quot;Basit&ccedil;e A&ccedil;&#305;kla&quot; komutuyla
+          basitle&#351;tirilebiliyor.</span
+        ><span class="c3">21</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile verilen anahtar kelimelerden bir sosyal medya
+          payla&#351;&#305;m takvimi olu&#351;turulabiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent&#39;a &quot;Yar&#305;nki u&ccedil;u&#351; saatimi
+          e-postalar&#305;mdan bul&quot; sorusu sorulabiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile d&ouml;k&uuml;man i&ccedil;eri&#287;ine g&ouml;re uygun
+          bir &quot;Tablo&quot; veya &quot;Veritaban&#305;&quot;
+          &#351;emas&#305; &ouml;nerisi al&#305;nabiliyor.</span
+        ><span class="c3">18</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] AI ile kod bloklar&#305;ndaki yaz&#305;l&#305;m hatalar&#305;
+          (bugs) tespit edilip &ccedil;&ouml;z&uuml;m &ouml;nerileri
+          sunulabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile uzun bir d&ouml;k&uuml;mandan &quot;SSS&quot;
+          (S&#305;k&ccedil;a Sorulan Sorular) b&ouml;l&uuml;m&uuml; otomatik
+          &uuml;retilebiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent, &ccedil;al&#305;&#351;ma alan&#305;ndaki sayfalar&#305;
+          &quot;Wiki&quot; yap&#305;s&#305;na uygun &#351;ekilde yeniden
+          organize edebiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] AI ile bir d&ouml;k&uuml;man&#305;n &quot;Sentiment&quot; (duygu)
+          analizi yap&#305;larak olumlu/olumsuz oldu&#287;u s&uuml;tuna
+          bas&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile d&ouml;k&uuml;man i&ccedil;indeki t&uuml;m tarih ve saat
+          bilgileri ay&#305;klan&#305;p tablo haline getirilebiliyor.</span
+        ><span class="c3">31</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent&#39;a &quot;Bana bu projenin SWOT analizini yap&quot;
+          komutu verilebiliyor.</span
+        ><span class="c3">32</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile d&ouml;k&uuml;man i&ccedil;in &quot;Meta Description&quot;
+          ve SEO anahtar kelimeleri &uuml;retilebiliyor.</span
+        ><span class="c3">32</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI ile karma&#351;&#305;k veri setlerinden trend analiz
+          raporlar&#305; tasla&#287;&#305; haz&#305;rlanabiliyor.</span
+        ><span class="c3">32</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] AI Agent, &quot;SOP&quot; (Standart Operasyon
+          Prosed&uuml;r&uuml;) d&ouml;k&uuml;manlar&#305;n&#305;
+          g&uuml;ncelleyip optimize edebiliyor.</span
+        ><span class="c3">20</span>
+      </li>
+    </ul>
+    <h3 class="c18">
+      <span class="c4"
+        >8. Payla&#351;&#305;m, &#304;zinler ve Ekosistem (Notion Sites, Mail,
+        Calendar) (901-1000)</span
+      >
+    </h3>
+    <ul class="c7 lst-kix_list_8-0 start">
+      <li class="c5 c16 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfaya ekip &uuml;yeleri e-posta ile davet edilebiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir &uuml;yeye &quot;Can View&quot; yetkisi verilerek sadece
+          okumas&#305; sa&#287;lanabiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir &uuml;yeye &quot;Can Comment&quot; yetkisi verilerek sadece
+          yorum yapmas&#305; sa&#287;lanabiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir &uuml;yeye &quot;Can Edit&quot; yetkisi verilerek
+          d&ouml;k&uuml;man&#305; d&uuml;zenlemesi sa&#287;lanabiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir &uuml;yeye &quot;Full Access&quot; verilerek hem
+          d&uuml;zenleme hem payla&#351;ma yetkisi tan&#305;nabiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Teamspace&quot; olu&#351;turularak departman bazl&#305;
+          &ccedil;al&#305;&#351;ma alanlar&#305; (Pazarlama, Yaz&#305;l&#305;m
+          vb.) kurulabiliyor.</span
+        ><span class="c3">35</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Teamspace&#39;e &uuml;ye olmayanlar o departman&#305;n
+          d&ouml;k&uuml;manlar&#305;n&#305; &quot;Private&quot; ayar&#305;yla
+          g&ouml;remiyor.</span
+        ><span class="c3">35</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Bir sayfa &quot;Publish&quot; tab&#305;ndan web sitesi olarak
+          yay&#305;na al&#305;nabiliyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Yay&#305;nlanan siteye &ouml;zel bir ikon (Favicon)
+          y&uuml;klenebiliyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Site i&ccedil;in &quot;notion.site&quot; uzant&#305;l&#305;
+          &uuml;cretsiz bir subdomain al&#305;nabiliyor.</span
+        ><span class="c3">38</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Siteye &#351;irket ad&#305;na kay&#305;tl&#305; &ouml;zel domain
+          (&ouml;rne&#287;in docs.akme.com) ba&#287;lanabiliyor.</span
+        ><span class="c3">39</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Notion Site &uuml;zerinde &quot;Search&quot; butonu aktif
+          edilerek ziyaret&ccedil;ilere arama imkan&#305; sunuluyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sitenin &quot;Navigation bar&quot; (navigasyon
+          &ccedil;ubu&#287;u) k&#305;sm&#305;na &ouml;nemli sayfalar&#305;n
+          linkleri eklenebiliyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sitede &quot;Built with Notion&quot; ibaresi &uuml;cretli
+          planlarda kald&#305;r&#305;labiliyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Site analytics entegrasyonu (Google Analytics) ile
+          ziyaret&ccedil;i takibi yap&#305;labiliyor.</span
+        ><span class="c3">37</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Notion Calendar&quot; ile &ccedil;al&#305;&#351;ma
+          alan&#305;ndaki t&uuml;m tarihli veriler takvimde
+          g&ouml;r&uuml;n&uuml;yor.</span
+        ><span class="c3">28</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvim &uuml;zerinde &quot;Open in Notion&quot; butonuyla
+          do&#287;rudan ilgili d&ouml;k&uuml;mana gidilebiliyor.</span
+        ><span class="c3">28</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvimden &quot;Meeting Link&quot; (Zoom, Google Meet vb.)
+          otomatik olu&#351;turulabiliyor.</span
+        ><span class="c3">42</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Takvim &uuml;zerinde &quot;Availability&quot; (M&uuml;saitlik)
+          linki olu&#351;turulup ba&#351;kalar&#305;na
+          g&ouml;nderilebiliyor.</span
+        ><span class="c3">41</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Notion Mail&quot; ile Gmail hesab&#305; Notion
+          i&ccedil;inden y&ouml;netilebiliyor.</span
+        ><span class="c3">43</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Mail kutusunda gelen e-postalar yapay zeka taraf&#305;ndan
+          otomatik &ouml;nceliklendiriliyor.</span
+        ><span class="c3">43</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] E-postadan gelen bir talep tek t&#305;kla Notion
+          veritaban&#305;nda &quot;G&ouml;rev&quot; (Task) olarak
+          kaydedilebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Notion Forms&quot; ile d&#305;&#351;ar&#305;dan veri
+          toplamak i&ccedil;in anketler olu&#351;turulabiliyor.</span
+        ><span class="c3">45</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Formda &quot;File Upload&quot; sorusu ile CV veya dekont
+          toplanabiliyor.</span
+        ><span class="c3">46</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Form sorular&#305; &quot;Hidden&quot; (Gizli) yap&#305;larak
+          sadece belirli parametrelerin kaydedilmesi sa&#287;lanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Form g&ouml;nderildi&#287;inde kat&#305;l&#305;mc&#305;ya
+          &ouml;zel bir &quot;Te&#351;ekk&uuml;r&quot; sayfas&#305;
+          g&ouml;sterilebiliyor.</span
+        ><span class="c3">45</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfa bazl&#305; &quot;Analytics&quot; ile
+          d&ouml;k&uuml;man&#305; kimlerin ka&ccedil; kez okudu&#287;u
+          grafiklerle g&ouml;r&uuml;lebiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Workspace ayarlar&#305;ndan &quot;Allowed Email Domains&quot; ile
+          &#351;irketteki herkesin otomatik kat&#305;lmas&#305;
+          sa&#287;lan&#305;yor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Sayfa d&#305;&#351;a aktar&#305;m&#305; (export) g&uuml;venlik
+          nedeniyle t&uuml;m workspace i&ccedil;in kapat&#305;labiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Security Audit Log&quot; ile hangi d&ouml;k&uuml;man&#305;n
+          ne zaman d&#305;&#351;ar&#305; payla&#351;&#305;ld&#305;&#287;&#305;
+          raporlanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Misafir (Guest) eri&#351;imi k&#305;s&#305;tlanarak sadece
+          kay&#305;tl&#305; &uuml;yelerin d&ouml;k&uuml;manlar&#305;
+          g&ouml;rmesi sa&#287;lanabiliyor.</span
+        ><span class="c3">33</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Notion d&ouml;k&uuml;man&#305; i&ccedil;ine &quot;Synced
+          Database&quot; ile Jira veya GitHub issue&#39;lar&#305; canl&#305;
+          &ccedil;ekilebiliyor.</span
+        ><span class="c3">23</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfalar &quot;Wiki&quot; olarak do&#287;rulanabiliyor (Verified)
+          ve &quot;Owner&quot; atanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Wiki sayfalar&#305;nda &quot;Expired&quot; (S&uuml;resi
+          Dolmu&#351;) uyar&#305;s&#305; ile d&ouml;k&uuml;manlar&#305;n
+          g&uuml;ncel kalmas&#305; sa&#287;lan&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &quot;Trash&quot; i&ccedil;indeki sayfalar toplu olarak silinerek
+          alan temizli&#287;i yap&#305;labiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Bir sayfa linki kopyaland&#305;&#287;&#305;nda &quot;Copy link
+          with current view&quot; se&ccedil;ene&#287;iyle o anki filtrelerle
+          payla&#351;&#305;l&#305;yor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] &Ccedil;al&#305;&#351;ma alan&#305; i&ccedil;in &quot;SAML
+          SSO&quot; yap&#305;land&#305;r&#305;larak kurumsal giri&#351;
+          g&uuml;venli&#287;i sa&#287;lanabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Notion mobil uygulamas&#305; &uuml;zerinden d&ouml;k&uuml;manlara
+          &quot;Offline&quot; (&ccedil;evrimd&#305;&#351;&#305;) eri&#351;im
+          sa&#287;lanabiliyor.</span
+        ><span class="c3">1</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Masa&uuml;st&uuml; uygulamas&#305;nda (Notion Desktop) birden
+          fazla sekme a&ccedil;&#305;larak farkl&#305; sayfalar aras&#305;
+          ge&ccedil;i&#351; yap&#305;labiliyor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] &quot;Dark Mode&quot; (Karanl&#305;k Mod) a&ccedil;&#305;larak
+          d&uuml;&#351;&uuml;k &#305;&#351;&#305;kta &ccedil;al&#305;&#351;ma
+          konforu sa&#287;lan&#305;yor.</span
+        ><span class="c3">22</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Sayfaya /toc eklendi&#287;inde sa&#287; tarafta y&uuml;zen bir
+          i&ccedil;indekiler men&uuml;s&uuml; olu&#351;turulabiliyor.</span
+        >
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c0"
+          >[ ] Notion &quot;Web Clipper&quot; ile taray&#305;c&#305;daki
+          herhangi bir makale tek t&#305;kla sayfaya kaydedilebiliyor.</span
+        ><span class="c3">7</span>
+      </li>
+      <li class="c2 li-bullet-0">
+        <span class="c1 c0"
+          >[ ] Kaydedilen makaleler &quot;AI&quot; taraf&#305;ndan otomatik
+          olarak &ouml;zetlenip bir veritaban&#305;na diziliyor.</span
+        >
+      </li>
+    </ul>
+    <h2 class="c18">
+      <span class="c19"
+        >Sonu&ccedil;: Mod&uuml;ler &#304;&#351; Ak&#305;&#351;&#305;
+        Y&ouml;netiminde Stratejik Yakla&#351;&#305;m</span
+      >
+    </h2>
+    <p class="c22">
+      <span class="c0"
+        >Notion platformunun sundu&#287;u blok bazl&#305; hiyerar&#351;i ve
+        ili&#351;kisel veritaban&#305; mimarisi, bilginin sadece bir not
+        olmaktan &ccedil;&#305;k&#305;p ya&#351;ayan bir &quot;varl&#305;k&quot;
+        (asset) haline gelmesini sa&#287;lar.</span
+      ><span class="c6">1</span
+      ><span class="c0"
+        >&nbsp;Formula 2.0 ile gelen computational derinlik ve AI Agent
+        yetenekleri, manuel i&#351; y&uuml;k&uuml;n&uuml; minimize ederken karar
+        alma s&uuml;re&ccedil;lerini h&#305;zland&#305;rmaktad&#305;r.</span
+      ><span class="c6">12</span
+      ><span class="c0"
+        >&nbsp;Kurumsal y&ouml;netimde Teamspace ve geli&#351;mi&#351; izin
+        sistemleri, g&uuml;venli bir i&#351;birli&#287;i zemini
+        olu&#351;tururken; Sites, Mail ve Calendar entegrasyonlar&#305;,
+        Notion&#39;&#305; dikey bir uygulama olmaktan &ccedil;&#305;kar&#305;p
+        yatay bir operasyon merkezine
+        d&ouml;n&uuml;&#351;t&uuml;rmektedir.</span
+      ><span class="c6">35</span
+      ><span class="c1 c0"
+        >&nbsp;Bu raporda sunulan 1000 senaryo, bu ekosistemin ne denli
+        geni&#351; bir spektrumda, bireysel basitlikten kurumsal
+        karma&#351;&#305;kl&#305;&#287;a kadar her seviyede
+        &ccedil;&ouml;z&uuml;m &uuml;retebilece&#287;inin bir
+        kan&#305;t&#305;d&#305;r.</span
+      >
+    </p>
+    <p class="c12 c23"><span class="c20"></span></p>
+  </body>
+</html>

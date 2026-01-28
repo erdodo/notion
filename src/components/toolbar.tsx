@@ -1,6 +1,7 @@
 'use client';
 
 import { ImageIcon, Smile, X, LayoutTemplate } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { IconPicker } from './icon-picker';
@@ -64,9 +65,20 @@ export const Toolbar = ({ page, preview }: ToolbarProperties) => {
             className={`flex items-center gap-x-2 group/icon pt-6 ${page.coverImage ? 'absolute -top-[1rem] left-0 z-10' : ''}`}
           >
             <IconPicker onChange={handleIconSelect}>
-              <p className="text-6xl hover:opacity-75 transition">
-                {page.icon}
-              </p>
+              {page.icon.startsWith('http') ? (
+                <div className="relative w-16 h-16 hover:opacity-75 transition cursor-pointer">
+                  <Image
+                    src={page.icon}
+                    alt="Icon"
+                    fill
+                    className="object-cover rounded"
+                  />
+                </div>
+              ) : (
+                <p className="text-6xl hover:opacity-75 transition">
+                  {page.icon}
+                </p>
+              )}
             </IconPicker>
             <button
               onClick={handleIconRemove}
@@ -77,11 +89,24 @@ export const Toolbar = ({ page, preview }: ToolbarProperties) => {
           </div>
         )}
         {!!page.icon && preview && (
-          <p
-            className={`text-6xl pt-6 ${page.coverImage ? 'absolute -top-[2.5rem] left-0 z-10' : ''}`}
-          >
-            {page.icon}
-          </p>
+          page.icon.startsWith('http') ? (
+            <div
+              className={`relative w-16 h-16 pt-6 ${page.coverImage ? 'absolute -top-[2.5rem] left-0 z-10' : ''}`}
+            >
+              <Image
+                src={page.icon}
+                alt="Icon"
+                fill
+                className="object-cover rounded"
+              />
+            </div>
+          ) : (
+            <p
+              className={`text-6xl pt-6 ${page.coverImage ? 'absolute -top-[2.5rem] left-0 z-10' : ''}`}
+            >
+              {page.icon}
+            </p>
+          )
         )}
         <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4 ">
           {!page.icon && !preview && (

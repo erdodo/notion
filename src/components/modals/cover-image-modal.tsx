@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEdgeStore } from '@/lib/edgestore';
+import { Loader2 } from 'lucide-react';
 
 interface CoverImageModalProperties {
   isOpen: boolean;
@@ -36,6 +37,9 @@ export const CoverImageModal = ({
   const [linkUrl, setLinkUrl] = useState('');
 
   const [recentImages, setRecentImages] = useState<string[]>([]);
+  const [unsplashImages, setUnsplashImages] = useState<any[]>([]);
+  const [unsplashQuery, setUnsplashQuery] = useState('nature');
+  const [isLoadingUnsplash, setIsLoadingUnsplash] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('notion-recent-covers');
@@ -48,6 +52,27 @@ export const CoverImageModal = ({
       }
     }
   }, []);
+
+  const searchUnsplash = async (query: string) => {
+    setIsLoadingUnsplash(true);
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=YOUR_ACCESS_KEY`
+      );
+      const data = await response.json();
+      setUnsplashImages(data.results || []);
+    } catch (error) {
+      console.error('Unsplash error:', error);
+    } finally {
+      setIsLoadingUnsplash(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      searchUnsplash(unsplashQuery);
+    }
+  }, [isOpen]);
 
   const addToRecent = (url: string) => {
     const updated = [
@@ -121,6 +146,12 @@ export const CoverImageModal = ({
                 Link
               </TabsTrigger>
               <TabsTrigger
+                value="unsplash"
+                className="px-2 pb-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none text-muted-foreground data-[state=active]:text-foreground bg-transparent h-full mr-4 text-xs"
+              >
+                Unsplash
+              </TabsTrigger>
+              <TabsTrigger
                 value="recent"
                 className="px-2 pb-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none text-muted-foreground data-[state=active]:text-foreground bg-transparent h-full mr-4 text-xs"
               >
@@ -165,6 +196,51 @@ export const CoverImageModal = ({
                 Submit
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="unsplash" className="flex-1 p-4 overflow-y-auto">
+            <div className="flex flex-col gap-2 mb-3">
+              <Input
+                placeholder="Search Unsplash..."
+                value={unsplashQuery}
+                onChange={(e) => setUnsplashQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    searchUnsplash(unsplashQuery);
+                  }
+                }}
+                className="text-xs h-8"
+              />
+            </div>
+            {isLoadingUnsplash ? (
+              <div className="flex items-center justify-center h-40">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : unsplashImages.length === 0 ? (
+              <div className="text-center text-xs text-muted-foreground mt-10">
+                No images found
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {unsplashImages.map((img) => (
+                  <div
+                    key={img.id}
+                    className="relative aspect-video rounded-md overflow-hidden cursor-pointer hover:opacity-80 border border-border"
+                    onClick={() => {
+                      addToRecent(img.urls.regular);
+                      handleSubmit(img.urls.regular);
+                    }}
+                  >
+                    <Image
+                      src={img.urls.small}
+                      alt={img.alt_description || 'Unsplash'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="recent" className="flex-1 p-4 overflow-y-auto">

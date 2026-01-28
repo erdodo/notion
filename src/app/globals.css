@@ -451,3 +451,9 @@ a,
 .dark [data-background-color='red'] {
   background-color: rgb(89, 65, 65);
 }
+
+/* Checked checklist items strikethrough */
+[data-content-type='checkListItem'][data-checked='true'] .bn-inline-content {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
