@@ -1,9 +1,14 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 import { useSettings } from '../use-settings';
 
 describe('useSettings', () => {
+  beforeEach(() => {
+    // Reset the store state before each test
+    useSettings.setState({ isOpen: false });
+  });
+
   it('should initialize with closed state', () => {
     const { result } = renderHook(() => useSettings());
 

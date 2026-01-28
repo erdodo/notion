@@ -24,7 +24,7 @@ describe('useFilteredSortedData', () => {
 
   it('should return empty array for empty database', () => {
     const { result } = renderHook(() => useFilteredSortedData(mockDatabase));
-    expect(result.current).toEqual([]);
+    expect(result.current.sortedRows).toEqual([]);
   });
 
   it('should return all rows when no filters applied', () => {
@@ -42,7 +42,7 @@ describe('useFilteredSortedData', () => {
     mockDatabase.rows = [mockRow1, mockRow2] as any;
 
     const { result } = renderHook(() => useFilteredSortedData(mockDatabase));
-    expect(result.current).toHaveLength(2);
+    expect(result.current.sortedRows).toHaveLength(2);
   });
 
   it('should apply text filters', () => {

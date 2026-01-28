@@ -1,15 +1,25 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import {
-  restoreDocument,
-  removeDocument,
-} from '@/app/(main)/_actions/documents';
+import { restoreDocument } from '@/app/(main)/_actions/documents';
 import { TrashBox } from '@/components/trash-box';
+
+const mockRemoveDocument = vi.fn();
+const mockSetTrashPages = vi.fn();
 
 vi.mock('@/app/(main)/_actions/documents', () => ({
   restoreDocument: vi.fn(),
-  removeDocument: vi.fn(),
+}));
+
+vi.mock('@/store/use-documents-store', () => ({
+  useDocumentsStore: () => ({
+    trashPages: [
+      { id: '1', title: 'Page 1', isArchived: true },
+      { id: '2', title: 'Page 2', isArchived: true },
+    ],
+    setTrashPages: mockSetTrashPages,
+    removeDocument: mockRemoveDocument,
+  }),
 }));
 
 vi.mock('sonner', () => ({
@@ -80,19 +90,19 @@ describe('TrashBox', () => {
   });
 
   it('removes document permanently', async () => {
-    (removeDocument as any).mockResolvedValue(true);
+    mockRemoveDocument.mockResolvedValue(true);
+    
     render(<TrashBox documents={documents} />);
 
     const page1Text = screen.getByText('Page 1');
-    const row = page1Text.closest('.flex.justify-between');
+    const row = page1Text.closest('.text-sm.rounded-sm');
     const buttons = row?.querySelectorAll('button');
-
-    const removeTrigger = buttons![1];
+    const deleteButton = buttons![1];
 
     await act(async () => {
-      fireEvent.click(removeTrigger);
+      fireEvent.click(deleteButton);
     });
 
-    expect(removeDocument).toHaveBeenCalledWith('1');
+    expect(mockRemoveDocument).toHaveBeenCalledWith('1');
   });
 });

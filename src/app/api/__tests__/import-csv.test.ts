@@ -50,12 +50,14 @@ describe('API: import/csv', () => {
     vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const formData = new FormData();
     const file = new File([''], 'empty.csv', { type: 'text/csv' });
+    Object.defineProperty(file, 'text', {
+      value: vi.fn().mockResolvedValue(''),
+    });
     formData.append('file', file);
 
-    const request = new NextRequest('http://localhost/api/import/csv', {
-      method: 'POST',
-      body: formData,
-    });
+    const request = {
+      formData: async () => formData,
+    } as any;
     const res = await POST(request);
     expect(res.status).toBe(400);
   });
@@ -72,12 +74,14 @@ describe('API: import/csv', () => {
     const csvContent = 'Name,Status\nTask 1,Done';
     const formData = new FormData();
     const file = new File([csvContent], 'Tasks.csv', { type: 'text/csv' });
+    Object.defineProperty(file, 'text', {
+      value: vi.fn().mockResolvedValue(csvContent),
+    });
     formData.append('file', file);
 
-    const request = new NextRequest('http://localhost/api/import/csv', {
-      method: 'POST',
-      body: formData,
-    });
+    const request = {
+      formData: async () => formData,
+    } as any;
 
     const res = await POST(request);
     expect(res.status).toBe(200);

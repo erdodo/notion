@@ -7,6 +7,7 @@ vi.mock('lucide-react', () => ({
   ImageIcon: () => <div data-testid="image-icon" />,
   Smile: () => <div data-testid="smile-icon" />,
   X: () => <div data-testid="x-icon" />,
+  LayoutTemplate: () => <div data-testid="layout-template-icon" />,
 }));
 
 vi.mock('@/components/icon-picker', () => ({

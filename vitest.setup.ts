@@ -87,7 +87,7 @@ window.scrollTo = vi.fn();
 // Mock lucide-react
 vi.mock('lucide-react', () => {
   const createMockIcon = (name: string) => {
-    const Icon = vi.fn((props: any) => null);
+    const Icon = vi.fn((props: any) => null) as any;
     Icon.displayName = name;
     return Icon;
   };
@@ -155,31 +155,37 @@ vi.mock('lucide-react', () => {
     FileDown: createMockIcon('FileDown'),
     ArrowUpDown: createMockIcon('ArrowUpDown'),
     FileImage: createMockIcon('FileImage'),
+    History: createMockIcon('History'),
+    Loader: createMockIcon('Loader'),
+    FilePlus: createMockIcon('FilePlus'),
   };
 });
 
 // Mock next/server to prevent import errors in JSDOM
-vi.mock('next/server', () => ({
-    NextResponse: {
-        json: vi.fn((data, init) => ({
-            json: async () => data,
-            text: async () => JSON.stringify(data),
-            status: init?.status || 200,
-            headers: new Headers(init?.headers || {}),
-        })),
-        redirect: vi.fn((url, status) => ({
-            status: status || 307,
-            headers: new Headers({ Location: url }),
-        })),
-        next: vi.fn(() => ({
-            status: 200,
-            headers: new Headers(),
-        })),
-    },
-    NextRequest: class NextRequest {
-        constructor(public url: string, public options?: any) {}
-    },
-}));
+vi.mock('next/server', () => {
+    class MockNextResponse extends Response {
+        constructor(body?: BodyInit | null, init?: ResponseInit) {
+            super(body, init);
+        }
+        static json(data: any, init?: ResponseInit) {
+            return new MockNextResponse(JSON.stringify(data), {
+                ...init,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(init?.headers || {}),
+                },
+            });
+        }
+    }
+    return {
+        NextResponse: MockNextResponse,
+        NextRequest: class NextRequest extends Request {
+            constructor(url: string, options?: RequestInit) {
+                super(url, options);
+            }
+        },
+    };
+});
 
 // Mock next-auth to prevent server-side code execution
 vi.mock('next-auth', () => ({

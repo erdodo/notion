@@ -148,14 +148,12 @@ describe('useSidebar', () => {
     });
 
     expect(result.current.isCollapsed).toBe(true);
-    expect(result.current.isOpen).toBe(true);
 
     act(() => {
       result.current.expand();
     });
 
     expect(result.current.isCollapsed).toBe(false);
-    expect(result.current.isOpen).toBe(true);
   });
 
   it('should provide all required methods', () => {

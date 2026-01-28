@@ -40,7 +40,12 @@ export const CoverImageModal = ({
   useEffect(() => {
     const stored = localStorage.getItem('notion-recent-covers');
     if (stored) {
-      setRecentImages(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+      const limited = parsed.slice(0, 9);
+      setRecentImages(limited);
+      if (parsed.length > 9) {
+        localStorage.setItem('notion-recent-covers', JSON.stringify(limited));
+      }
     }
   }, []);
 

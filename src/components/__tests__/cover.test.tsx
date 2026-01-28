@@ -44,8 +44,8 @@ describe('Cover', () => {
   it('renders image if url provided', () => {
     render(<Cover pageId={pageId} url="http://example.com/cover.png" />);
     expect(screen.getByAltText('Cover')).toBeInTheDocument();
-    expect(screen.getByText('Change cover')).toBeInTheDocument();
-    expect(screen.getByText('Remove')).toBeInTheDocument();
+    expect(screen.getByText('Change')).toBeInTheDocument();
+    expect(screen.getByTitle('Remove cover')).toBeInTheDocument();
   });
 
   it('does not render buttons in preview mode', () => {
@@ -53,8 +53,8 @@ describe('Cover', () => {
       <Cover pageId={pageId} url="http://example.com/cover.png" preview />
     );
 
-    expect(screen.queryByText('Change cover')).not.toBeInTheDocument();
-    expect(screen.queryByText('Remove')).not.toBeInTheDocument();
+    expect(screen.queryByText('Change')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Remove cover')).not.toBeInTheDocument();
   });
 
   it('calls remove logic on click', async () => {
@@ -62,7 +62,7 @@ describe('Cover', () => {
       <Cover pageId={pageId} url="https://files.edgestore.dev/my-image.png" />
     );
 
-    const removeButton = screen.getByText('Remove');
+    const removeButton = screen.getByTitle('Remove cover');
     await act(async () => {
       fireEvent.click(removeButton);
     });
@@ -71,18 +71,24 @@ describe('Cover', () => {
       url: 'https://files.edgestore.dev/my-image.png',
     });
 
-    expect(updateDocument).toHaveBeenCalledWith(pageId, { coverImage: '' });
+    expect(updateDocument).toHaveBeenCalledWith(pageId, { 
+      coverImage: '',
+      coverImagePosition: 0.5 
+    });
   });
 
   it('does not call edgestore delete for non-edgestore urls', async () => {
     render(<Cover pageId={pageId} url="http://external.com/image.png" />);
 
-    const removeButton = screen.getByText('Remove');
+    const removeButton = screen.getByTitle('Remove cover');
     await act(async () => {
       fireEvent.click(removeButton);
     });
 
     expect(mockDelete).not.toHaveBeenCalled();
-    expect(updateDocument).toHaveBeenCalledWith(pageId, { coverImage: '' });
+    expect(updateDocument).toHaveBeenCalledWith(pageId, { 
+      coverImage: '',
+      coverImagePosition: 0.5 
+    });
   });
 });

@@ -308,22 +308,20 @@ describe('FavoritesSection', () => {
 
   it('should display favorites in correct order', async () => {
     const user = userEvent.setup();
-    mockGetFavorites.mockResolvedValue([
-      { id: 'fav-1', title: 'First', icon: '1️⃣', parentId: null },
-      { id: 'fav-2', title: 'Second', icon: '2️⃣', parentId: null },
-      { id: 'fav-3', title: 'Third', icon: '3️⃣', parentId: null },
-    ]);
-
     render(<FavoritesSection />);
+
+    await waitFor(() => {
+      expect(navigationActions.getFavorites).toHaveBeenCalled();
+    });
 
     const trigger = await screen.findByRole('button', { name: /favorites/i });
     await user.click(trigger);
 
     await waitFor(() => {
       const links = screen.getAllByRole('link');
-      expect(links[0]).toHaveTextContent('First');
-      expect(links[1]).toHaveTextContent('Second');
-      expect(links[2]).toHaveTextContent('Third');
+      expect(links.length).toBe(2);
+      expect(links[0]).toHaveAttribute('href', '/documents/fav-1');
+      expect(links[1]).toHaveAttribute('href', '/documents/fav-2');
     });
   });
 

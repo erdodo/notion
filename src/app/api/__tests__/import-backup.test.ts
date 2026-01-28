@@ -94,10 +94,9 @@ describe('API: import/backup', () => {
   it('should return 400 if zip file missing', async () => {
     vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const formData = new FormData();
-    const request = new NextRequest('http://localhost/api/import/backup', {
-      method: 'POST',
-      body: formData,
-    });
+    const request = {
+      formData: async () => formData,
+    } as any;
     const res = await POST(request);
     expect(res.status).toBe(400);
   });
@@ -107,16 +106,19 @@ describe('API: import/backup', () => {
     mockCreate.mockResolvedValue({ id: 'new-id' });
 
     const formData = new FormData();
-    const file = new File([new ArrayBuffer(10)], 'backup.zip', {
+    const buffer = new ArrayBuffer(10);
+    const file = new File([buffer], 'backup.zip', {
       type: 'application/zip',
+    });
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: vi.fn().mockResolvedValue(buffer),
     });
     formData.append('file', file);
     formData.append('mode', 'merge');
 
-    const request = new NextRequest('http://localhost/api/import/backup', {
-      method: 'POST',
-      body: formData,
-    });
+    const request = {
+      formData: async () => formData,
+    } as any;
     const res = await POST(request);
 
     expect(res.status).toBe(200);

@@ -1,9 +1,12 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 import { useSearch } from '../use-search';
 
 describe('useSearch', () => {
+  beforeEach(() => {
+    useSearch.setState({ isOpen: false });
+  });
   it('should initialize with closed state', () => {
     const { result } = renderHook(() => useSearch());
 

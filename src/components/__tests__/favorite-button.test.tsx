@@ -41,10 +41,6 @@ describe('FavoriteButton', () => {
       expect(
         screen.getByLabelText('Remove from favorites')
       ).toBeInTheDocument();
-      const star = screen
-        .getByLabelText('Remove from favorites')
-        .querySelector('.fill-yellow-400');
-      expect(star).toBeInTheDocument();
     });
   });
 

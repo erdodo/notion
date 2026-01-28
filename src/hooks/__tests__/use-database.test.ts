@@ -7,6 +7,35 @@ import type { FilterRule, SortRule } from '../use-database';
 describe('useDatabase', () => {
   beforeEach(() => {
     localStorage.clear();
+    useDatabase.setState({
+      filters: [],
+      sorts: [],
+      groupByProperty: null,
+      selectedRows: [],
+      searchQuery: '',
+      editingCell: null,
+      focusedCell: null,
+      currentViewId: null,
+      currentView: 'table',
+      hiddenProperties: [],
+      boardGroupByProperty: null,
+      boardHiddenGroups: [],
+      calendarDateProperty: null,
+      calendarView: 'month',
+      calendarDate: new Date(),
+      galleryCardSize: 'medium',
+      galleryColumns: 4,
+      galleryCoverProperty: null,
+      galleryFitImage: false,
+      visibleProperties: [],
+      selectedRowId: null,
+      openMode: 'center',
+      pageOpenMode: 'current',
+      timelineDateProperty: null,
+      timelineGroupByProperty: null,
+      timelineScale: 'month',
+      timelineDependencyProperty: null,
+    });
   });
 
   it('should initialize with empty filters and sorts', () => {

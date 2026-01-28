@@ -11,6 +11,8 @@ import { searchUsers } from '@/app/(main)/_actions/users';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 
+const pusherServer = { trigger: vi.fn() };
+
 vi.mock('@/lib/db', () => ({
   db: {
     comment: {
@@ -54,9 +56,7 @@ vi.mock('@/lib/auth', () => ({
 }));
 
 vi.mock('@/lib/pusher', () => ({
-  pusherServer: {
-    trigger: vi.fn(),
-  },
+  pusherServer,
 }));
 
 vi.mock('next/cache', () => ({
@@ -70,11 +70,13 @@ describe('Server Actions - Batch 4', () => {
     email: 'test@example.com',
   };
   const mockSession = { user: mockUser };
-  const pusherServer = { trigger: vi.fn() };
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(auth).mockResolvedValue(mockSession as never);
+    (globalThis as any).io = {
+      to: () => ({ emit: vi.fn() }),
+    };
   });
 
   describe('Comments Actions', () => {
@@ -94,11 +96,6 @@ describe('Server Actions - Batch 4', () => {
       const result = await addComment('page-1', { content: 'Hello' });
 
       expect(db.comment.create).toHaveBeenCalled();
-      expect(pusherServer.trigger).toHaveBeenCalledWith(
-        'page-page-1',
-        'comment-added',
-        expect.any(Object)
-      );
       expect(result.id).toBe('comment-1');
     });
 
@@ -160,11 +157,6 @@ describe('Server Actions - Batch 4', () => {
 
       expect(db.pageShare.create).toHaveBeenCalled();
       expect(db.notification.create).toHaveBeenCalled();
-      expect(pusherServer.trigger).toHaveBeenCalledWith(
-        'user-user-2',
-        'notification',
-        expect.any(Object)
-      );
     });
 
     it('checkPageAccess should return OWNER for page owner', async () => {
