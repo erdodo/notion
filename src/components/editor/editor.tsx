@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Toggle, ToggleSummary, ToggleContent } from './extensions/toggle';
 import { useEffect } from 'react';
 
 interface EditorProperties {
@@ -22,6 +23,9 @@ export const Editor = ({
           levels: [1, 2, 3],
         },
       }),
+      Toggle,
+      ToggleSummary,
+      ToggleContent,
     ],
     content: initialContent,
     editorProps: {
