@@ -300,7 +300,8 @@ describe('FavoritesSection', () => {
     await user.click(trigger);
 
     await waitFor(() => {
-      const span = screen.getByText(longTitle).closest('span');
+      const links = screen.getAllByRole('link');
+      const span = links[0].querySelector('.truncate');
       expect(span).toHaveClass('truncate');
     });
   });

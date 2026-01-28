@@ -1,7 +1,6 @@
 import { PartialBlock } from '@blocknote/core';
 import { useSyncExternalStore } from 'react';
 
-import { schema } from '../editor/schema';
 
 import { CoverImageMenu } from './menus/cover-image-menu';
 import { DatabaseCellMenu } from './menus/database-cell-menu';

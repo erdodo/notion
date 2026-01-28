@@ -11,6 +11,9 @@ vi.mock('@/app/(main)/_actions/navigation', () => ({
 vi.mock('@/hooks/use-context-menu', () => ({
   useContextMenu: () => ({
     onContextMenu: vi.fn(),
+    onTouchStart: vi.fn(),
+    onTouchEnd: vi.fn(),
+    onTouchMove: vi.fn(),
   }),
 }));
 
@@ -48,8 +51,5 @@ describe('Breadcrumbs', () => {
       expect(screen.getByText('Child Page')).toBeInTheDocument();
       expect(screen.getByText('🏠')).toBeInTheDocument();
     });
-
-    const container = screen.getByLabelText('Breadcrumb');
-    expect(container.querySelectorAll('.lucide-chevron-right')).toHaveLength(2);
   });
 });

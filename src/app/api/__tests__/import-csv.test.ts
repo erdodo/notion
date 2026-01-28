@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { POST } from '@/app/api/import/csv/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockPageCreate = vi.fn();
@@ -38,7 +38,7 @@ describe('API: import/csv', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest('http://localhost/api/import/csv', {
       method: 'POST',
     });
@@ -47,7 +47,7 @@ describe('API: import/csv', () => {
   });
 
   it('should return 400 if csv is invalid', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const formData = new FormData();
     const file = new File([''], 'empty.csv', { type: 'text/csv' });
     formData.append('file', file);
@@ -61,7 +61,7 @@ describe('API: import/csv', () => {
   });
 
   it('should return 200 and verify creation flow on success', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
 
     mockPageCreate.mockResolvedValue({ id: 'page-1' });
     mockDatabaseCreate.mockResolvedValue({ id: 'db-1' });

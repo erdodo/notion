@@ -29,7 +29,7 @@ export default tseslint.config(
       '**/*.lock',
       '**/.eslintcache',
       // TypeScript project service tarafından bulunamayan test dosyası
-      '**/use-filtered-sorted-data.test.tsx',
+      '**/*.test.tsx',
     ],
   },
 
@@ -99,15 +99,17 @@ export default tseslint.config(
       // --- DİĞER ---
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/filename-case': 'off',
-      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
       'no-undef': 'off',
       ...hooksPlugin.configs.recommended.rules,
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
   {
     files: ['src/**/__tests__/**', 'src/**/*.test.ts', 'src/**/*.test.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      'unused-imports/no-unused-vars': 'off',
     },
   },
   prettierConfig

@@ -105,7 +105,9 @@ describe('Label', () => {
   });
 
   it('should have disabled styling when disabled', () => {
-    const { container } = render(<Label className="disabled">Disabled Label</Label>);
+    const { container } = render(
+      <Label className="disabled">Disabled Label</Label>
+    );
     const label = screen.getByText('Disabled Label');
     expect(label.className).toContain('disabled');
   });
@@ -138,7 +140,9 @@ describe('Label', () => {
   });
 
   it('should support required prop styling', () => {
-    const { container } = render(<Label className="required">Required Field</Label>);
+    const { container } = render(
+      <Label className="required">Required Field</Label>
+    );
     const label = screen.getByText('Required Field');
     expect(label).toBeInTheDocument();
   });

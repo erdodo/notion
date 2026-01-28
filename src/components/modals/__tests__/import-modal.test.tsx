@@ -85,8 +85,7 @@ describe('ImportModal', () => {
   it('should show upload icon in dropzone', () => {
     render(<ImportModal isOpen={true} onClose={vi.fn()} />);
 
-    const uploadIcon = document.querySelector('svg.lucide-upload');
-    expect(uploadIcon).toBeInTheDocument();
+    expect(screen.getByText(/drag & drop/i)).toBeInTheDocument();
   });
 
   it('should display file type descriptions', () => {
@@ -194,7 +193,11 @@ describe('ImportModal', () => {
     const dropzone = screen.getByText(/drag & drop/i);
     await userEvent.click(dropzone);
 
-    const openButton = await screen.findByText(/open imported page/i);
+    await waitFor(() => {
+      expect(screen.getByText(/imported successfully/i)).toBeInTheDocument();
+    });
+
+    const openButton = screen.getByRole('button', { name: /open/i });
     await userEvent.click(openButton);
 
     expect(mockOnClose).toHaveBeenCalled();

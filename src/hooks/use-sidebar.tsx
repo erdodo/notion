@@ -10,7 +10,7 @@ interface SidebarStore {
   expand: () => void;
 }
 
-export const useSidebar = create<SidebarStore>((set, get) => ({
+export const useSidebar = create<SidebarStore>((set) => ({
   isOpen: true,
   isCollapsed: false,
   onOpen: () => {
@@ -20,7 +20,7 @@ export const useSidebar = create<SidebarStore>((set, get) => ({
     set({ isOpen: false, isCollapsed: true });
   },
   toggle: () => {
-    set({ isCollapsed: !get().isCollapsed });
+    set((state) => ({ isCollapsed: !state.isCollapsed }));
   },
   collapse: () => {
     set({ isCollapsed: true });

@@ -240,7 +240,9 @@ describe('ModalProvider', () => {
 
     await waitFor(() => {
       const firstChild = container.querySelector('[data-testid]');
-      expect((firstChild as HTMLElement)?.dataset.testid).toBe('search-command');
+      expect((firstChild as HTMLElement)?.dataset.testid).toBe(
+        'search-command'
+      );
     });
   });
 

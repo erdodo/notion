@@ -6,15 +6,16 @@ import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 import '@blocknote/mantine/style.css';
 
+import { schema } from './schema';
+
 import { useOptionalCollaboration } from '@/components/providers/collaboration-provider';
 import { useEdgeStore } from '@/lib/edgestore';
-import { schema } from './schema';
 
 interface CoreEditorProperties {
   initialContent?: string;
   onChange: (content: string) => void;
   editable?: boolean;
-  documentId?: string;
+  _documentId?: string;
   disableCollaboration?: boolean;
   onEditorReady?: (editor: any) => void;
 }
@@ -23,7 +24,7 @@ export const CoreEditor = ({
   initialContent,
   onChange,
   editable = true,
-  documentId,
+  _documentId,
   disableCollaboration = false,
   onEditorReady,
 }: CoreEditorProperties) => {

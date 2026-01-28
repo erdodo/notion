@@ -63,7 +63,7 @@ export function DocumentNavbarActions({
 
   return (
     <div className="flex items-center gap-1">
-      <PresenceIndicators pageId={pageId} className="mr-2" />
+      <PresenceIndicators _pageId={pageId} className="mr-2" />
 
       <Button
         variant="ghost"

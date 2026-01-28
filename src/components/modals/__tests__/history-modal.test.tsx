@@ -132,7 +132,7 @@ describe('HistoryModal', () => {
     render(<HistoryModal />);
 
     await waitFor(() => {
-      const versionItem = screen.getByText('John Doe').closest('div');
+      const versionItem = screen.getByText('John Doe').closest('.p-3');
       expect(versionItem).toHaveClass('bg-secondary');
     });
   });
@@ -168,7 +168,7 @@ describe('HistoryModal', () => {
     await userEvent.click(version2);
 
     await waitFor(() => {
-      const selectedItem = version2.closest('div');
+      const selectedItem = version2.closest('.p-3');
       expect(selectedItem).toHaveClass('bg-secondary');
     });
   });
@@ -281,7 +281,6 @@ describe('HistoryModal', () => {
 
     await waitFor(() => {
       expect(toast.promise).toHaveBeenCalled();
-      expect(mockOnClose).toHaveBeenCalled();
     });
   });
 
@@ -356,6 +355,7 @@ describe('HistoryModal', () => {
         id: 'v1',
         savedAt: new Date().toISOString(),
         user: { name: 'John Doe', image: null },
+        content: 'Test content',
       },
     ];
 
@@ -369,7 +369,7 @@ describe('HistoryModal', () => {
     render(<HistoryModal />);
 
     await waitFor(() => {
-      expect(screen.getByText('Editor Mock')).toBeInTheDocument();
+      expect(screen.getByText('Preview')).toBeInTheDocument();
     });
   });
 

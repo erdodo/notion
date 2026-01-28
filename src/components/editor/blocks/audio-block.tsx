@@ -1,6 +1,5 @@
 'use client';
 
-import { BlockNoteEditor } from '@blocknote/core';
 import { createReactBlockSpec } from '@blocknote/react';
 import { Loader2, Mic, Music } from 'lucide-react';
 import { useState, useRef } from 'react';
@@ -18,7 +17,7 @@ export const AudioBlock = createReactBlockSpec(
     },
   },
   {
-    render: (properties) => <AudioBlockContent {...properties as any} />,
+    render: (properties) => <AudioBlockContent {...(properties as any)} />,
   }
 );
 

@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { GET } from '@/app/api/export/csv/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockFindUnique = vi.fn();
@@ -32,7 +32,7 @@ describe('API: export/csv', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest(
       'http://localhost/api/export/csv?pageId=123'
     );
@@ -41,14 +41,14 @@ describe('API: export/csv', () => {
   });
 
   it('should return 400 if pageId is missing', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const request = new NextRequest('http://localhost/api/export/csv');
     const res = await GET(request);
     expect(res.status).toBe(400);
   });
 
   it('should return 404 if page not found', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindUnique.mockResolvedValue(null);
     const request = new NextRequest(
       'http://localhost/api/export/csv?pageId=123'
@@ -58,7 +58,7 @@ describe('API: export/csv', () => {
   });
 
   it('should return 400 if page is not a database', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindUnique.mockResolvedValue({
       id: '123',
       userId: 'user1',
@@ -74,7 +74,7 @@ describe('API: export/csv', () => {
   });
 
   it('should return 200 and CSV content on success', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindUnique.mockResolvedValue({
       id: '123',
       userId: 'user1',

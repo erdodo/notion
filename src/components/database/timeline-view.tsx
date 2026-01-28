@@ -218,16 +218,15 @@ export function TimelineView({ database }: TimelineViewProperties) {
         updateTime: true,
         overrideItems: false,
       },
-      onMove: async (
-        item: any,
-        callback: any
-      ) => {
+      onMove: async (item: any, callback: any) => {
         let allowed = true;
         const newStart = item.start;
         const newEnd = item.end;
 
         if (timelineDependencyProperty) {
-          const blockers = dependencies.filter((d: any) => d.target === item.id);
+          const blockers = dependencies.filter(
+            (d: any) => d.target === item.id
+          );
           for (const dep of blockers) {
             const blockerItem = items.get(dep.source);
             if (
@@ -239,14 +238,15 @@ export function TimelineView({ database }: TimelineViewProperties) {
             }
           }
 
-          const blockedItems = dependencies.filter((d: any) => d.source === item.id);
+          const blockedItems = dependencies.filter(
+            (d: any) => d.source === item.id
+          );
           for (const dep of blockedItems) {
             const targetItem = items.get(dep.target);
             if (
               targetItem &&
               targetItem.start &&
-              new Date(newEnd as any) >
-                new Date(targetItem.start)
+              new Date(newEnd as any) > new Date(targetItem.start)
             ) {
               allowed = false;
             }

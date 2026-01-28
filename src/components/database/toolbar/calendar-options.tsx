@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/popover';
 
 interface CalendarOptionsProps {
-  database: Database & { properties: Property[] };
+  _database?: Database & { properties: Property[] };
 }
 
-export function CalendarOptions({ database }: CalendarOptionsProps) {
+export function CalendarOptions({ _database }: CalendarOptionsProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>

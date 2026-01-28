@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { POST } from '@/app/api/import/backup/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockCreate = vi.fn();
@@ -83,7 +83,7 @@ describe('API: import/backup', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest('http://localhost/api/import/backup', {
       method: 'POST',
     });
@@ -92,7 +92,7 @@ describe('API: import/backup', () => {
   });
 
   it('should return 400 if zip file missing', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const formData = new FormData();
     const request = new NextRequest('http://localhost/api/import/backup', {
       method: 'POST',
@@ -103,7 +103,7 @@ describe('API: import/backup', () => {
   });
 
   it('should return 200 and import pages on success', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockCreate.mockResolvedValue({ id: 'new-id' });
 
     const formData = new FormData();

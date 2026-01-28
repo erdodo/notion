@@ -1,9 +1,4 @@
-import {
-  Database,
-  DatabaseView,
-  ViewType,
-  Property,
-} from '@prisma/client';
+import { Database, DatabaseView, ViewType, Property } from '@prisma/client';
 import {
   MoreHorizontal,
   Trash,

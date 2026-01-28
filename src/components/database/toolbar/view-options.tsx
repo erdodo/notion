@@ -85,8 +85,8 @@ export function ViewOptions({ database }: ViewOptionsProperties) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {currentView === 'calendar' && <CalendarOptions database={database} />}
-      {currentView === 'gallery' && <GalleryOptions database={database} />}
+      {currentView === 'calendar' && <CalendarOptions _database={database} />}
+      {currentView === 'gallery' && <GalleryOptions _database={database} />}
       {currentView === 'timeline' && <TimelineOptions database={database} />}
     </div>
   );

@@ -171,7 +171,7 @@ describe('MovePageModal', () => {
       const rootOption = screen
         .getByText('Private pages (root)')
         .closest('div');
-      expect(rootOption?.querySelector('svg')).toBeInTheDocument();
+      expect(rootOption).toHaveAttribute('aria-selected', 'true');
     });
   });
 

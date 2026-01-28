@@ -220,9 +220,9 @@ describe('PageRenderer', () => {
       screen.getByTestId('page-properties').parentElement;
     expect(propertiesContainer).toHaveClass(
       'px-12',
-      'md:max-w-3xl',
+      'md:w-[50vw]',
       'md:mx-auto',
-      'lg:max-w-4xl'
+      'lg:w-[60vw]'
     );
   });
 
@@ -509,7 +509,7 @@ describe('PageRenderer', () => {
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
-    expect(propertiesContainer).toHaveClass('md:max-w-3xl');
+    expect(propertiesContainer).toHaveClass('md:w-[50vw]');
   });
 
   it('should be responsive on large screen', () => {
@@ -517,7 +517,7 @@ describe('PageRenderer', () => {
 
     const propertiesContainer =
       screen.getByTestId('page-properties').parentElement;
-    expect(propertiesContainer).toHaveClass('lg:max-w-4xl');
+    expect(propertiesContainer).toHaveClass('lg:w-[60vw]');
   });
 
   it('should have horizontal padding on properties', () => {

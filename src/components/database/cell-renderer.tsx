@@ -96,14 +96,14 @@ export function CellRenderer(properties: CellProperties) {
         <FormulaCell
           propertyId={properties.propertyId}
           rowId={properties.rowId}
-          config={
-            {
-              expression: (properties.column.columnDef.meta?.property
-                ?.formulaConfig as any)?.expression || '',
-              resultType: (properties.column.columnDef.meta?.property
-                ?.formulaConfig as any)?.resultType || 'string',
-            }
-          }
+          config={{
+            expression:
+              (properties.column.columnDef.meta?.property?.formulaConfig as any)
+                ?.expression || '',
+            resultType:
+              (properties.column.columnDef.meta?.property?.formulaConfig as any)
+                ?.resultType || 'string',
+          }}
         />
       );
     }

@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { POST } from '@/app/api/import/markdown/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockCreate = vi.fn();
@@ -23,7 +23,7 @@ describe('API: import/markdown', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest('http://localhost/api/import/markdown', {
       method: 'POST',
     });
@@ -32,7 +32,7 @@ describe('API: import/markdown', () => {
   });
 
   it('should return 400 if file is missing', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const formData = new FormData();
     const request = new NextRequest('http://localhost/api/import/markdown', {
       method: 'POST',
@@ -43,7 +43,7 @@ describe('API: import/markdown', () => {
   });
 
   it('should return 200 and create page on success', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockCreate.mockResolvedValue({ id: 'new-page-id', title: 'Test Doc' });
 
     const formData = new FormData();

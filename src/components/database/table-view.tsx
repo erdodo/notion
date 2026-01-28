@@ -30,7 +30,6 @@ import { AddPropertyButton } from './add-property-button';
 import { AddRowButton } from './add-row-button';
 import { CalculationCell } from './calculation-cell';
 import { CellRenderer } from './cell-renderer';
-import { CellProperties as BaseCellProperties } from './cells/types';
 import { PropertyConfigDialog } from './property-config-dialog';
 import { PropertyHeader } from './property-header';
 import { GroupSection } from './shared/group-section';
@@ -40,7 +39,6 @@ import {
   addRow,
   updateProperty,
 } from '@/app/(main)/_actions/database';
-import { cn } from '@/lib/utils';
 import { useContextMenu } from '@/hooks/use-context-menu';
 import { useDatabase } from '@/hooks/use-database';
 import {
@@ -49,6 +47,7 @@ import {
 } from '@/hooks/use-filtered-sorted-data';
 import { useOptimisticDatabase } from '@/hooks/use-optimistic-database';
 import { DetailedDatabase } from '@/hooks/use-optimistic-database';
+import { cn } from '@/lib/utils';
 
 type DetailedRow = DatabaseRow & {
   cells: Cell[];
@@ -149,9 +148,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
 
     const propertyColumns: any = database.properties.map((property, index) => ({
       accessorKey: property.id,
-      header: ({
-        column,
-      }: any) => (
+      header: ({ column }: any) => (
         <PropertyHeader
           property={property as any}
           column={column}
@@ -561,11 +558,7 @@ export function TableView({ database: initialDatabase }: TableViewProperties) {
   );
 }
 
-function SortableHead({
-  header,
-}: {
-  header: any;
-}) {
+function SortableHead({ header }: { header: any }) {
   const {
     attributes,
     listeners,
@@ -639,7 +632,7 @@ function SortableHead({
   );
 }
 
-interface CellWrapperProps {
+interface _CellWrapperProps {
   isFirstColumn: boolean;
   depth?: number;
   hasChildren?: boolean;
@@ -692,7 +685,9 @@ function CellWrapper({
       type: 'database-cell',
       data: {
         rowId,
-        pageId: (row as any).original.pageId || (row as any).original.originalRow?.pageId,
+        pageId:
+          (row as any).original.pageId ||
+          (row as any).original.originalRow?.pageId,
         propertyId,
         value: getValue(),
       },

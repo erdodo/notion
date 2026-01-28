@@ -41,7 +41,10 @@ export function MonthGrid({
     end: endDate,
   });
 
-  const eventsByDate: Record<string, (DatabaseRow & { cells: Cell[]; page: Page | null; title: string })[]> = {};
+  const eventsByDate: Record<
+    string,
+    (DatabaseRow & { cells: Cell[]; page: Page | null; title: string })[]
+  > = {};
 
   const titleProperty = properties.find((p) => p.type === 'TITLE');
 
@@ -67,7 +70,11 @@ export function MonthGrid({
 
     const title = rawTitle ? String(rawTitle) : 'Untitled';
 
-    eventsByDate[dateString].push({ ...row, title } as DatabaseRow & { cells: Cell[]; page: Page | null; title: string });
+    eventsByDate[dateString].push({ ...row, title } as DatabaseRow & {
+      cells: Cell[];
+      page: Page | null;
+      title: string;
+    });
   }
 
   return (

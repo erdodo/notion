@@ -1,6 +1,5 @@
 'use client';
 
-import { Block, BlockNoteEditor } from '@blocknote/core';
 import { createReactBlockSpec } from '@blocknote/react';
 import {
   Loader2,
@@ -337,7 +336,9 @@ export const ImageBlock = createReactBlockSpec(
   {
     render: (properties) => {
       const { block, editor } = properties;
-      return <ImageBlockComponent block={block as any} editor={editor as any} />;
+      return (
+        <ImageBlockComponent block={block as any} editor={editor as any} />
+      );
     },
   }
 );

@@ -122,114 +122,115 @@ export const SlashCommandManager = ({
     }
   };
 
-  const getCustomSlashMenuItems = useCallback((editor: typeof schema.BlockNoteEditor) => {
-    const defaultItems = [
-      {
-        title: 'Paragraph',
-        onItemClick: () => {
-          insertOrUpdateBlock('paragraph');
+  const getCustomSlashMenuItems = useCallback(
+    (editor: typeof schema.BlockNoteEditor) => {
+      const defaultItems = [
+        {
+          title: 'Paragraph',
+          onItemClick: () => {
+            insertOrUpdateBlock('paragraph');
+          },
+          aliases: ['p', 'paragraph'],
+          group: 'Basic',
+          icon: '¶',
+          subtext: 'Plain text paragraph',
         },
-        aliases: ['p', 'paragraph'],
-        group: 'Basic',
-        icon: '¶',
-        subtext: 'Plain text paragraph',
-      },
-      {
-        title: 'Heading 1',
-        onItemClick: () => {
-          insertOrUpdateBlock('heading', { level: 1 });
+        {
+          title: 'Heading 1',
+          onItemClick: () => {
+            insertOrUpdateBlock('heading', { level: 1 });
+          },
+          aliases: ['h1', 'heading1', 'title'],
+          group: 'Basic',
+          icon: 'H1',
+          subtext: 'Large section heading',
         },
-        aliases: ['h1', 'heading1', 'title'],
-        group: 'Basic',
-        icon: 'H1',
-        subtext: 'Large section heading',
-      },
-      {
-        title: 'Heading 2',
-        onItemClick: () => {
-          insertOrUpdateBlock('heading', { level: 2 });
+        {
+          title: 'Heading 2',
+          onItemClick: () => {
+            insertOrUpdateBlock('heading', { level: 2 });
+          },
+          aliases: ['h2', 'heading2', 'subtitle'],
+          group: 'Basic',
+          icon: 'H2',
+          subtext: 'Medium section heading',
         },
-        aliases: ['h2', 'heading2', 'subtitle'],
-        group: 'Basic',
-        icon: 'H2',
-        subtext: 'Medium section heading',
-      },
-      {
-        title: 'Heading 3',
-        onItemClick: () => {
-          insertOrUpdateBlock('heading', { level: 3 });
+        {
+          title: 'Heading 3',
+          onItemClick: () => {
+            insertOrUpdateBlock('heading', { level: 3 });
+          },
+          aliases: ['h3', 'heading3'],
+          group: 'Basic',
+          icon: 'H3',
+          subtext: 'Small section heading',
         },
-        aliases: ['h3', 'heading3'],
-        group: 'Basic',
-        icon: 'H3',
-        subtext: 'Small section heading',
-      },
-      {
-        title: 'Bullet List',
-        onItemClick: () => {
-          insertOrUpdateBlock('bulletListItem');
+        {
+          title: 'Bullet List',
+          onItemClick: () => {
+            insertOrUpdateBlock('bulletListItem');
+          },
+          aliases: ['ul', 'bullet', 'unordered'],
+          group: 'Basic',
+          icon: '•',
+          subtext: 'Unordered list',
         },
-        aliases: ['ul', 'bullet', 'unordered'],
-        group: 'Basic',
-        icon: '•',
-        subtext: 'Unordered list',
-      },
-      {
-        title: 'Numbered List',
-        onItemClick: () => {
-          insertOrUpdateBlock('numberedListItem');
+        {
+          title: 'Numbered List',
+          onItemClick: () => {
+            insertOrUpdateBlock('numberedListItem');
+          },
+          aliases: ['ol', 'numbered', 'ordered'],
+          group: 'Basic',
+          icon: '1.',
+          subtext: 'Ordered list',
         },
-        aliases: ['ol', 'numbered', 'ordered'],
-        group: 'Basic',
-        icon: '1.',
-        subtext: 'Ordered list',
-      },
-      {
-        title: 'Check List',
-        onItemClick: () => {
-          insertOrUpdateBlock('checkListItem');
+        {
+          title: 'Check List',
+          onItemClick: () => {
+            insertOrUpdateBlock('checkListItem');
+          },
+          aliases: ['todo', 'checkbox', 'task'],
+          group: 'Basic',
+          icon: '☑',
+          subtext: 'To-do list with checkboxes',
         },
-        aliases: ['todo', 'checkbox', 'task'],
-        group: 'Basic',
-        icon: '☑',
-        subtext: 'To-do list with checkboxes',
-      },
-      {
-        title: 'Table',
-        onItemClick: () => {
-          insertOrUpdateBlock('table');
+        {
+          title: 'Table',
+          onItemClick: () => {
+            insertOrUpdateBlock('table');
+          },
+          aliases: ['table', 'grid'],
+          group: 'Advanced',
+          icon: '⊞',
+          subtext: 'Insert a table',
         },
-        aliases: ['table', 'grid'],
-        group: 'Advanced',
-        icon: '⊞',
-        subtext: 'Insert a table',
-      },
-      {
-        title: 'Code Block',
-        onItemClick: () => {
-          insertOrUpdateBlock('codeBlock');
+        {
+          title: 'Code Block',
+          onItemClick: () => {
+            insertOrUpdateBlock('codeBlock');
+          },
+          aliases: ['code', 'codeblock'],
+          group: 'Advanced',
+          icon: '</>',
+          subtext: 'Code with syntax highlighting',
         },
-        aliases: ['code', 'codeblock'],
-        group: 'Advanced',
-        icon: '</>',
-        subtext: 'Code with syntax highlighting',
-      },
-      {
-        title: 'Page Mention',
-        onItemClick: () => {
-          cleanupSlashCommand();
-          setMentionOpen(true);
-          setSlashMenuOpen(false);
-          setMentionPosition({
-            top: slashMenuPosition.y,
-            left: slashMenuPosition.x,
-          });
+        {
+          title: 'Page Mention',
+          onItemClick: () => {
+            cleanupSlashCommand();
+            setMentionOpen(true);
+            setSlashMenuOpen(false);
+            setMentionPosition({
+              top: slashMenuPosition.y,
+              left: slashMenuPosition.x,
+            });
+          },
+          aliases: ['mention', 'page mention', 'link page'],
+          group: 'Basic',
+          icon: <div className="text-xl">↗️</div>,
+          subtext: 'Link to an existing page',
         },
-        aliases: ['mention', 'page mention', 'link page'],
-        group: 'Basic',
-        icon: <div className="text-xl">↗️</div>,
-        subtext: 'Link to an existing page',
-      },
         {
           title: 'Image',
           onItemClick: () => {
@@ -490,32 +491,40 @@ export const SlashCommandManager = ({
           icon: <div className="text-xl">::::::</div>,
           subtext: '6 Column Layout',
         },
-    ];
+      ];
 
-    const combinedItems = [...defaultItems];
+      const combinedItems = [...defaultItems];
 
-    const uniqueItemsMap = new Map();
-    for (const item of combinedItems) {
-      if (!uniqueItemsMap.has(item.title)) {
-        uniqueItemsMap.set(item.title, item);
+      const uniqueItemsMap = new Map();
+      for (const item of combinedItems) {
+        if (!uniqueItemsMap.has(item.title)) {
+          uniqueItemsMap.set(item.title, item);
+        }
       }
-    }
-    const allItems = [...uniqueItemsMap.values()];
+      const allItems = [...uniqueItemsMap.values()];
 
-    const groupedItems: Record<string, (typeof allItems)[number][]> = {};
-    const groupOrder: string[] = [];
+      const groupedItems: Record<string, (typeof allItems)[number][]> = {};
+      const groupOrder: string[] = [];
 
-    for (const item of allItems) {
-      const group = item.group || 'Other';
-      if (!groupedItems[group]) {
-        groupedItems[group] = [];
-        groupOrder.push(group);
+      for (const item of allItems) {
+        const group = item.group || 'Other';
+        if (!groupedItems[group]) {
+          groupedItems[group] = [];
+          groupOrder.push(group);
+        }
+        groupedItems[group].push(item);
       }
-      groupedItems[group].push(item);
-    }
 
-    return groupOrder.flatMap((group) => groupedItems[group]);
-  }, [slashMenuPosition, slashMenuQuery, insertOrUpdateBlock, cleanupSlashCommand, documentId]);
+      return groupOrder.flatMap((group) => groupedItems[group]);
+    },
+    [
+      slashMenuPosition,
+      slashMenuQuery,
+      insertOrUpdateBlock,
+      cleanupSlashCommand,
+      documentId,
+    ]
+  );
 
   useEffect(() => {
     if (slashMenuOpen) {

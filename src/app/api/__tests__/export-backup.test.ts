@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { GET } from '@/app/api/export/backup/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockFindMany = vi.fn();
@@ -45,14 +45,14 @@ describe('API: export/backup', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest('http://localhost/api/export/backup');
     const res = await GET(request);
     expect(res.status).toBe(401);
   });
 
   it.skip('should return 200 and zip file on success', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindMany.mockResolvedValue([
       {
         id: '1',
@@ -110,7 +110,7 @@ describe('API: export/backup', () => {
   });
 
   it('should handle error during backup generation', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindMany.mockRejectedValue(new Error('DB Error'));
 
     const request = new NextRequest('http://localhost/api/export/backup');

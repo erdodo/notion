@@ -3,8 +3,8 @@
 import { useRef, useState } from 'react';
 
 import { CoreEditor } from './core-editor';
-import { SlashCommandManager } from './slash-command-manager';
 import { DragDropManager } from './drag-drop-manager';
+import { SlashCommandManager } from './slash-command-manager';
 import { ThemeManager } from './theme-manager';
 
 interface BlockNoteEditorProperties {
@@ -50,7 +50,7 @@ export const BlockNoteEditorComponent = ({
         initialContent={initialContent}
         onChange={onChange}
         editable={editable}
-        documentId={documentId}
+        _documentId={documentId}
         disableCollaboration={disableCollaboration}
         onEditorReady={setEditorInstance}
       />
@@ -63,7 +63,7 @@ export const BlockNoteEditorComponent = ({
             onMentionSelect={handleMentionSelect}
           />
 
-          <DragDropManager editor={editorInstance} documentId={documentId} />
+          <DragDropManager _editor={editorInstance} _documentId={documentId} />
 
           <ThemeManager />
         </>

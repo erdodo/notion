@@ -48,7 +48,8 @@ export function DatabaseView({ database, page }: DatabaseViewProperties) {
 
   useViewPersistence(database.properties);
 
-  const shouldInitializeView = database.views && database.views.length > 0 && !currentViewId;
+  const shouldInitializeView =
+    database.views && database.views.length > 0 && !currentViewId;
 
   useEffect(() => {
     if (shouldInitializeView) {
@@ -57,7 +58,13 @@ export function DatabaseView({ database, page }: DatabaseViewProperties) {
       setCurrentViewId(defaultView.id);
       setFromView(defaultView.type as any);
     }
-  }, [database.views, currentViewId, setCurrentViewId, setFromView, shouldInitializeView]);
+  }, [
+    database.views,
+    currentViewId,
+    setCurrentViewId,
+    setFromView,
+    shouldInitializeView,
+  ]);
 
   if (!database) {
     return <div className="p-4 text-muted-foreground">Database not found</div>;

@@ -26,14 +26,12 @@ vi.mock('../../db', () => ({
   },
 }));
 
-vi.mock('fs/promises', () => {
-  return {
-    default: {
-      readFile: vi.fn(),
-      access: vi.fn().mockResolvedValue(undefined),
-    },
-  };
-});
+vi.mock('node:fs/promises', () => ({
+  default: {
+    readFile: vi.fn(),
+    access: vi.fn().mockResolvedValue(undefined),
+  },
+}));
 
 describe('Template Factory: Goal Setting', () => {
   beforeEach(() => {
@@ -49,18 +47,19 @@ describe('Template Factory: Goal Setting', () => {
   });
 
   it('should process markdown and import CSV links', async () => {
-    (fs.readFile as any).mockImplementation(async (filePath: string) => {
-      if (filePath.endsWith('.md')) {
+    (fs.readFile as any).mockImplementation(async (filePath: any) => {
+      const path = typeof filePath === 'string' ? filePath : filePath.toString();
+      if (path.endsWith('.md')) {
         return `
 # Goals
 Here are my [Dreams](Dreams.csv)
 ![Goals](Goals.png)
-                `;
+                ` as any;
       }
-      if (filePath.endsWith('.csv')) {
-        return `Name,Target Date\nTravel,2025-01-01`;
+      if (path.endsWith('.csv')) {
+        return `Name,Target Date\nTravel,2025-01-01` as any;
       }
-      return '';
+      return '' as any;
     });
 
     const context = { userId: 'user-1', parentId: 'parent-1' };

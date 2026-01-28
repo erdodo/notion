@@ -70,7 +70,11 @@ export function ListItem({ row, properties, onClick }: ListItemProperties) {
                 className="h-3 w-3 opacity-70 shrink-0"
               />
               <div className="truncate">
-                <PropertyValue property={property} value={cell.value as any} compact />
+                <PropertyValue
+                  property={property}
+                  value={cell.value as any}
+                  compact
+                />
               </div>
             </div>
           );

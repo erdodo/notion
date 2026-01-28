@@ -49,10 +49,7 @@ export function getAvailableConversions(blockType: string): string[] {
   return BLOCK_CONVERSIONS[blockType] || [];
 }
 
-export function convertBlockType(
-  block: Block,
-  newType: string
-): any {
+export function convertBlockType(block: Block, newType: string): any {
   const converted: any = {
     type: newType,
     content: block.content,
@@ -88,11 +85,14 @@ export function duplicateBlock(block: Block): any {
     type: block.type as Block['type'],
     props: { ...block.props },
     content: block.content,
-    children: block.children as any,
+    children: block.children ? block.children.map(child => ({ ...child })) : [],
   };
 }
 
-export function getBlockColorStyle(color: BlockColor | string, isDark = false): string {
+export function getBlockColorStyle(
+  color: BlockColor | string,
+  isDark = false
+): string {
   const colors = isDark ? BLOCK_COLORS_DARK : BLOCK_COLORS;
   return colors[color as BlockColor]?.bg || colors.default.bg;
 }

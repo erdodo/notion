@@ -458,6 +458,9 @@ export const useDocumentsStore = create<DocumentsStore>()(
             publishedPages: state.publishedPages.filter(
               (document_) => document_.id !== id
             ),
+            sharedPages: state.sharedPages.filter(
+              (document_) => document_.id !== id
+            ),
             trashPages: documentToArchive
               ? [
                   { ...documentToArchive, isArchived: true },

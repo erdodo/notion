@@ -492,9 +492,7 @@ describe('Tooltip', () => {
     render(
       <TooltipProvider delayDuration={0} skipDelayDuration={0}>
         <Tooltip>
-          <TooltipTrigger ref={refCallback}>
-            Trigger
-          </TooltipTrigger>
+          <TooltipTrigger ref={refCallback}>Trigger</TooltipTrigger>
           <TooltipContent>Content</TooltipContent>
         </Tooltip>
       </TooltipProvider>

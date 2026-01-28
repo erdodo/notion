@@ -567,9 +567,7 @@ describe('AlertDialog', () => {
     };
     render(
       <AlertDialog>
-        <AlertDialogTrigger ref={refCallback}>
-          Open
-        </AlertDialogTrigger>
+        <AlertDialogTrigger ref={refCallback}>Open</AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogTitle>Title</AlertDialogTitle>
         </AlertDialogContent>

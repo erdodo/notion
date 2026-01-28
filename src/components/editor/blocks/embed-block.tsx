@@ -1,6 +1,5 @@
 'use client';
 
-import { BlockNoteEditor } from '@blocknote/core';
 import { createReactBlockSpec } from '@blocknote/react';
 import { LayoutTemplate, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -18,7 +17,7 @@ export const EmbedBlock = createReactBlockSpec(
   },
   {
     render: (properties) => {
-      return <EmbedBlockComponent {...properties as any} />;
+      return <EmbedBlockComponent {...(properties as any)} />;
     },
   }
 );

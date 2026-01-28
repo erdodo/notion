@@ -51,7 +51,10 @@ export function RollupConfig({
 
     const relationProperty = properties.find((p) => p.id === propertyId);
 
-    if (relationProperty && (relationProperty.relationConfig as any)?.targetDatabaseId) {
+    if (
+      relationProperty &&
+      (relationProperty.relationConfig as any)?.targetDatabaseId
+    ) {
       const targetDatabase = await getDatabase(
         (relationProperty!.relationConfig as any).targetDatabaseId
       );

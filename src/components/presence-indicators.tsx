@@ -10,12 +10,12 @@ import {
 } from '@/components/ui/tooltip';
 
 interface PresenceIndicatorsProperties {
-  pageId?: string;
+  _pageId?: string;
   className?: string;
 }
 
 export const PresenceIndicators = ({
-  pageId,
+  _pageId,
   className,
 }: PresenceIndicatorsProperties) => {
   const { activeUsers } = useCollaboration();

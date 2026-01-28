@@ -23,13 +23,7 @@ export const VideoBlock = createReactBlockSpec(
   }
 );
 
-const VideoBlockContent = ({
-  block,
-  editor,
-}: {
-  block: any;
-  editor: any;
-}) => {
+const VideoBlockContent = ({ block, editor }: { block: any; editor: any }) => {
   const { edgestore } = useEdgeStore();
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);

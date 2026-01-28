@@ -109,7 +109,10 @@ const SyncedBlock = createReactBlockSpec(
   {
     render: (properties) => {
       return (
-        <SyncedBlockView block={properties.block as any} editor={properties.editor as any} />
+        <SyncedBlockView
+          block={properties.block as any}
+          editor={properties.editor as any}
+        />
       );
     },
   }

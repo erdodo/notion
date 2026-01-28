@@ -282,12 +282,13 @@ export function PropertyValue({
     case 'TEXT':
       return <span className="truncate">{getTextValue(value)}</span>;
 
-    case 'NUMBER':
+    case 'NUMBER': {
       const numberValue =
         typeof value === 'object' && value !== null
           ? (value as ObjectValue).value
           : value;
       return <span>{String(numberValue)}</span>;
+    }
 
     case 'SELECT':
       return getSelectValue(property, value);

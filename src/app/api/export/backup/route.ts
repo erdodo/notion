@@ -55,10 +55,14 @@ export async function GET(request: NextRequest) {
 
     for (const p of pages) {
       const page = p as Page & {
-        database: (Database & {
-          properties: Property[];
-          rows: (DatabaseRow & { cells: { id: string; propertyId: string; value: unknown }[] })[];
-        }) | null;
+        database:
+          | (Database & {
+              properties: Property[];
+              rows: (DatabaseRow & {
+                cells: { id: string; propertyId: string; value: unknown }[];
+              })[];
+            })
+          | null;
         content: string | null;
         coverImage: string | null;
       };
@@ -137,13 +141,16 @@ function buildPageStructure(
   isDatabase: boolean;
   children: unknown[];
 }> {
-  const map = new Map<string, {
-    id: string;
-    title: string | null;
-    icon: string | null;
-    isDatabase: boolean;
-    children: unknown[];
-  }>();
+  const map = new Map<
+    string,
+    {
+      id: string;
+      title: string | null;
+      icon: string | null;
+      isDatabase: boolean;
+      children: unknown[];
+    }
+  >();
   const roots: Array<{
     id: string;
     title: string | null;
@@ -200,10 +207,12 @@ function getPagePath(
   return path.join('/');
 }
 
-function databaseToCSV(database: Database & {
-  properties: Property[];
-  rows: (DatabaseRow & { cells: { propertyId: string; value: unknown }[] })[];
-}): string {
+function databaseToCSV(
+  database: Database & {
+    properties: Property[];
+    rows: (DatabaseRow & { cells: { propertyId: string; value: unknown }[] })[];
+  }
+): string {
   const headers = database.properties.map((p) => p.name);
   const data = database.rows.map((row) => {
     const rowData: Record<string, string> = {};

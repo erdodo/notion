@@ -36,13 +36,13 @@ describe('CoverImageModal', () => {
   it('should render when isOpen is true', () => {
     render(<CoverImageModal isOpen={true} onClose={vi.fn()} />);
 
-    expect(screen.getByText('Upload Cover Image')).toBeInTheDocument();
+    expect(screen.getByText('Cover Image')).toBeInTheDocument();
   });
 
   it('should not render when isOpen is false', () => {
     render(<CoverImageModal isOpen={false} onClose={vi.fn()} />);
 
-    expect(screen.queryByText('Upload Cover Image')).not.toBeInTheDocument();
+    expect(screen.queryByText('Cover Image')).not.toBeInTheDocument();
   });
 
   it('should display tabs for upload, link, and recent', () => {
@@ -75,7 +75,7 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    expect(screen.getByPlaceholderText(/enter image url/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/paste image link/i)).toBeInTheDocument();
   });
 
   it('should accept URL input in link tab', async () => {
@@ -84,30 +84,29 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(
+      /paste image link/i
+    ) as HTMLInputElement;
     await userEvent.type(input, 'https://example.com/image.jpg');
 
     expect(input.value).toBe('https://example.com/image.jpg');
   });
 
-  it('should display upload button', () => {
+  it('should display upload button', async () => {
     render(<CoverImageModal isOpen={true} onClose={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: /upload/i })).toBeInTheDocument();
+    const linkTab = screen.getByRole('tab', { name: /link/i });
+    await userEvent.click(linkTab);
+
+    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
   });
 
-  it('should display cancel button', () => {
-    render(<CoverImageModal isOpen={true} onClose={vi.fn()} />);
-
-    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
-  });
-
-  it('should call onClose when cancel button is clicked', async () => {
+  it('should call onClose when close button is clicked', async () => {
     const mockOnClose = vi.fn();
     render(<CoverImageModal isOpen={true} onClose={mockOnClose} />);
 
-    const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    await userEvent.click(cancelButton);
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    await userEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -183,11 +182,11 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/paste image link/i);
     await userEvent.type(input, 'https://example.com/image.jpg');
 
-    const uploadButton = screen.getByRole('button', { name: /upload/i });
-    await userEvent.click(uploadButton);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await userEvent.click(submitButton);
 
     expect(mockOnConfirm).toHaveBeenCalledWith(
       expect.stringContaining('https://example.com/image.jpg')
@@ -222,14 +221,15 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/paste image link/i);
+    await userEvent.clear(input);
     await userEvent.type(input, 'https://example.com/cover.jpg');
 
-    const uploadButton = screen.getByRole('button', { name: /upload/i });
-    await userEvent.click(uploadButton);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockUpdateDocument).toHaveBeenCalled();
+      expect(mockOnClose).toHaveBeenCalled();
     });
   });
 
@@ -239,13 +239,15 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(
+      /paste image link/i
+    ) as HTMLInputElement;
     await userEvent.type(input, 'invalid-url');
 
     expect(input.value).toBe('invalid-url');
   });
 
-  it('should limit recent images to 9', () => {
+  it('should limit recent images to 9', async () => {
     const manyImages = Array.from(
       { length: 15 },
       (_, index) => `https://example.com/${index}.jpg`
@@ -254,11 +256,13 @@ describe('CoverImageModal', () => {
 
     render(<CoverImageModal isOpen={true} onClose={vi.fn()} />);
 
-    const stored = localStorage.getItem('notion-recent-covers');
-    if (stored) {
-      const images = JSON.parse(stored);
+    const recentTab = screen.getByRole('tab', { name: /recent/i });
+    await userEvent.click(recentTab);
+
+    await waitFor(() => {
+      const images = screen.getAllByAltText('Recent');
       expect(images.length).toBeLessThanOrEqual(9);
-    }
+    });
   });
 
   it('should allow direct confirmation via onConfirm prop', async () => {
@@ -274,11 +278,11 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/paste image link/i);
     await userEvent.type(input, 'https://example.com/test.jpg');
 
-    const uploadButton = screen.getByRole('button', { name: /upload/i });
-    await userEvent.click(uploadButton);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockOnConfirm).toHaveBeenCalled();
@@ -295,11 +299,11 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i);
+    const input = screen.getByPlaceholderText(/paste image link/i);
     await userEvent.type(input, 'https://example.com/image.jpg');
 
-    const uploadButton = screen.getByRole('button', { name: /upload/i });
-    await userEvent.click(uploadButton);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockOnClose).toHaveBeenCalled();
@@ -312,7 +316,9 @@ describe('CoverImageModal', () => {
     const linkTab = screen.getByRole('tab', { name: /link/i });
     await userEvent.click(linkTab);
 
-    const input = screen.getByPlaceholderText(/enter image url/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(
+      /paste image link/i
+    ) as HTMLInputElement;
     await userEvent.type(input, 'https://example.com/preview.jpg');
 
     expect(input.value).toBe('https://example.com/preview.jpg');

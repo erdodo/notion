@@ -31,9 +31,10 @@ describe('API: url-metadata', () => {
       ogUrl: 'http://example.com',
     };
 
-    (ogs as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+    vi.mocked(ogs).mockResolvedValue({
       result: mockResult,
-    });
+      error: false,
+    } as any);
 
     const request = new NextRequest(
       'http://localhost/api/url-metadata?url=http://example.com'
@@ -61,9 +62,10 @@ describe('API: url-metadata', () => {
       ogUrl: 'http://example.com',
     };
 
-    (ogs as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+    vi.mocked(ogs).mockResolvedValue({
       result: mockResult,
-    });
+      error: false,
+    } as any);
 
     const request = new NextRequest(
       'http://localhost/api/url-metadata?url=http://example.com'
@@ -79,7 +81,7 @@ describe('API: url-metadata', () => {
   });
 
   it('should return 500 if fetching metadata fails', async () => {
-    (ogs as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(
+    vi.mocked(ogs).mockRejectedValue(
       new Error('Fetch error')
     );
 

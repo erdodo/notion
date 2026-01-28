@@ -18,12 +18,16 @@ vi.mock('@/lib/auth', () => ({
 }));
 
 const globalFetch = globalThis.fetch;
-globalThis.fetch = vi.fn() as never as typeof fetch;
+const mockFetch = vi.fn();
 
 describe('Users and Utils Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'user-1' }, expires: '2025-12-31T00:00:00.000Z' } as any);
+    vi.mocked(auth).mockResolvedValue({
+      user: { id: 'user-1' },
+      expires: '2025-12-31T00:00:00.000Z',
+    } as any);
+    globalThis.fetch = mockFetch as any;
   });
 
   afterEach(() => {
@@ -32,7 +36,17 @@ describe('Users and Utils Actions', () => {
 
   describe('Users: searchUsers', () => {
     it('returns matched users', async () => {
-      const mockUsers = [{ id: 'u1', name: 'User 1', email: null, emailVerified: null, image: null, createdAt: new Date(), updatedAt: new Date() }];
+      const mockUsers = [
+        {
+          id: 'u1',
+          name: 'User 1',
+          email: null,
+          emailVerified: null,
+          image: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
       vi.mocked(db.user.findMany).mockResolvedValue(
         mockUsers as never as typeof mockUsers
       );
@@ -76,7 +90,7 @@ describe('Users and Utils Actions', () => {
                     </head>
                 </html>
              `;
-      vi.mocked(globalThis.fetch).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         text: async () => mockHtml,
       } as never as Response);
@@ -94,9 +108,7 @@ describe('Users and Utils Actions', () => {
     });
 
     it('returns null if fetch fails', async () => {
-      vi.mocked(globalThis.fetch).mockResolvedValue({
-        ok: false,
-      } as never as Response);
+      mockFetch.mockRejectedValue(new Error('Fetch failed'));
 
       const result = await utilActions.fetchLinkMetadata('http://fail.com');
       expect(result).toBeNull();

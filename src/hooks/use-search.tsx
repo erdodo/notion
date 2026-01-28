@@ -7,7 +7,7 @@ interface SearchStore {
   toggle: () => void;
 }
 
-export const useSearch = create<SearchStore>((set, get) => ({
+export const useSearch = create<SearchStore>((set) => ({
   isOpen: false,
   onOpen: () => {
     set({ isOpen: true });
@@ -16,6 +16,6 @@ export const useSearch = create<SearchStore>((set, get) => ({
     set({ isOpen: false });
   },
   toggle: () => {
-    set({ isOpen: !get().isOpen });
+    set((state) => ({ isOpen: !state.isOpen }));
   },
 }));

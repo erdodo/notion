@@ -2,10 +2,10 @@ import { NextRequest } from 'next/server';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { GET } from '@/app/api/export/markdown/route';
+import { auth } from '@/lib/auth';
 
-const mockAuth = vi.fn();
 vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
+  auth: vi.fn(),
 }));
 
 const mockFindUnique = vi.fn();
@@ -32,7 +32,7 @@ describe('API: export/markdown', () => {
   });
 
   it('should return 401 if not authenticated', async () => {
-    mockAuth.mockResolvedValue(null);
+    vi.mocked(auth).mockResolvedValue(null);
     const request = new NextRequest(
       'http://localhost/api/export/markdown?pageId=123'
     );
@@ -41,14 +41,14 @@ describe('API: export/markdown', () => {
   });
 
   it('should return 400 if pageId is missing', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     const request = new NextRequest('http://localhost/api/export/markdown');
     const res = await GET(request);
     expect(res.status).toBe(400);
   });
 
   it('should return 404 if page not found', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindUnique.mockResolvedValue(null);
 
     const request = new NextRequest(
@@ -59,9 +59,9 @@ describe('API: export/markdown', () => {
   });
 
   it('should return 403 if user does not have access', async () => {
-    mockAuth.mockResolvedValue({
+    vi.mocked(auth).mockResolvedValue({
       user: { id: 'user1', email: 'user1@test.com' },
-    });
+    } as any);
     mockFindUnique.mockResolvedValue({ id: '123', userId: 'user2' });
     mockFindFirst.mockResolvedValue(null);
 
@@ -73,7 +73,7 @@ describe('API: export/markdown', () => {
   });
 
   it('should return 200 and markdown content if successful (owner)', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user1' } });
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'user1' } } as any);
     mockFindUnique.mockResolvedValue({
       id: '123',
       userId: 'user1',
@@ -97,9 +97,9 @@ describe('API: export/markdown', () => {
   });
 
   it('should return 200 and markdown content if successful (shared)', async () => {
-    mockAuth.mockResolvedValue({
+    vi.mocked(auth).mockResolvedValue({
       user: { id: 'user1', email: 'user1@test.com' },
-    });
+    } as any);
     mockFindUnique.mockResolvedValue({
       id: '123',
       userId: 'user2',

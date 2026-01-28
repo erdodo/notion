@@ -29,7 +29,9 @@ export function PageDialog({
   open,
   onOpenChange,
 }: PageDialogProperties) {
-  const [page, setPage] = useState<(Page & { databaseRow: DatabaseRow | null }) | null>(null);
+  const [page, setPage] = useState<
+    (Page & { databaseRow: DatabaseRow | null }) | null
+  >(null);
   const [database, setDatabase] = useState<Database | null>(null);
   const [row, setRow] = useState<DatabaseRow | null>(null);
   const [loading, setLoading] = useState(true);

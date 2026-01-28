@@ -1,6 +1,6 @@
 'use client';
 
-import { PartialBlock, BlockNoteEditor } from '@blocknote/core';
+import { PartialBlock } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/mantine';
 import { createReactBlockSpec, useCreateBlockNote } from '@blocknote/react';
 import { useTheme } from 'next-themes';
@@ -52,7 +52,8 @@ const GridColumn = ({
 
           if ((clean as any).type === 'inlineDatabase') {
             delete (clean as any).content;
-            if (!(clean as any).props) (clean as any).props = { linkedDatabaseId: '' };
+            if (!(clean as any).props)
+              (clean as any).props = { linkedDatabaseId: '' };
           }
           return clean;
         });
@@ -120,13 +121,7 @@ export const GridBlock = createReactBlockSpec(
   }
 );
 
-function GridBlockComponent({
-  block,
-  editor,
-}: {
-  block: any;
-  editor: any;
-}) {
+function GridBlockComponent({ block, editor }: { block: any; editor: any }) {
   const cols = Math.min(Math.max((block.props as any).columns || 2, 2), 6);
 
   const [colWidths, setColWidths] = useState<number[]>(() => {

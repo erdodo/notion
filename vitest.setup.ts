@@ -84,12 +84,100 @@ window.scrollTo = vi.fn();
 
 // --- Next.js / NextAuth Mocks ---
 
+// Mock lucide-react
+vi.mock('lucide-react', () => {
+  const createMockIcon = (name: string) => {
+    const Icon = vi.fn((props: any) => null);
+    Icon.displayName = name;
+    return Icon;
+  };
+  return {
+    LayoutTemplate: createMockIcon('LayoutTemplate'),
+    ChevronRight: createMockIcon('ChevronRight'),
+    ChevronDown: createMockIcon('ChevronDown'),
+    Plus: createMockIcon('Plus'),
+    Trash2: createMockIcon('Trash2'),
+    Archive: createMockIcon('Archive'),
+    Copy: createMockIcon('Copy'),
+    Share2: createMockIcon('Share2'),
+    MoreVertical: createMockIcon('MoreVertical'),
+    Edit: createMockIcon('Edit'),
+    Eye: createMockIcon('Eye'),
+    EyeOff: createMockIcon('EyeOff'),
+    Lock: createMockIcon('Lock'),
+    Unlock: createMockIcon('Unlock'),
+    Download: createMockIcon('Download'),
+    Upload: createMockIcon('Upload'),
+    Search: createMockIcon('Search'),
+    X: createMockIcon('X'),
+    Check: createMockIcon('Check'),
+    AlertCircle: createMockIcon('AlertCircle'),
+    Info: createMockIcon('Info'),
+    Settings: createMockIcon('Settings'),
+    Menu: createMockIcon('Menu'),
+    Home: createMockIcon('Home'),
+    FileText: createMockIcon('FileText'),
+    Folder: createMockIcon('Folder'),
+    Calendar: createMockIcon('Calendar'),
+    Clock: createMockIcon('Clock'),
+    User: createMockIcon('User'),
+    LogOut: createMockIcon('LogOut'),
+    LogIn: createMockIcon('LogIn'),
+    Bell: createMockIcon('Bell'),
+    MessageSquare: createMockIcon('MessageSquare'),
+    Heart: createMockIcon('Heart'),
+    Share: createMockIcon('Share'),
+    Bookmark: createMockIcon('Bookmark'),
+    Flag: createMockIcon('Flag'),
+    Zap: createMockIcon('Zap'),
+    Layers: createMockIcon('Layers'),
+    Grid: createMockIcon('Grid'),
+    List: createMockIcon('List'),
+    RotateCcw: createMockIcon('RotateCcw'),
+    Star: createMockIcon('Star'),
+    Globe: createMockIcon('Globe'),
+    Link2: createMockIcon('Link2'),
+    Users: createMockIcon('Users'),
+    ArrowUpRight: createMockIcon('ArrowUpRight'),
+    MoreHorizontal: createMockIcon('MoreHorizontal'),
+    FolderOpen: createMockIcon('FolderOpen'),
+    Table: createMockIcon('Table'),
+    Loader2: createMockIcon('Loader2'),
+    CheckCircle: createMockIcon('CheckCircle'),
+    XCircle: createMockIcon('XCircle'),
+    ImageIcon: createMockIcon('ImageIcon'),
+    FileCode: createMockIcon('FileCode'),
+    Sun: createMockIcon('Sun'),
+    Moon: createMockIcon('Moon'),
+    Database: createMockIcon('Database'),
+    Undo: createMockIcon('Undo'),
+    Trash: createMockIcon('Trash'),
+    FileDown: createMockIcon('FileDown'),
+    ArrowUpDown: createMockIcon('ArrowUpDown'),
+    FileImage: createMockIcon('FileImage'),
+  };
+});
+
 // Mock next/server to prevent import errors in JSDOM
 vi.mock('next/server', () => ({
     NextResponse: {
-        json: vi.fn((data) => ({ json: async () => data })),
-        redirect: vi.fn(),
-        next: vi.fn(),
+        json: vi.fn((data, init) => ({
+            json: async () => data,
+            text: async () => JSON.stringify(data),
+            status: init?.status || 200,
+            headers: new Headers(init?.headers || {}),
+        })),
+        redirect: vi.fn((url, status) => ({
+            status: status || 307,
+            headers: new Headers({ Location: url }),
+        })),
+        next: vi.fn(() => ({
+            status: 200,
+            headers: new Headers(),
+        })),
+    },
+    NextRequest: class NextRequest {
+        constructor(public url: string, public options?: any) {}
     },
 }));
 

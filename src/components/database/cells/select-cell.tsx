@@ -28,7 +28,9 @@ export function SelectCell({
 }: CellProperties) {
   const initialValue = getValue();
   const value =
-    typeof initialValue === 'object' ? (initialValue as any)?.value : initialValue;
+    typeof initialValue === 'object'
+      ? (initialValue as any)?.value
+      : initialValue;
 
   const property = column.columnDef.meta?.property;
   const options: SelectOption[] =

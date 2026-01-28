@@ -1,6 +1,5 @@
 'use client';
 
-import { BlockNoteEditor } from '@blocknote/core';
 import { createReactBlockSpec } from '@blocknote/react';
 import { Link as LinkIcon, Loader2, AlertCircle, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -14,7 +13,7 @@ export const BookmarkBlock = createReactBlockSpec(
     },
   },
   {
-    render: (properties) => <BookmarkBlockContent {...properties as any} />,
+    render: (properties) => <BookmarkBlockContent {...(properties as any)} />,
   }
 );
 

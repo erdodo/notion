@@ -30,17 +30,11 @@ export const FileBlock = createReactBlockSpec(
     },
   },
   {
-    render: (properties) => <FileBlockContent {...properties as any} />,
+    render: (properties) => <FileBlockContent {...(properties as any)} />,
   }
 );
 
-const FileBlockContent = ({
-  block,
-  editor,
-}: {
-  block: any;
-  editor: any;
-}) => {
+const FileBlockContent = ({ block, editor }: { block: any; editor: any }) => {
   const { edgestore } = useEdgeStore();
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);

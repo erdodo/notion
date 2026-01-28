@@ -238,7 +238,7 @@ export async function deleteComment(commentId: string): Promise<void> {
   const io = (
     globalThis as {
       io?: {
-        to: (room: string) => { emit: (event: string, data: any) => void };
+        to: (room: string) => { emit: (event: string, data: unknown) => void };
       };
     }
   ).io;

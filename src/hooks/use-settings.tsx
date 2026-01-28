@@ -7,7 +7,7 @@ interface SettingsStore {
   toggle: () => void;
 }
 
-export const useSettings = create<SettingsStore>((set, get) => ({
+export const useSettings = create<SettingsStore>((set) => ({
   isOpen: false,
   onOpen: () => {
     set({ isOpen: true });
@@ -16,6 +16,6 @@ export const useSettings = create<SettingsStore>((set, get) => ({
     set({ isOpen: false });
   },
   toggle: () => {
-    set({ isOpen: !get().isOpen });
+    set((state) => ({ isOpen: !state.isOpen }));
   },
 }));

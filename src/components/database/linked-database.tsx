@@ -81,7 +81,9 @@ export function LinkedDatabaseView({
           className="inline-flex items-center gap-2 px-2 py-1 rounded bg-muted hover:bg-muted/80 text-sm group transition-colors"
         >
           {}
-          <span className="text-xl">{(sourceDatabase as any).page?.icon || '📊'}</span>
+          <span className="text-xl">
+            {(sourceDatabase as any).page?.icon || '📊'}
+          </span>
           <span className="font-medium group-hover:underline underline-offset-2">
             {}
             {linkedDb.title ||

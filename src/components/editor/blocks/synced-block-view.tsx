@@ -17,7 +17,8 @@ interface SyncedBlockProperties {
 }
 
 export const SyncedBlockView = ({ block, editor }: SyncedBlockProperties) => {
-  const { sourcePageId, sourceBlockId, childrenJSON } = (block.props || {}) as any;
+  const { sourcePageId, sourceBlockId, childrenJSON } = (block.props ||
+    {}) as any;
   const { resolvedTheme } = useTheme();
 
   const isMaster = !sourcePageId || !sourceBlockId;

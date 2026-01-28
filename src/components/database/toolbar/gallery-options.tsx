@@ -10,10 +10,10 @@ import {
 import { useDatabase } from '@/hooks/use-database';
 
 interface GalleryOptionsProps {
-  database: Database & { properties: Property[] };
+  _database?: Database & { properties: Property[] };
 }
 
-export function GalleryOptions({ database }: GalleryOptionsProps) {
+export function GalleryOptions({ _database }: GalleryOptionsProps) {
   const {
     galleryCardSize,
     setGalleryCardSize,

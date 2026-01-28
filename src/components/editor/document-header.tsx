@@ -125,7 +125,10 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
 
       <div className="px-12 pt-12 md:max-w-3xl md:mx-auto lg:max-w-4xl">
         <div className={coverImage ? '-mt-24' : ''}>
-          <Toolbar page={{ ...pageData, isPublished: false }} preview={preview} />
+          <Toolbar
+            page={{ ...pageData, isPublished: false }}
+            preview={preview}
+          />
         </div>
 
         <div className="mt-8">
