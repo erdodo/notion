@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Toggle, ToggleSummary, ToggleContent } from './extensions/toggle';
+import { Callout } from './extensions/callout';
 import { useEffect } from 'react';
 
 interface EditorProperties {
@@ -26,6 +27,7 @@ export const Editor = ({
       Toggle,
       ToggleSummary,
       ToggleContent,
+      Callout,
     ],
     content: initialContent,
     editorProps: {
