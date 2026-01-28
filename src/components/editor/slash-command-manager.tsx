@@ -55,7 +55,7 @@ export const SlashCommandManager = ({
     left: number;
   }>({ top: 0, left: 0 });
 
-  const insertOrUpdateBlock = (
+  const insertOrUpdateBlock = useCallback((
     type: string,
     properties: Record<string, unknown> = {}
   ) => {
@@ -101,9 +101,9 @@ export const SlashCommandManager = ({
       currentBlock,
       'after'
     );
-  };
+  }, [editor, slashMenuQuery]);
 
-  const cleanupSlashCommand = () => {
+  const cleanupSlashCommand = useCallback(() => {
     const currentBlock = editor.getTextCursorPosition().block;
     const content = currentBlock.content;
     const text =
@@ -120,7 +120,7 @@ export const SlashCommandManager = ({
     } else if (text === command || text === '/') {
       editor.updateBlock(currentBlock, { content: '' });
     }
-  };
+  }, [editor, slashMenuQuery]);
 
   const getCustomSlashMenuItems = useCallback(
     (editor: typeof schema.BlockNoteEditor) => {
@@ -198,7 +198,53 @@ export const SlashCommandManager = ({
         {
           title: 'Table',
           onItemClick: () => {
-            insertOrUpdateBlock('table');
+            const currentBlock = editor.getTextCursorPosition().block;
+            const content = currentBlock.content;
+            const text =
+              Array.isArray(content) && content.length > 0
+                ? (content as { text: string }[]).map((c) => c.text).join('')
+                : '';
+            const command = `/${slashMenuQuery}`;
+
+            if (text === command || text === '/' || text === '') {
+              editor.replaceBlocks([currentBlock], [
+                {
+                  type: 'table' as any,
+                  content: {
+                    type: 'tableContent',
+                    rows: [
+                      {
+                        cells: [[''], [''], ['']],
+                      },
+                      {
+                        cells: [[''], [''], ['']],
+                      },
+                    ],
+                  },
+                },
+              ]);
+            } else {
+              editor.insertBlocks(
+                [
+                  {
+                    type: 'table' as any,
+                    content: {
+                      type: 'tableContent',
+                      rows: [
+                        {
+                          cells: [[''], [''], ['']],
+                        },
+                        {
+                          cells: [[''], [''], ['']],
+                        },
+                      ],
+                    },
+                  },
+                ],
+                currentBlock,
+                'after'
+              );
+            }
           },
           aliases: ['table', 'grid'],
           group: 'Advanced',
