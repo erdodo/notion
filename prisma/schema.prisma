@@ -65,41 +65,42 @@ model User {
   favorites Favorite[]
   pageViews PageView[]
   history   PageHistory[]
-  
+
   // Paylaşım ilişkileri
-  sharedPages     PageShare[]   @relation("SharedPages")
-  sentInvites     PageShare[]   @relation("SentInvites")
-  
+  sharedPages PageShare[] @relation("SharedPages")
+  sentInvites PageShare[] @relation("SentInvites")
+
   // Yorum ilişkileri
-  comments        Comment[]
-  
+  comments Comment[]
+
   // Mention ilişkileri
   mentions        UserMention[] @relation("Mentions")
   mentionedOthers UserMention[] @relation("MentionedBy")
-  
+
   // Bildirimler
-  notifications   Notification[]
+  notifications      Notification[]
   actorNotifications Notification[] @relation("NotificationActor")
-  
+
   // Presence
-  presence        UserPresence[]
+  presence UserPresence[]
 
   @@index([email])
 }
 
 model Page {
-  id          String    @id @default(uuid())
-  title       String
-  content     String?   @db.Text
-  icon        String?
-  coverImage  String?
-  coverImagePosition Float @default(0.5)
-  isPublished Boolean   @default(false)
-  isArchived  Boolean   @default(false)
-  isFavorite  Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
+  id                 String    @id @default(uuid())
+  title              String
+  description        String?   @db.Text
+  content            String?   @db.Text
+  icon               String?
+  coverImage         String?
+  coverImagePosition Float     @default(0.5)
+  isPublished        Boolean   @default(false)
+  isArchived         Boolean   @default(false)
+  isFavorite         Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  publishedAt        DateTime?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -117,40 +118,39 @@ model Page {
   linkedDatabases LinkedDatabase[]
 
   // YENİ: Sıralama için
-  order       Int       @default(0)
-  
+  order Int @default(0)
+
   // YENİ: Son ziyaret takibi (user başına)
-  pageViews   PageView[]
-  
+  pageViews PageView[]
+
   // YENİ: Backlinks için - bu sayfadan link verilen sayfalar
   outgoingLinks PageLink[] @relation("OutgoingLinks")
   // Bu sayfaya link veren sayfalar
   incomingLinks PageLink[] @relation("IncomingLinks")
 
   // Paylaşım
-  shares          PageShare[]
-  
+  shares PageShare[]
+
   // Yorumlar
-  comments        Comment[]
-  
+  comments Comment[]
+
   // Mentions (sayfa içeriğinde)
-  mentions        UserMention[]
-  
+  mentions UserMention[]
+
   // Notifications
-  notifications   Notification[]
-  
+  notifications Notification[]
+
   // Presence
-  activeUsers     UserPresence[]
-  
+  activeUsers UserPresence[]
 
   // Customization
-  isSmallText Boolean   @default(false)
-  isFullWidth Boolean   @default(false)
-  fontStyle   String    @default("DEFAULT") // DEFAULT (sans), SERIF, MONO
-  isLocked    Boolean   @default(false)
+  isSmallText Boolean @default(false)
+  isFullWidth Boolean @default(false)
+  fontStyle   String  @default("DEFAULT") // DEFAULT (sans), SERIF, MONO
+  isLocked    Boolean @default(false)
 
   // History
-  history         PageHistory[]
+  history PageHistory[]
 
   @@index([userId])
   @@index([parentId])
@@ -175,13 +175,13 @@ model Favorite {
 
 // YENİ: Sayfa ziyaret kaydı (recent pages için)
 model PageView {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pageId    String
-  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  viewedAt  DateTime @default(now())
-  
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageId   String
+  page     Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  viewedAt DateTime @default(now())
+
   @@unique([userId, pageId])
   @@index([userId, viewedAt(sort: Desc)])
   @@index([pageId])
@@ -195,7 +195,7 @@ model PageLink {
   targetPageId String
   targetPage   Page     @relation("IncomingLinks", fields: [targetPageId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
-  
+
   @@unique([sourcePageId, targetPageId])
   @@index([sourcePageId])
   @@index([targetPageId])
@@ -203,49 +203,49 @@ model PageLink {
 
 // Database - Page ile 1:1 ilişki (her database bir sayfa)
 model Database {
-  id          String   @id @default(uuid())
-  pageId      String   @unique
-  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  id          String        @id @default(uuid())
+  pageId      String        @unique
+  page        Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   properties  Property[]
   rows        DatabaseRow[]
-  defaultView String   @default("table") // table, board, calendar, gallery, list
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  defaultView String        @default("table") // table, board, calendar, gallery, list
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
   templates       DatabaseTemplate[]
   automations     DatabaseAutomation[]
-  linkedDatabases LinkedDatabase[]   @relation("LinkedDatabases")
+  linkedDatabases LinkedDatabase[]     @relation("LinkedDatabases")
   views           DatabaseView[]
-  
+
   @@index([pageId])
 }
 
 model DatabaseView {
-  id          String   @id @default(uuid())
-  databaseId  String
-  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
-  
-  name        String   @default("Untitled View")
-  type        ViewType @default(table)
-  
+  id         String   @id @default(uuid())
+  databaseId String
+  database   Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+
+  name String   @default("Untitled View")
+  type ViewType @default(table)
+
   // View-specific config
-  filter      Json?    // Filter rules
-  sort        Json?    // Sort rules
-  group       Json?    // Group by config
-  layout      Json?    // Layout specific settings (e.g. card size, calendar properties)
-  
+  filter Json? // Filter rules
+  sort   Json? // Sort rules
+  group  Json? // Group by config
+  layout Json? // Layout specific settings (e.g. card size, calendar properties)
+
   // Property visibility per view
   hiddenProperties Json? // [propertyId]
   propertyWidths   Json? // {propertyId: width}
   propertyOrder    Json? // [propertyId]
-  
+
   // View settings
-  isLocked    Boolean  @default(false)
-  isDefault   Boolean  @default(false)
-  
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isLocked  Boolean @default(false)
+  isDefault Boolean @default(false)
+
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([databaseId])
 }
@@ -261,20 +261,19 @@ enum ViewType {
 
 // Property (Column) - Sütun tanımları
 model Property {
-  id          String       @id @default(uuid())
-  name        String
-  type        PropertyType
-  databaseId  String
-  database    Database     @relation(fields: [databaseId], references: [id], onDelete: Cascade)
-  order       Int          @default(0)
-  width       Int          @default(200)
-  isVisible   Boolean      @default(true)
-  options     Json?        // Select options: [{id, name, color}]
-  cells       Cell[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  
-  
+  id         String       @id @default(uuid())
+  name       String
+  type       PropertyType
+  databaseId String
+  database   Database     @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  order      Int          @default(0)
+  width      Int          @default(200)
+  isVisible  Boolean      @default(true)
+  options    Json? // Select options: [{id, name, color}]
+  cells      Cell[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
   // YENİ: Relation yapılandırması
   relationConfig Json?
   // {
@@ -283,7 +282,7 @@ model Property {
   //   reversePropertyId?: string,   // Ters property ID
   //   limitType: 'none' | 'one'     // Tek mi çok mu link
   // }
-  
+
   // YENİ: Rollup yapılandırması
   rollupConfig Json?
   // {
@@ -291,7 +290,7 @@ model Property {
   //   targetPropertyId: string,     // Hangi property'den
   //   aggregation: string           // Aggregation tipi
   // }
-  
+
   // YENİ: Formula yapılandırması
   formulaConfig Json?
   // {
@@ -304,7 +303,7 @@ model Property {
 
 // Property Types Enum
 enum PropertyType {
-  TITLE       // Zorunlu - her database'de bir tane
+  TITLE // Zorunlu - her database'de bir tane
   TEXT
   NUMBER
   SELECT
@@ -316,27 +315,27 @@ enum PropertyType {
   PHONE
   CREATED_TIME
   UPDATED_TIME
-  
-  RELATION      // Database ilişkisi
-  ROLLUP        // Relation üzerinden hesaplama
-  FORMULA       // Formül ile hesaplama
-  STATUS        // Status (To Do, In Progress, Complete)
+
+  RELATION // Database ilişkisi
+  ROLLUP // Relation üzerinden hesaplama
+  FORMULA // Formül ile hesaplama
+  STATUS // Status (To Do, In Progress, Complete)
   CREATED_BY
   LAST_EDITED_BY
 }
 
 // Database Row - Satırlar (aynı zamanda alt sayfa)
 model DatabaseRow {
-  id          String   @id @default(uuid())
-  databaseId  String
-  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
-  pageId      String?  @unique // Her satır bir sayfa olabilir (açılabilir)
-  page        Page?    @relation("RowPage", fields: [pageId], references: [id], onDelete: Cascade)
-  cells       Cell[]
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id         String   @id @default(uuid())
+  databaseId String
+  database   Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  pageId     String?  @unique // Her satır bir sayfa olabilir (açılabilir)
+  page       Page?    @relation("RowPage", fields: [pageId], references: [id], onDelete: Cascade)
+  cells      Cell[]
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
   parentRowId String?
   parent      DatabaseRow?  @relation("RowToRow", fields: [parentRowId], references: [id], onDelete: SetNull)
   children    DatabaseRow[] @relation("RowToRow")
@@ -353,8 +352,8 @@ model Cell {
   property   Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   rowId      String
   row        DatabaseRow @relation(fields: [rowId], references: [id], onDelete: Cascade)
-  value      Json?       // Dinamik değer storage
-  
+  value      Json? // Dinamik değer storage
+
   @@unique([propertyId, rowId])
   @@index([propertyId])
   @@index([rowId])
@@ -362,33 +361,33 @@ model Cell {
 
 // YENİ: Linked Database (Database view alias)
 model LinkedDatabase {
-  id              String   @id @default(uuid())
-  pageId          String   // Hangi sayfada gösteriliyor
-  page            Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  sourceDatabaseId String  // Kaynak database
-  sourceDatabase  Database @relation("LinkedDatabases", fields: [sourceDatabaseId], references: [id])
-  title           String?  // Override title
-  viewConfig      Json?    // View-specific config (filters, sorts, hidden columns)
-  createdAt       DateTime @default(now())
-  
+  id               String   @id @default(uuid())
+  pageId           String // Hangi sayfada gösteriliyor
+  page             Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  sourceDatabaseId String // Kaynak database
+  sourceDatabase   Database @relation("LinkedDatabases", fields: [sourceDatabaseId], references: [id])
+  title            String? // Override title
+  viewConfig       Json? // View-specific config (filters, sorts, hidden columns)
+  createdAt        DateTime @default(now())
+
   @@index([pageId])
   @@index([sourceDatabaseId])
 }
 
 // YENİ: Database Template
 model DatabaseTemplate {
-  id          String   @id @default(uuid())
-  databaseId  String
-  database    Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
-  name        String   @default("New Template")
-  icon        String?
-  content     String?  @db.Text   // BlockNote JSON (sayfa içeriği)
-  defaultCells Json?              // { propertyId: defaultValue }
-  isDefault   Boolean  @default(false)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id           String   @id @default(uuid())
+  databaseId   String
+  database     Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+  name         String   @default("New Template")
+  icon         String?
+  content      String?  @db.Text // BlockNote JSON (sayfa içeriği)
+  defaultCells Json? // { propertyId: defaultValue }
+  isDefault    Boolean  @default(false)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
   @@index([databaseId])
 }
 
@@ -396,28 +395,28 @@ model DatabaseTemplate {
 
 // Sayfa paylaşım kayıtları
 model PageShare {
-  id          String      @id @default(uuid())
-  pageId      String
-  page        Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(uuid())
+  pageId String
+  page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
   // Paylaşılan kişi (ikisinden biri dolu olmalı)
-  userId      String?     // Mevcut kullanıcı ile paylaşım
-  user        User?       @relation("SharedPages", fields: [userId], references: [id], onDelete: Cascade)
-  email       String?     // Email ile davet (henüz üye değilse)
-  
+  userId String? // Mevcut kullanıcı ile paylaşım
+  user   User?   @relation("SharedPages", fields: [userId], references: [id], onDelete: Cascade)
+  email  String? // Email ile davet (henüz üye değilse)
+
   // İzin seviyesi
-  role        ShareRole   @default(VIEWER)
-  
+  role ShareRole @default(VIEWER)
+
   // Misafir erişimi için
-  token       String?     @unique  // Guest link token
+  token          String?   @unique // Guest link token
   tokenExpiresAt DateTime?
-  
+
   // Audit
-  invitedBy   String
+  invitedBy     String
   invitedByUser User      @relation("SentInvites", fields: [invitedBy], references: [id])
-  createdAt   DateTime    @default(now())
-  acceptedAt  DateTime?   // Email davetleri için
-  
+  createdAt     DateTime  @default(now())
+  acceptedAt    DateTime? // Email davetleri için
+
   @@unique([pageId, userId])
   @@unique([pageId, email])
   @@index([pageId])
@@ -426,47 +425,47 @@ model PageShare {
 }
 
 enum ShareRole {
-  VIEWER      // Sadece görüntüleme
-  COMMENTER   // Görüntüleme + yorum
-  EDITOR      // Görüntüleme + yorum + düzenleme
-  ADMIN       // Tam erişim (paylaşım dahil)
+  VIEWER // Sadece görüntüleme
+  COMMENTER // Görüntüleme + yorum
+  EDITOR // Görüntüleme + yorum + düzenleme
+  ADMIN // Tam erişim (paylaşım dahil)
 }
 
 // ============ COMMENTS ============
 
 model Comment {
-  id          String    @id @default(uuid())
-  content     String    @db.Text
-  
+  id      String @id @default(uuid())
+  content String @db.Text
+
   // Sayfa ilişkisi
-  pageId      String
-  page        Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  
+  pageId String
+  page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
   // Yazar
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // Thread (yanıtlar)
-  parentId    String?
-  parent      Comment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     Comment[] @relation("CommentThread")
-  
+  parentId String?
+  parent   Comment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentThread")
+
   // Blok seviyesi yorum (opsiyonel)
-  blockId     String?   // BlockNote block ID
-  
+  blockId String? // BlockNote block ID
+
   // Durum
-  resolved    Boolean   @default(false)
-  resolvedBy  String?
-  resolvedAt  DateTime?
-  
+  resolved   Boolean   @default(false)
+  resolvedBy String?
+  resolvedAt DateTime?
+
   // Mentions
-  mentions    UserMention[]
-  
+  mentions UserMention[]
+
   // Audit
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  editedAt    DateTime? // Düzenlendiğinde
-  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime? // Düzenlendiğinde
+
   @@index([pageId])
   @@index([parentId])
   @@index([blockId])
@@ -476,28 +475,28 @@ model Comment {
 // ============ USER MENTIONS ============
 
 model UserMention {
-  id          String    @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   // Mention konumu
-  commentId   String?
-  comment     Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  pageId      String?   // Sayfa içeriğinde mention
-  page        Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  pageId    String? // Sayfa içeriğinde mention
+  page      Page?    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
   // Etiketlenen kullanıcı
-  userId      String
-  user        User      @relation("Mentions", fields: [userId], references: [id], onDelete: Cascade)
-  
+  userId String
+  user   User   @relation("Mentions", fields: [userId], references: [id], onDelete: Cascade)
+
   // Etiketleyen kullanıcı
-  mentionedBy String
-  mentionedByUser User  @relation("MentionedBy", fields: [mentionedBy], references: [id])
-  
+  mentionedBy     String
+  mentionedByUser User   @relation("MentionedBy", fields: [mentionedBy], references: [id])
+
   // Okundu durumu
-  read        Boolean   @default(false)
-  readAt      DateTime?
-  
-  createdAt   DateTime  @default(now())
-  
+  read   Boolean   @default(false)
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
   @@index([userId, read])
   @@index([commentId])
   @@index([pageId])
@@ -506,52 +505,52 @@ model UserMention {
 // ============ NOTIFICATIONS ============
 
 model Notification {
-  id          String           @id @default(uuid())
-  userId      String
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type        NotificationType
-  title       String
-  message     String?
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type    NotificationType
+  title   String
+  message String?
+
   // İlgili kayıtlar
-  pageId      String?
-  page        Page?            @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  commentId   String?
-  actorId     String?          // Aksiyonu yapan kullanıcı
-  actor       User?            @relation("NotificationActor", fields: [actorId], references: [id])
-  
+  pageId    String?
+  page      Page?   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  commentId String?
+  actorId   String? // Aksiyonu yapan kullanıcı
+  actor     User?   @relation("NotificationActor", fields: [actorId], references: [id])
+
   // Durum
-  read        Boolean          @default(false)
-  readAt      DateTime?
-  
-  createdAt   DateTime         @default(now())
-  
+  read   Boolean   @default(false)
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
   @@index([userId, read, createdAt(sort: Desc)])
 }
 
 enum NotificationType {
-  COMMENT_ADDED      // Yeni yorum
-  COMMENT_REPLY      // Yoruma yanıt
-  MENTION            // @mention
-  PAGE_SHARED        // Sayfa paylaşıldı
-  SHARE_ACCEPTED     // Davet kabul edildi
-  PAGE_EDITED        // Sayfa düzenlendi (izlenenler için)
+  COMMENT_ADDED // Yeni yorum
+  COMMENT_REPLY // Yoruma yanıt
+  MENTION // @mention
+  PAGE_SHARED // Sayfa paylaşıldı
+  SHARE_ACCEPTED // Davet kabul edildi
+  PAGE_EDITED // Sayfa düzenlendi (izlenenler için)
 }
 
 // ============ PRESENCE (Opsiyonel - Cache'de tutulabilir) ============
 
 model UserPresence {
-  id          String    @id @default(uuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pageId      String?
-  page        Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  
-  status      PresenceStatus @default(ONLINE)
-  lastSeen    DateTime  @default(now())
-  cursorPosition Json?  // { blockId, offset }
-  
+  id     String  @id @default(uuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageId String?
+  page   Page?   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  status         PresenceStatus @default(ONLINE)
+  lastSeen       DateTime       @default(now())
+  cursorPosition Json? // { blockId, offset }
+
   @@unique([userId, pageId])
   @@index([pageId])
 }
@@ -565,13 +564,13 @@ enum PresenceStatus {
 // ============ PAGE HISTORY ============
 
 model PageHistory {
-  id        String   @id @default(uuid())
-  pageId    String
-  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  content   String?  @db.Text
-  savedAt   DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      String   @id @default(uuid())
+  pageId  String
+  page    Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  content String?  @db.Text
+  savedAt DateTime @default(now())
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([pageId])
   @@index([savedAt(sort: Desc)])
@@ -580,20 +579,20 @@ model PageHistory {
 // ============ AUTOMATIONS ============
 
 model DatabaseAutomation {
-  id            String   @id @default(uuid())
-  databaseId    String
-  database      Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(uuid())
+  databaseId String
+  database   Database @relation(fields: [databaseId], references: [id], onDelete: Cascade)
+
   // Trigger Configuration
-  triggerType   String   // e.g., "PROPERTY_CHANGE"
-  triggerConfig Json     // { propertyId: "...", from: "...", to: "..." }
-  
+  triggerType   String // e.g., "PROPERTY_CHANGE"
+  triggerConfig Json // { propertyId: "...", from: "...", to: "..." }
+
   // Action Configuration
-  actionType    String   // e.g., "UPDATE_PROPERTY"
-  actionConfig  Json     // { propertyId: "...", value: "..." }
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  actionType   String // e.g., "UPDATE_PROPERTY"
+  actionConfig Json // { propertyId: "...", value: "..." }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([databaseId])
 }

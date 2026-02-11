@@ -150,6 +150,7 @@ export async function updateDocument(
   documentId: string,
   data: {
     title?: string;
+    description?: string;
     content?: string;
     icon?: string;
     coverImage?: string;

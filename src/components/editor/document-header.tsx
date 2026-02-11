@@ -9,6 +9,7 @@ interface DocumentHeaderProperties {
   page: {
     id: string;
     title: string;
+    description?: string | null;
     icon?: string | null;
     coverImage?: string | null;
     coverImagePosition?: number;
@@ -18,6 +19,7 @@ interface DocumentHeaderProperties {
 
 export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
   const [title, setTitle] = useState(page.title);
+  const [description, setDescription] = useState(page.description || '');
   const [icon, setIcon] = useState(page.icon);
   const [coverImage, setCoverImage] = useState(page.coverImage);
   const [coverImagePosition, setCoverImagePosition] = useState(
@@ -27,7 +29,9 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
   const { socket } = useSocket();
 
   const isEditingReference = useRef(false);
+  const isEditingDescriptionReference = useRef(false);
   const previousTitleReference = useRef(page.title);
+  const previousDescriptionReference = useRef(page.description || '');
 
   useEffect(() => {
     if (!socket) return;
@@ -40,6 +44,11 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
         const updates = payload.updates;
         if (updates.title !== undefined && !isEditingReference.current)
           setTitle(updates.title);
+        if (
+          updates.description !== undefined &&
+          !isEditingDescriptionReference.current
+        )
+          setDescription(updates.description || '');
         if (updates.icon !== undefined) setIcon(updates.icon);
         if (updates.coverImage !== undefined) setCoverImage(updates.coverImage);
         if (updates.coverImagePosition !== undefined)
@@ -54,6 +63,7 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
   }, [socket, page.id]);
 
   const debounceTimerReference = useRef<NodeJS.Timeout | null>(null);
+  const descriptionDebounceTimerReference = useRef<NodeJS.Timeout | null>(null);
 
   const saveTitle = async (newTitle: string) => {
     if (newTitle === previousTitleReference.current) return;
@@ -66,6 +76,13 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
     );
 
     await updateDocument(page.id, { title: newTitle });
+  };
+
+  const saveDescription = async (newDescription: string) => {
+    if (newDescription === previousDescriptionReference.current) return;
+    previousDescriptionReference.current = newDescription;
+
+    await updateDocument(page.id, { description: newDescription });
   };
 
   const handleInput = (value: string) => {
@@ -90,6 +107,28 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
     }
   };
 
+  const handleDescriptionInput = (value: string) => {
+    setDescription(value);
+    isEditingDescriptionReference.current = true;
+
+    if (descriptionDebounceTimerReference.current) {
+      clearTimeout(descriptionDebounceTimerReference.current);
+    }
+
+    descriptionDebounceTimerReference.current = setTimeout(() => {
+      saveDescription(value);
+      isEditingDescriptionReference.current = false;
+    }, 500);
+  };
+
+  const handleDescriptionBlur = () => {
+    if (descriptionDebounceTimerReference.current) {
+      clearTimeout(descriptionDebounceTimerReference.current);
+      saveDescription(description);
+      isEditingDescriptionReference.current = false;
+    }
+  };
+
   const pageIdReference = useRef(page.id);
 
   useEffect(() => {
@@ -97,16 +136,19 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
       // Props değişikliğine tepki olarak state güncelliyoruz
       queueMicrotask(() => {
         setTitle(page.title);
+        setDescription(page.description || '');
         setIcon(page.icon);
         setCoverImage(page.coverImage);
         setCoverImagePosition(page.coverImagePosition);
         previousTitleReference.current = page.title;
+        previousDescriptionReference.current = page.description || '';
         pageIdReference.current = page.id;
       });
     }
   }, [
     page.id,
     page.title,
+    page.description,
     page.icon,
     page.coverImage,
     page.coverImagePosition,
@@ -149,6 +191,24 @@ export const DocumentHeader = ({ page, preview }: DocumentHeaderProperties) => {
             }}
             className="text-5xl font-bold outline-none text-[#3F3F3F] dark:text-[#CFCFCF] bg-transparent w-full placeholder:text-muted-foreground/50 mt-4 resize-none h-auto overflow-hidden block"
             placeholder="Untitled"
+            disabled={preview}
+            rows={1}
+            style={{ height: 'auto' }}
+            ref={(textarea) => {
+              if (textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+              }
+            }}
+          />
+          <textarea
+            value={description}
+            onChange={(e) => {
+              handleDescriptionInput(e.target.value);
+            }}
+            onBlur={handleDescriptionBlur}
+            className="text-sm outline-none text-muted-foreground bg-transparent w-full placeholder:text-muted-foreground/50 mt-2 resize-none h-auto overflow-hidden block"
+            placeholder="Add a description..."
             disabled={preview}
             rows={1}
             style={{ height: 'auto' }}

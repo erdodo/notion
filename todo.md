@@ -1,5 +1,0 @@
-- [ ] callout component için renk değişimi yapılmasın. yalnızca birkaç state olmalı. success, error, warning, info gibi. buna göre renk ve ikonlar değişmeli
-- [ ] table of content componenti tıklandığında font menüsü açılıyor. açılmasını engellemeli
-- [ ] syncblock içinde slah menü açtığımda 2 kere açılıyor yada sync block altındaki bloğa etki ediyor gibi garip bir durum var
-- [ ] slah menü içinden bir item'a tıkladığımda alt bloğa focus olabiliyor
-- [ ] bir sayfa altına slah menüden bir sayfa daha ekledim. tıklanarak gidilmiyor, normalde alt sayfa olması gereken sayfa navigation altında hem ana düzeyde hem de alt düzeyde görünüyor

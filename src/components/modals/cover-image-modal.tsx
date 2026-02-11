@@ -57,7 +57,7 @@ export const CoverImageModal = ({
     setIsLoadingUnsplash(true);
     try {
       const response = await fetch(
-        `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=YOUR_ACCESS_KEY`
+        `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=8eaoqr6JtpxopkD_pzvgEi1z5zdxrd2qNxQcGcNxdmw`
       );
       const data = await response.json();
       setUnsplashImages(data.results || []);

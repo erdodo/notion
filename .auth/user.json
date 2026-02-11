@@ -1,16 +1,6 @@
 {
   "cookies": [
     {
-      "name": "next-auth.session-token",
-      "value": "test-session-token",
-      "domain": "127.0.0.1",
-      "path": "/",
-      "expires": 1769609689.516,
-      "httpOnly": true,
-      "secure": false,
-      "sameSite": "Lax"
-    },
-    {
       "name": "authjs.csrf-token",
       "value": "cc489d14c3cf7fa20ca7f45a9105c30740ce548c647751bb59eaeaa423f985d3%7Ca9fdf45836a3464fed2f196f50b0bb78dc066d3993d8775207e78b96691b9c66",
       "domain": "127.0.0.1",
@@ -51,8 +41,58 @@
       "sameSite": "Lax"
     },
     {
+      "name": "authjs.csrf-token",
+      "value": "31e536c2a420e3ffeeeb0579677c8c749f7a44ec8cfaf3706b915f9e5ae34372%7Ce51ea0a5ecafe698b1640b50b2a7586d2d67fee30a72137e88b1fe1443133d40",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "authjs.callback-url",
+      "value": "http%3A%2F%2Flocalhost%3A3000",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "next-auth.session-token",
+      "value": "test-session-token",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1770838401.475,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "edgestore-ctx",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..uEUHUzLP5QYRiawp.kSDo9y_7-85mdn_01nT8o-AIxmwlt5iEwxhJxBUthXB6aT0WqYAD6c7Rg8hnhmTe-dt727VXb87x1-wZegLUhYbhsUdcYKSkOvW8r6v21EVFUC2A.A3X6yLlXFPoEVQi710KxDg",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1773426804.067237,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
       "name": "edgestore-token",
-      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..vbc9bmpzSXAT7LhB.Glby-bTyTCrRCK_5ME-QS1KQgzJHjUuIhvzejRKFDAGPd7ZNzmuKDBSbZF2iVmJuMLX40D0G4o28tmmJnKNpoDi0lox_xkZUt3yDJNHnpTXhtXPi4hCsL7WXEqoBx9CsAbQWyIO9-qwGiPVy71YPJj6qrRLTjbBwQgci32EL9KvHkT3OPLE1OK2cnqLUE9mDyevr9Y1gAvaCWV5W5VXLSimCv9SJxI9SUU91DVQqADGCjB26BVFLNA7EUIL_F3Bq7awCMWM7-Wi1Z_jVA-f95CJLHx_XXPk.a1HmHi0ckstIs4pVJKjx6w",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..smmG8TzYJjEtMcE1.6lKYn6o_JoWRaixsoY9oghe6pBF38ziQvA7xcIaLNxYq2AeMQldxyJ10Wd4XunVRUaOsLQoiSQEKr0IEXEf0my-6hbvq7vJjbSTINqc7hrx12b7aha8HAwmm4_KPMKb3_sZE9MfwKINeulpvbMts-vO7_V9SzWJb1E4inKVTE5J57KLV2OFE7Zk7Bl2pOd3hgPhAmlm3yLdz1ZYzlxgbZPczht11ZzLfnKI_Y9VWzZzgGtnL_ZjYz7UtkyWHTipObaAOLGun45gYV3tl-Nw7TT9VaE_Fi_Q.Y35UmEDJW7vbTFgTXzj0ig",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1773426804.067478,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "edgestore-token",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..smmG8TzYJjEtMcE1.6lKYn6o_JoWRaixsoY9oghe6pBF38ziQvA7xcIaLNxYq2AeMQldxyJ10Wd4XunVRUaOsLQoiSQEKr0IEXEf0my-6hbvq7vJjbSTINqc7hrx12b7aha8HAwmm4_KPMKb3_sZE9MfwKINeulpvbMts-vO7_V9SzWJb1E4inKVTE5J57KLV2OFE7Zk7Bl2pOd3hgPhAmlm3yLdz1ZYzlxgbZPczht11ZzLfnKI_Y9VWzZzgGtnL_ZjYz7UtkyWHTipObaAOLGun45gYV3tl-Nw7TT9VaE_Fi_Q.Y35UmEDJW7vbTFgTXzj0ig",
       "domain": "files.edgestore.dev",
       "path": "/",
       "expires": -1,
